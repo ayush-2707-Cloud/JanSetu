@@ -648,5 +648,491 @@ export const copilotService = {
   },
 };
 
+// ── Officer Back-Office Dashboard & Scrutiny API Service ──
+
+import type {
+  OfficerApplication,
+  OfficerDecisionRequest,
+  OfficerDecisionResponse,
+  DossierAnalysisRequest,
+  DossierAnalysisResponse,
+  DepartmentCode,
+  ApplicationStatus,
+} from "@/types/officer";
+
+const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
+  {
+    application_id: "APP-2026-MSME-0841",
+    citizen_name: "Rahul Rajesh Sharma",
+    enterprise_name: "Namma Cloud Technologies LLP",
+    department: "MSME",
+    department_name: "Ministry of Micro, Small & Medium Enterprises",
+    service_title: "Udyam Enterprise Registration & Priority Credit Certificate",
+    journey_id: "msme-registration",
+    current_step_id: "step-2",
+    current_step_title: "NIC Code & Enterprise Classification Validation",
+    status: "PENDING_REVIEW",
+    submission_date: "2026-08-21T09:30:00Z",
+    sla_deadline: "2026-08-23T09:30:00Z",
+    sla_hours_total: 48,
+    sla_hours_remaining: 31.5,
+    is_sla_breached: false,
+    risk_score: 12,
+    dossier: {
+      citizen_name: "Rahul Rajesh Sharma",
+      applicant_id: "CITIZEN-KA-88129",
+      aadhaar_masked: "XXXX-XXXX-4912",
+      pan_masked: "ABCPS****K",
+      mobile: "+91 98765 43210",
+      email: "rahul.sharma@nammacloud.io",
+      enterprise_name: "Namma Cloud Technologies LLP",
+      entity_type: "Limited Liability Partnership (LLP)",
+      registered_address: "#42, 100ft Ring Road, Indiranagar, Bengaluru",
+      pincode: "560038",
+      state: "Karnataka",
+      district: "Bengaluru Urban",
+      timeline: [
+        {
+          step_id: "step-1",
+          step_title: "Aadhaar & PAN Biometric Match",
+          department: "UIDAI / Income Tax Dept",
+          completed_at: "2026-08-21T09:32:00Z",
+          status: "VERIFIED",
+          verified_by: "API Setu Gateway (Automated)",
+          officer_remarks: "100% cryptographic match between Aadhaar demographic data and PAN database.",
+        },
+        {
+          step_id: "step-2",
+          step_title: "NIC Code & Enterprise Classification Validation",
+          department: "MSME Nodal Directorate",
+          completed_at: null,
+          status: "PENDING",
+          verified_by: null,
+          officer_remarks: null,
+        },
+      ],
+      documents: [
+        {
+          doc_id: "doc-msme-1",
+          doc_name: "Aadhaar Identity Record",
+          category: "Identity Proof",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "UIDAI",
+          file_url: "https://digilocker.gov.in/sample/aadhaar_verified.pdf",
+          uploaded_at: "2026-08-21T09:31:00Z",
+        },
+        {
+          doc_id: "doc-msme-2",
+          doc_name: "LLP Incorporation Certificate",
+          category: "Statutory Registration",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "Ministry of Corporate Affairs (MCA)",
+          file_url: "https://mca.gov.in/sample/llp_cert.pdf",
+          uploaded_at: "2026-08-21T09:31:30Z",
+        },
+        {
+          doc_id: "doc-msme-3",
+          doc_name: "Electricity Bill (Proof of Address)",
+          category: "Address Proof",
+          verification_status: "REQUIRES_SCRUTINY",
+          issuing_authority: "BESCOM (Karnataka Electricity Board)",
+          file_url: "https://bescom.karnataka.gov.in/sample/bill_aug26.pdf",
+          uploaded_at: "2026-08-21T09:32:00Z",
+        },
+      ],
+    },
+  },
+  {
+    application_id: "APP-2026-FSSAI-1904",
+    citizen_name: "Priya V. Sundaram",
+    enterprise_name: "Anand Sweets & Cloud Kitchen",
+    department: "FOOD_SAFETY",
+    department_name: "Food Safety and Standards Authority of India (FSSAI)",
+    service_title: "FSSAI State Food Business Operator (FBO) License",
+    journey_id: "food-license-fssai",
+    current_step_id: "step-2",
+    current_step_title: "Kitchen Hygiene & FSMS Plan Scrutiny",
+    status: "PENDING_REVIEW",
+    submission_date: "2026-08-20T14:15:00Z",
+    sla_deadline: "2026-08-22T14:15:00Z",
+    sla_hours_total: 48,
+    sla_hours_remaining: 4.2,
+    is_sla_breached: false,
+    risk_score: 42,
+    dossier: {
+      citizen_name: "Priya V. Sundaram",
+      applicant_id: "CITIZEN-TN-44912",
+      aadhaar_masked: "XXXX-XXXX-8921",
+      pan_masked: "DFGPS****M",
+      mobile: "+91 97123 45678",
+      email: "priya.sundaram@anandsweets.in",
+      enterprise_name: "Anand Sweets & Cloud Kitchen",
+      entity_type: "Partnership Firm",
+      registered_address: "Shop #12, Ground Floor, Anna Nagar Main Road, Chennai",
+      pincode: "600040",
+      state: "Tamil Nadu",
+      district: "Chennai",
+      timeline: [
+        {
+          step_id: "step-1",
+          step_title: "Nominated Food Safety Supervisor Certification",
+          department: "FoSTaC / FSSAI",
+          completed_at: "2026-08-20T14:20:00Z",
+          status: "VERIFIED",
+          verified_by: "FoSTaC Portal API",
+          officer_remarks: "Supervisor completed Level 2 Advanced Catering Food Safety Course.",
+        },
+        {
+          step_id: "step-2",
+          step_title: "Kitchen Hygiene & FSMS Plan Scrutiny",
+          department: "Tamil Nadu Food Safety Directorate",
+          completed_at: null,
+          status: "PENDING",
+          verified_by: null,
+          officer_remarks: null,
+        },
+      ],
+      documents: [
+        {
+          doc_id: "doc-fssai-1",
+          doc_name: "Commercial Rent Agreement (11-Month Registered Lease)",
+          category: "Premises Possession",
+          verification_status: "REQUIRES_SCRUTINY",
+          issuing_authority: "Sub-Registrar Anna Nagar",
+          file_url: "https://tnreginet.gov.in/sample/lease.pdf",
+          uploaded_at: "2026-08-20T14:16:00Z",
+        },
+        {
+          doc_id: "doc-fssai-2",
+          doc_name: "Water Potability Test Report (IS 10500 Compliant)",
+          category: "Public Health",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "King Institute of Preventive Medicine",
+          file_url: "https://kinginstitute.tn.gov.in/lab_report_774.pdf",
+          uploaded_at: "2026-08-20T14:17:00Z",
+        },
+      ],
+    },
+  },
+  {
+    application_id: "APP-2026-REV-3301",
+    citizen_name: "Amitabh Ramesh Kulkarni",
+    enterprise_name: "Kulkarni Agro Processing Units",
+    department: "REVENUE",
+    department_name: "Department of Land Records & Revenue",
+    service_title: "Agricultural Land Conversion & Non-Agricultural (NA) Permission",
+    journey_id: "property-registration",
+    current_step_id: "step-3",
+    current_step_title: "Tahsildar Field Inspection & Title Search Clearance",
+    status: "DEFECT_FLAGGED",
+    submission_date: "2026-08-18T11:00:00Z",
+    sla_deadline: "2026-08-21T11:00:00Z",
+    sla_hours_total: 72,
+    sla_hours_remaining: -24.0,
+    is_sla_breached: true,
+    risk_score: 68,
+    last_action_date: "2026-08-21T16:40:00Z",
+    last_officer_id: "OFFICER-MH-4410",
+    last_officer_remarks: "Survey Map discrepancy: Missing boundary coordinates for plot 142/3-B bordering forest buffer zone.",
+    dossier: {
+      citizen_name: "Amitabh Ramesh Kulkarni",
+      applicant_id: "CITIZEN-MH-90214",
+      aadhaar_masked: "XXXX-XXXX-1149",
+      pan_masked: "BKMPK****L",
+      mobile: "+91 94220 11223",
+      email: "amitabh.kulkarni@agrocorp.in",
+      enterprise_name: "Kulkarni Agro Processing Units",
+      entity_type: "Sole Proprietorship",
+      registered_address: "Gat No. 142, Village Shirwal, Taluka Khandala, Satara",
+      pincode: "412801",
+      state: "Maharashtra",
+      district: "Satara",
+      timeline: [
+        {
+          step_id: "step-1",
+          step_title: "7/12 Extract & Mutation Entry (Ferfar) Verification",
+          department: "MahaBhulekh (Land Records)",
+          completed_at: "2026-08-18T11:05:00Z",
+          status: "VERIFIED",
+          verified_by: "MahaBhumi Setu",
+          officer_remarks: "Clear title without encumbrance in last 30 years.",
+        },
+        {
+          step_id: "step-2",
+          step_title: "Zone Demarcation by Town Planning Department",
+          department: "Town Planning & Valuation",
+          completed_at: "2026-08-19T17:00:00Z",
+          status: "VERIFIED",
+          verified_by: "Town Planning Officer",
+          officer_remarks: "Classified under Agro-Industrial Expansion Belt.",
+        },
+        {
+          step_id: "step-3",
+          step_title: "Tahsildar Field Inspection & Title Search Clearance",
+          department: "Revenue Sub-Division Satara",
+          completed_at: null,
+          status: "DEFECT",
+          verified_by: "OFFICER-MH-4410",
+          officer_remarks: "Discrepancy in Survey Map plot coordinates.",
+        },
+      ],
+      documents: [
+        {
+          doc_id: "doc-rev-1",
+          doc_name: "Digitally Signed 7/12 Land Record Extract",
+          category: "Title Proof",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "Revenue Dept Govt of Maharashtra",
+          file_url: "https://mahabhumi.gov.in/sample/7_12.pdf",
+          uploaded_at: "2026-08-18T11:02:00Z",
+        },
+        {
+          doc_id: "doc-rev-2",
+          doc_name: "Cadastral Survey Map (KJP)",
+          category: "Demarcation",
+          verification_status: "DEFECT",
+          issuing_authority: "District Land Survey Office",
+          file_url: "https://landrecords.mh.gov.in/sample/kjp_map.pdf",
+          uploaded_at: "2026-08-18T11:03:00Z",
+        },
+      ],
+    },
+  },
+  {
+    application_id: "APP-2026-MUNI-5590",
+    citizen_name: "Fatima Zahra Khan",
+    enterprise_name: "Zahra Designer Studios",
+    department: "MUNICIPAL",
+    department_name: "Greater Bengaluru Municipal Corporation (BBMP)",
+    service_title: "Trade License & Commercial Establishment Sanction",
+    journey_id: "trade-license",
+    current_step_id: "step-1",
+    current_step_title: "Property Tax (PID) & Zonal Sanction Verification",
+    status: "APPROVED",
+    submission_date: "2026-08-21T08:00:00Z",
+    sla_deadline: "2026-08-23T08:00:00Z",
+    sla_hours_total: 48,
+    sla_hours_remaining: 38.0,
+    is_sla_breached: false,
+    risk_score: 8,
+    last_action_date: "2026-08-21T18:00:00Z",
+    last_officer_id: "OFFICER-BBMP-8821",
+    last_officer_remarks: "PID 102-W0041-94 verified with up-to-date FY 2025-26 SAS property tax receipt. Approved.",
+    dossier: {
+      citizen_name: "Fatima Zahra Khan",
+      applicant_id: "CITIZEN-KA-77610",
+      aadhaar_masked: "XXXX-XXXX-9920",
+      pan_masked: "EPZPK****R",
+      mobile: "+91 99887 66554",
+      email: "fatima@zahrastudios.com",
+      enterprise_name: "Zahra Designer Studios",
+      entity_type: "Proprietorship",
+      registered_address: "#19, Commercial Street, Tasker Town, Bengaluru",
+      pincode: "560001",
+      state: "Karnataka",
+      district: "Bengaluru Urban",
+      timeline: [
+        {
+          step_id: "step-1",
+          step_title: "Property Tax (PID) & Zonal Sanction Verification",
+          department: "BBMP Revenue Cell",
+          completed_at: "2026-08-21T18:00:00Z",
+          status: "VERIFIED",
+          verified_by: "OFFICER-BBMP-8821",
+          officer_remarks: "PID and SAS tax clearance verified.",
+        },
+      ],
+      documents: [
+        {
+          doc_id: "doc-bbmp-1",
+          doc_name: "BBMP Property Tax SAS Receipt FY 25-26",
+          category: "Tax Clearance",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "BBMP Revenue Dept",
+          file_url: "https://bbmptax.karnataka.gov.in/receipt_2026.pdf",
+          uploaded_at: "2026-08-21T08:01:00Z",
+        },
+      ],
+    },
+  },
+  {
+    application_id: "APP-2026-RTO-7102",
+    citizen_name: "Kavita Devendra Patil",
+    enterprise_name: null,
+    department: "TRANSPORT",
+    department_name: "Ministry of Road Transport & Highways (MoRTH)",
+    service_title: "Commercial Goods Carrier Permit & Fitness Certification",
+    journey_id: "driving-license",
+    current_step_id: "step-2",
+    current_step_title: "Automated Vehicle Inspection & Emission Report Check",
+    status: "PENDING_REVIEW",
+    submission_date: "2026-08-21T12:00:00Z",
+    sla_deadline: "2026-08-22T12:00:00Z",
+    sla_hours_total: 24,
+    sla_hours_remaining: 14.9,
+    is_sla_breached: false,
+    risk_score: 19,
+    dossier: {
+      citizen_name: "Kavita Devendra Patil",
+      applicant_id: "CITIZEN-MH-33819",
+      aadhaar_masked: "XXXX-XXXX-3381",
+      pan_masked: "ASDPP****Q",
+      mobile: "+91 98112 33445",
+      email: "kavita.patil@logisticsindia.org",
+      registered_address: "Plot 8, MIDC Bhosari, Pune",
+      pincode: "411026",
+      state: "Maharashtra",
+      district: "Pune",
+      timeline: [
+        {
+          step_id: "step-1",
+          step_title: "Vehicle Chassis & VAHAN Record Match",
+          department: "VAHAN National Register",
+          completed_at: "2026-08-21T12:05:00Z",
+          status: "VERIFIED",
+          verified_by: "VAHAN 4.0 API",
+          officer_remarks: "Chassis match verified with zero pending e-challans.",
+        },
+      ],
+      documents: [
+        {
+          doc_id: "doc-rto-1",
+          doc_name: "Commercial Vehicle RC & Speed Governor Certificate",
+          category: "Vehicle Registration",
+          verification_status: "VERIFIED_DIGILOCKER",
+          issuing_authority: "MoRTH / Parivahan",
+          file_url: "https://parivahan.gov.in/sample/rc.pdf",
+          uploaded_at: "2026-08-21T12:02:00Z",
+        },
+      ],
+    },
+  },
+];
+
+export const officerService = {
+  /**
+   * Retrieve list of cross-departmental citizen applications for officer scrutiny.
+   */
+  getApplications: async (
+    department?: DepartmentCode,
+    status?: ApplicationStatus,
+    search?: string
+  ): Promise<OfficerApplication[]> => {
+    const params = new URLSearchParams();
+    if (department) params.append("department", department);
+    if (status) params.append("status", status);
+    if (search) params.append("search", search);
+
+    const qs = params.toString() ? `?${params.toString()}` : "";
+    const live = await safeFetch<OfficerApplication[]>(`/api/officer/applications${qs}`);
+    if (live && Array.isArray(live)) {
+      return live;
+    }
+
+    // Client-side fallback filtering
+    let results = [...FALLBACK_OFFICER_APPLICATIONS];
+    if (department) results = results.filter((a) => a.department === department);
+    if (status) results = results.filter((a) => a.status === status);
+    if (search) {
+      const q = search.toLowerCase();
+      results = results.filter(
+        (a) =>
+          a.application_id.toLowerCase().includes(q) ||
+          a.citizen_name.toLowerCase().includes(q) ||
+          (a.enterprise_name && a.enterprise_name.toLowerCase().includes(q)) ||
+          a.service_title.toLowerCase().includes(q)
+      );
+    }
+    return results;
+  },
+
+  /**
+   * Retrieve single application detail with full dossier.
+   */
+  getApplicationById: async (applicationId: string): Promise<OfficerApplication | null> => {
+    const live = await safeFetch<OfficerApplication>(`/api/officer/applications/${encodeURIComponent(applicationId)}`);
+    if (live) return live;
+    return FALLBACK_OFFICER_APPLICATIONS.find((a) => a.application_id === applicationId) || null;
+  },
+
+  /**
+   * Submit statutory decision (APPROVE, FLAG_DEFECT, REJECT) with SLA delta calculation.
+   */
+  submitDecision: async (payload: OfficerDecisionRequest): Promise<OfficerDecisionResponse> => {
+    const live = await safeFetch<OfficerDecisionResponse>("/api/officer/decision", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (live) return live;
+
+    // Fallback response generator
+    const nowStr = new Date().toISOString();
+    return {
+      success: true,
+      application_id: payload.application_id,
+      new_status: payload.decision,
+      decision_timestamp: nowStr,
+      sla_time_delta_hours: 14.5,
+      sla_performance_summary: `Completed in 14.5 hrs (33.5 hrs ahead of statutory SLA limit of 48 hrs)`,
+      audit_reference_id: `AUDIT-${payload.department || "GOV"}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      officer_id: payload.officer_id || "OFFICER-KA-9942",
+      message: `Application ${payload.application_id} updated to ${payload.decision}.`,
+    };
+  },
+
+  /**
+   * Request automated Gemini 2.5 Flash 3-point dossier briefing.
+   */
+  analyzeDossier: async (payload: DossierAnalysisRequest): Promise<DossierAnalysisResponse> => {
+    const live = await safeFetch<DossierAnalysisResponse>("/api/officer/analyze-dossier", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (live) return live;
+
+    const isFssai = payload.application_id.includes("FSSAI") || payload.service_title.includes("Food");
+    const isRev = payload.application_id.includes("REV") || payload.service_title.includes("Land");
+
+    if (isFssai) {
+      return {
+        application_id: payload.application_id,
+        identity_verification_status: "Aadhaar & PAN authenticated with 100% biometric and name match via DigiLocker. Food Safety Supervisor Level 2 FoSTaC Certificate verified.",
+        document_completeness: "IS 10500 compliant water test report and registered 11-month lease deed attached. Kitchen equipment layout blueprint attached.",
+        regulatory_red_flags: "Commercial lease agreement has 28 days remaining for statutory renewal; requires a 3-year extension undertaking under FSSAI Section 31 before final 5-year license dispatch.",
+        overall_risk_level: "MEDIUM",
+        risk_score: 42,
+        statutory_citations: ["FSSAI Act 2006 Section 31", "Food Safety and Standards Regulations 2011"],
+        recommended_action: "REQUEST_CLARIFICATION",
+        analysis_timestamp: new Date().toISOString(),
+      };
+    } else if (isRev) {
+      return {
+        application_id: payload.application_id,
+        identity_verification_status: "Applicant identity confirmed with DigiLocker verified 7/12 land record mutation extract (Ferfar) dating back 30 years without encumbrances.",
+        document_completeness: "Cadastral survey map (KJP) submitted; Town Planning zone classification letter attached.",
+        regulatory_red_flags: "Discrepancy noted in plot boundary coordinates on Survey Plot 142/3-B bordering forest buffer zone. Demarcation must be verified by Deputy Director of Land Records (DDLR).",
+        overall_risk_level: "ELEVATED",
+        risk_score: 68,
+        statutory_citations: ["Maharashtra Land Revenue Code 1966 Section 44", "Forest Conservation Act 1980"],
+        recommended_action: "REQUEST_CLARIFICATION",
+        analysis_timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        application_id: payload.application_id,
+        identity_verification_status: "Aadhaar KYC & Income Tax PAN cryptographic match confirmed via API Setu with zero discrepancy in applicant demographic records.",
+        document_completeness: "Incorporation certification from Ministry of Corporate Affairs and BESCOM electricity utility tariff bill verified.",
+        regulatory_red_flags: "No high-risk regulatory red flags identified. Enterprise qualifies for Micro category under MSMED Act 2006 with clean statutory standing.",
+        overall_risk_level: "LOW",
+        risk_score: 12,
+        statutory_citations: ["MSMED Act 2006 Section 7", "Central Goods and Services Tax Act 2017"],
+        recommended_action: "APPROVE",
+        analysis_timestamp: new Date().toISOString(),
+      };
+    }
+  },
+};
+
+
 
 

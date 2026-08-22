@@ -423,7 +423,22 @@ def _deterministic_copilot_query(
                 name="load_journey",
                 arguments={"journey_id": "food-business-license"}
             ))
-            text_response = "I have navigated to the citizen service directory to assist with your procedural requirements. Please select a milestone step to proceed."
+    # Attach grounded statutory context chunks if not already provided
+    if not context_chunks:
+        try:
+            rag_hits = vector_store.search(query, top_k=3)
+            context_chunks = [
+                {
+                    "department": h.get("department", "Government of India"),
+                    "document_title": h.get("document_title", "Official Gazette Manual"),
+                    "section_title": h.get("section_title", "Statutory Guidelines"),
+                    "portal_url": h.get("portal_url", "https://india.gov.in"),
+                    "excerpt": h.get("text", "")[:350],
+                }
+                for h in rag_hits
+            ]
+        except Exception:
+            context_chunks = []
 
     latency = round((time.perf_counter() - start_time) * 1000, 2)
     ui_actions = [

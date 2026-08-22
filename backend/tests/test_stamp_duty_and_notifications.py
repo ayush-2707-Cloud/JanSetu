@@ -62,7 +62,7 @@ def test_simulate_whatsapp_notification_dispatch():
     data = res.json()
     assert data["channel"] == "WHATSAPP"
     assert data["status"] == "DELIVERED_TO_GATEWAY"
-    assert "CivicJourney" in data["rendered_message_text"]
+    assert "JanSetu" in data["rendered_message_text"]
     assert data["dispatch_id"].startswith("CDAC-")
 
 def test_simulate_sms_notification_dispatch_hindi():

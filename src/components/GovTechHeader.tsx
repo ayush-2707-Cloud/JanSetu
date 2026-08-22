@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { 
   Landmark, 
   Shield, 
@@ -18,6 +18,8 @@ import {
   FolderTree,
   Building2,
   CheckSquare,
+  Users,
+  ShieldCheck,
 } from "lucide-react";
 import { useJourney } from "@/context/JourneyContext";
 import { useTheme, Theme } from "@/context/ThemeContext";
@@ -34,7 +36,7 @@ const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "KN", label: "Kannada", native: "ಕನ್ನಡ" },
   { id: "ML", label: "Malayalam", native: "മലയാളം" },
   { id: "MR", label: "Marathi", native: "मराठी" },
-  { id: "OR", label: "Odia", native: "ଓଡ଼ಿଆ" },
+  { id: "OR", label: "Odia", native: "ଓଡ଼ିଆ" },
   { id: "PA", label: "Punjabi", native: "ਪੰਜਾਬੀ" },
   { id: "TA", label: "Tamil", native: "தமிழ்" },
   { id: "TE", label: "Telugu", native: "తెలుగు" },
@@ -42,6 +44,7 @@ const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
 
 export const GovTechHeader: React.FC = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const {
     language,
     setLanguage,
@@ -221,44 +224,46 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Top Dual-Mode UX Controller Switch: AI Copilot vs Manual Directory */}
-        <div className="hidden md:flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner text-xs">
-          <button
-            type="button"
+        {/* Top Navigation Mode / Role Controller */}
+        <div className="hidden lg:flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner text-xs">
+          {/* Citizen Portal Tab */}
+          <Link
+            href="/"
             onClick={() => {
-              setAppMode("AI_COPILOT");
-              if (activeScreen === "ROADMAP") setActiveScreen("LANDING");
+              if (pathname === "/officer") {
+                navigateToHome();
+              }
             }}
-            className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              appMode === "AI_COPILOT"
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
+              pathname !== "/officer"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-blue-300" />
-            <span>AI Autonomous Copilot</span>
-          </button>
+            <Users className="w-3.5 h-3.5" />
+            <span>Citizen Portal</span>
+          </Link>
 
-          <button
-            type="button"
-            onClick={() => {
-              setAppMode("MANUAL_DIRECTORY");
-              setActiveScreen("LANDING");
-            }}
-            className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              appMode === "MANUAL_DIRECTORY"
+          {/* Officer / Admin Back-Office Tab */}
+          <Link
+            href="/officer"
+            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
+              pathname === "/officer"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            <FolderTree className="w-3.5 h-3.5 text-blue-300" />
-            <span>Manual Directory</span>
-          </button>
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
+            <span>Officer Scrutiny Hub</span>
+            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/40">
+              Back-Office
+            </span>
+          </Link>
 
           <button
             type="button"
             onClick={() => setIsMunicipalModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer ml-1"
             title="Compare municipal compliance rules (BBMP vs BMC vs MCD)"
           >
             <Building2 className="w-3.5 h-3.5 text-indigo-400" />

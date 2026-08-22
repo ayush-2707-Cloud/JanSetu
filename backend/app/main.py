@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.db.database import init_db
-from app.routers import journeys, progress, sandbox, sessions, alerts, ai, copilot, legal, stamp_duty, notifications
+from app.routers import journeys, progress, sandbox, sessions, alerts, ai, copilot, legal, stamp_duty, notifications, officer
 from app.engine.dependency_graph import DependencyResolutionError
 
 # Initialize database tables on application startup
@@ -45,6 +45,7 @@ app.include_router(copilot.router, prefix="/api")
 app.include_router(legal.router)
 app.include_router(stamp_duty.router)
 app.include_router(notifications.router)
+app.include_router(officer.router)
 
 # Also expose under versioned /api/v1 prefix
 app.include_router(journeys.router, prefix=settings.API_V1_STR)
@@ -57,6 +58,7 @@ app.include_router(copilot.router, prefix=settings.API_V1_STR)
 app.include_router(legal.router, prefix=settings.API_V1_STR)
 app.include_router(stamp_duty.router, prefix=settings.API_V1_STR)
 app.include_router(notifications.router, prefix=settings.API_V1_STR)
+app.include_router(officer.router, prefix=settings.API_V1_STR)
 
 
 @app.exception_handler(DependencyResolutionError)

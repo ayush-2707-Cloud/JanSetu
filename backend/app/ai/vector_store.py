@@ -10,8 +10,15 @@ import os
 import re
 import math
 from typing import List, Dict, Any, Optional
-import chromadb
-from chromadb.config import Settings as ChromaSettings
+try:
+    import chromadb
+    from chromadb.config import Settings as ChromaSettings
+    HAS_CHROMADB = True
+except ImportError:
+    chromadb = None
+    ChromaSettings = None
+    HAS_CHROMADB = False
+
 from app.config import settings
 from app.data.knowledge_base import OFFICIAL_KNOWLEDGE_DOCUMENTS
 from app.data.blueprints import MASTER_BLUEPRINTS, MASTER_HIERARCHICAL_JOURNEYS
@@ -65,40 +72,52 @@ class StatutoryVectorStore:
 
     def _init_db(self) -> None:
         """Initialize ChromaDB client and build collection from official docs."""
-        try:
-            os.makedirs(self.persist_directory, exist_ok=True)
-            self._client = chromadb.PersistentClient(
-                path=self.persist_directory,
-                settings=ChromaSettings(anonymized_telemetry=False)
-            )
-        except Exception:
-            # Fallback to EphemeralClient in constrained/in-memory environments
-            self._client = chromadb.EphemeralClient(
-                settings=ChromaSettings(anonymized_telemetry=False)
-            )
-
-        collection_name = "official_statutory_manuals"
-        try:
-            self._collection = self._client.get_or_create_collection(
-                name=collection_name,
-                metadata={"description": "Verified Official Government Statutory Source Documents"}
-            )
-        except Exception:
-            self._collection = self._client.create_collection(name=collection_name)
-
-        # Journey blueprints collection for semantic journey discovery
-        try:
-            self._journey_collection = self._client.get_or_create_collection(
-                name="journey_blueprints",
-                metadata={"description": "Semantic index of statutory life-event journey blueprints"}
-            )
-        except Exception:
+        if HAS_CHROMADB and chromadb is not None:
             try:
-                self._journey_collection = self._client.create_collection(name="journey_blueprints")
+                os.makedirs(self.persist_directory, exist_ok=True)
+                self._client = chromadb.PersistentClient(
+                    path=self.persist_directory,
+                    settings=ChromaSettings(anonymized_telemetry=False)
+                )
             except Exception:
-                logger.warning("Could not create journey_blueprints collection")
+                # Fallback to EphemeralClient in constrained/in-memory environments
+                try:
+                    self._client = chromadb.EphemeralClient(
+                        settings=ChromaSettings(anonymized_telemetry=False)
+                    )
+                except Exception:
+                    self._client = None
 
-        # Build chunks from knowledge base
+            if self._client:
+                collection_name = "official_statutory_manuals"
+                try:
+                    self._collection = self._client.get_or_create_collection(
+                        name=collection_name,
+                        metadata={"description": "Verified Official Government Statutory Source Documents"}
+                    )
+                except Exception:
+                    try:
+                        self._collection = self._client.create_collection(name=collection_name)
+                    except Exception:
+                        self._collection = None
+
+                # Journey blueprints collection for semantic journey discovery
+                try:
+                    self._journey_collection = self._client.get_or_create_collection(
+                        name="journey_blueprints",
+                        metadata={"description": "Semantic index of statutory life-event journey blueprints"}
+                    )
+                except Exception:
+                    try:
+                        self._journey_collection = self._client.create_collection(name="journey_blueprints")
+                    except Exception:
+                        self._journey_collection = None
+        else:
+            self._client = None
+            self._collection = None
+            self._journey_collection = None
+
+        # Build chunks from knowledge base for in-memory & chroma indexing
         self._build_and_index_chunks()
         # Build journey blueprint index
         self._build_journey_index()
@@ -249,6 +268,21 @@ class StatutoryVectorStore:
                 combined_dict[cid] = hit
 
         sorted_results = sorted(combined_dict.values(), key=lambda x: x["score"], reverse=True)
+        if not sorted_results and self._chunks:
+            return [
+                {
+                    "chunk_id": c.chunk_id,
+                    "text": c.text,
+                    "score": 0.5,
+                    "department": c.department,
+                    "document_title": c.document_title,
+                    "section_title": c.section_title,
+                    "portal_url": c.portal_url,
+                    "domain": c.domain,
+                    "source_reference": c.source_reference,
+                }
+                for c in self._chunks[:top_k]
+            ]
         return sorted_results[:top_k]
 
     def search(
@@ -394,35 +428,49 @@ class StatutoryVectorStore:
             except Exception as e:
                 logger.warning(f"Journey vector search error: {e}")
 
-        # 2. Lexical keyword fallback over MASTER_BLUEPRINTS
+        # 2. Lexical keyword fallback over MASTER_BLUEPRINTS & MASTER_HIERARCHICAL_JOURNEYS
         q_tokens = set(query.lower().split())
         seen_jids = {r["journey_id"] for r in results}
         seen_canonical: set = set()
 
-        for jid, bp in MASTER_BLUEPRINTS.items():
-            canonical_id = bp.get("journey_id", jid)
-            if canonical_id in seen_jids or canonical_id in seen_canonical:
+        all_sources = list(MASTER_BLUEPRINTS.values()) + list(MASTER_HIERARCHICAL_JOURNEYS.values())
+        for bp in all_sources:
+            if isinstance(bp, dict):
+                canonical_id = bp.get("journey_id")
+                title = bp.get("title", "")
+                desc = bp.get("description", "")
+                cat = bp.get("category", "")
+                dept = bp.get("department", "")
+                jur = bp.get("jurisdiction", "Central / National")
+                st = bp.get("state", "National")
+                dur = bp.get("estimated_duration", "")
+            else:
+                canonical_id = getattr(bp, "journey_id", None)
+                title = getattr(bp, "title", "")
+                desc = getattr(bp, "description", "")
+                cat = getattr(bp, "category", "")
+                dept = getattr(bp, "department", "")
+                jur = getattr(bp, "jurisdiction", "Central / National")
+                st = getattr(bp, "state", "National")
+                dur = getattr(bp, "estimated_duration", "")
+
+            if not canonical_id or canonical_id in seen_jids or canonical_id in seen_canonical:
                 continue
             seen_canonical.add(canonical_id)
 
-            searchable = (
-                f"{bp.get('title', '')} {bp.get('description', '')} "
-                f"{bp.get('category', '')} {bp.get('department', '')} "
-                f"{bp.get('jurisdiction', '')} {bp.get('state', '')}"
-            ).lower()
-
+            searchable = f"{title} {desc} {cat} {dept} {jur} {st}".lower()
             match_count = sum(1 for t in q_tokens if len(t) > 2 and t in searchable)
             if match_count > 0:
                 score = match_count / (len(q_tokens) + 1.0)
                 results.append({
                     "journey_id": canonical_id,
-                    "title": bp.get("title", ""),
-                    "description": (bp.get("description", ""))[:300],
-                    "category": bp.get("category", ""),
-                    "department": bp.get("department", ""),
-                    "jurisdiction": bp.get("jurisdiction", "Central / National"),
-                    "state": bp.get("state", "National"),
-                    "estimated_duration": bp.get("estimated_duration", ""),
+                    "title": title,
+                    "description": desc[:300] if desc else "",
+                    "category": cat,
+                    "department": dept,
+                    "jurisdiction": jur,
+                    "state": st,
+                    "estimated_duration": dur,
                     "score": round(score, 4),
                 })
 
