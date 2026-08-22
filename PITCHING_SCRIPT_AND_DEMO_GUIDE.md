@@ -91,3 +91,23 @@
 | **Fault Tolerance** | Unhandled 500 crashes | Circuit Breaker + DLQ | **100% zero data loss during outages** |
 | **Legal Admissibility** | Disparate log files | Cryptographic SHA-256 Chain | **Sec 65B Indian Evidence Act compliant** |
 | **System Replacement Cost** | ₹500+ Crores | Zero (Non-invasive adapters) | **100% legacy reuse** |
+
+---
+
+## 💡 Tough Judge Cross-Questions & Winning Answers (FAQ)
+
+### Q1: *"What if two different citizens have the same name (e.g. 'Ayush Singh Chauhan' vs 'Ayush S Chouhan') and were born in the same city? Will your system mistakenly merge their profiles?"*
+* **Winning Answer**:
+  > *"Absolutely not, Judges. Under IndEA 2.0 and the DPDP Act 2023, we enforce **Zero-Trust Identity Resolution**.
+  > 
+  > 1. **We never merge on probabilistic attributes** (names, birthplaces, or cities).
+  > 2. **Merging strictly requires Deterministic Cryptographic Tokens** (unique PAN or UIDAI Aadhaar Vault Tokens).
+  > 3. If demographic similarity is high ($\ge 85\%$) but tokens are missing, the system **never silently links data**. Instead, it triggers an **MCI Ambiguous Identity Alert** and prompts the citizen for DigiLocker Aadhaar OTP verification to confirm identity before establishing two separate, isolated UTIDs."*
+
+### Q2: *"How do you handle data privacy and consent under the DPDP Act 2023?"*
+* **Winning Answer**:
+  > *"Every single data exchange between departments requires explicit, granular, time-bound citizen consent. Consent grants and revocations are logged as immutable SHA-256 blocks in our cryptographic audit ledger for non-repudiation under Section 65B of the Indian Evidence Act."*
+
+### Q3: *"How do you integrate with 20-year-old state systems without rewriting their code?"*
+* **Winning Answer**:
+  > *"We use non-invasive protocol converters. Our Connectors Hub wraps legacy SOAP/XML endpoints with sub-5ms serialization layers, converting legacy XML envelopes into modern OpenAPI 3.0 JSON without touching legacy database code."*
