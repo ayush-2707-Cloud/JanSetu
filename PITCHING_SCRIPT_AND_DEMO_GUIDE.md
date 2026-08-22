@@ -111,3 +111,13 @@
 ### Q3: *"How do you integrate with 20-year-old state systems without rewriting their code?"*
 * **Winning Answer**:
   > *"We use non-invasive protocol converters. Our Connectors Hub wraps legacy SOAP/XML endpoints with sub-5ms serialization layers, converting legacy XML envelopes into modern OpenAPI 3.0 JSON without touching legacy database code."*
+
+### Q4: *"What are the 6 official IndEA 2.0 reference pillars your middleware complies with?"*
+* **Winning Answer**:
+  > *"We comply 100% with all 6 MeitY / NeGD IndEA 2.0 reference models:
+  > 1. **BRM (Business)**: Citizen life-event composite journeys instead of departmental silos.
+  > 2. **DRM (Data)**: Canonical schema harmonization & Once-Only Principle.
+  > 3. **ARM (Application)**: Decoupled microservice adapters & No-Code DAG state machines.
+  > 4. **TRM (Technology)**: Open web standards (FastAPI, Next.js, OpenAPI 3.0, SSE) with zero vendor lock-in.
+  > 5. **SRM (Security)**: UIDAI Aadhaar Vault tokenization, DPDP 2023 consent, and SHA-256 evidence ledgers (Sec 65B).
+  > 6. **PRM (Performance)**: Maharashtra RTSA 2015 statutory SLA countdowns, Circuit Breakers, and 99.98% live uptime."*
