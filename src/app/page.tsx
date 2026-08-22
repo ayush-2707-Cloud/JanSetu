@@ -428,89 +428,382 @@ ALL_SUPPORTED.forEach((lang) => {
   };
 });
 
-const testimonials = [
-  {
-    name: "Vikram R.",
-    role: "Cloud Kitchen Founder, Bengaluru",
-    comment:
-      "Cut through 4 different departmental portals for my FSSAI and trade license in under 20 minutes without paying touts.",
-    rating: 5,
-    tag: "MSME Food Business",
-    initials: "VR",
-    color: "from-blue-600 to-cyan-500",
-  },
-  {
-    name: "Pooja Sharma",
-    role: "CSC Center Operator, Pune",
-    comment:
-      "The UTID single-tracking feature saves me hours when answering citizen status queries across multiple departments.",
-    rating: 5,
-    tag: "VLE Operations",
-    initials: "PS",
-    color: "from-purple-600 to-pink-500",
-  },
-  {
-    name: "Ankit Verma",
-    role: "Overseas Postgrad Student",
-    comment:
-      "Guided me through MEA Apostille, Forex declarations, and verification step-by-step with exact document checklists.",
-    rating: 5,
-    tag: "Higher Education",
-    initials: "AV",
-    color: "from-emerald-600 to-teal-500",
-  },
-];
+interface ServiceItem {
+  id: string;
+  title: string;
+  description: string;
+  dept: string;
+  badge: string;
+  utidSample: string;
+}
 
-const SERVICES_DATA = [
-  {
-    id: "msme",
-    title: "MSME & Udyam Enterprise Setup",
-    description: "PAN + Aadhaar biometric verification with automatic NIC-2008 code validation & priority bank credit.",
-    dept: "Ministry of MSME",
-    badge: "Fast Track (48h)",
-    utidSample: "APP-2026-MSME-0841",
-  },
-  {
-    id: "fssai",
-    title: "FSSAI State & Central Food License",
-    description: "Nominated FoSTaC supervisor check, water potability IS 10500 reports & commercial kitchen sanctions.",
-    dept: "Food Safety & Standards (FSSAI)",
-    badge: "Statutory SLA",
-    utidSample: "APP-2026-FSSAI-1904",
-  },
-  {
-    id: "land",
-    title: "Agricultural Land Conversion & 7/12",
-    description: "Cadastral survey verification, town planning zoning approvals & Tahsildar mutation extracts.",
-    dept: "Revenue & Land Records",
-    badge: "Multi-Agency",
-    utidSample: "APP-2026-REV-3301",
-  },
-  {
-    id: "education",
-    title: "PM Vidyalaxmi Interest Subsidy",
-    description: "Aadhaar + APAAR student ID validation with national credit portal & university admission sync.",
-    dept: "Ministry of Education",
-    badge: "Direct Benefit",
-    utidSample: "APP-2026-EDU-6102",
-  },
-  {
-    id: "municipal",
-    title: "Municipal Trade License (BBMP / BMC / MCD)",
-    description: "Property tax PID SAS receipt matching, fire NOC classification & zonal establishment sanctions.",
-    dept: "Urban Local Bodies",
-    badge: "Zonal Rules",
-    utidSample: "APP-2026-MUNI-5590",
-  },
-  {
-    id: "transport",
-    title: "Commercial Goods Carrier & Fitness",
-    description: "VAHAN chassis matching, automated emission verification & Parivahan speed governor clearances.",
-    dept: "MoRTH / Parivahan",
-    badge: "Instant API",
-    utidSample: "APP-2026-RTO-7102",
-  },
-];
+interface TestimonialItem {
+  name: string;
+  role: string;
+  comment: string;
+  rating: number;
+  tag: string;
+  initials: string;
+  color: string;
+}
+
+const TRANSLATED_SERVICES: Record<Language, ServiceItem[]> = {
+  EN: [
+    {
+      id: "msme",
+      title: "MSME & Udyam Enterprise Setup",
+      description: "PAN + Aadhaar biometric verification with automatic NIC-2008 code validation & priority bank credit.",
+      dept: "Ministry of MSME",
+      badge: "Fast Track (48h)",
+      utidSample: "APP-2026-MSME-0841",
+    },
+    {
+      id: "fssai",
+      title: "FSSAI State & Central Food License",
+      description: "Nominated FoSTaC supervisor check, water potability IS 10500 reports & commercial kitchen sanctions.",
+      dept: "Food Safety & Standards (FSSAI)",
+      badge: "Statutory SLA",
+      utidSample: "APP-2026-FSSAI-1904",
+    },
+    {
+      id: "land",
+      title: "Agricultural Land Conversion & 7/12",
+      description: "Cadastral survey verification, town planning zoning approvals & Tahsildar mutation extracts.",
+      dept: "Revenue & Land Records",
+      badge: "Multi-Agency",
+      utidSample: "APP-2026-REV-3301",
+    },
+    {
+      id: "education",
+      title: "PM Vidyalaxmi Interest Subsidy",
+      description: "Aadhaar + APAAR student ID validation with national credit portal & university admission sync.",
+      dept: "Ministry of Education",
+      badge: "Direct Benefit",
+      utidSample: "APP-2026-EDU-6102",
+    },
+    {
+      id: "municipal",
+      title: "Municipal Trade License (BBMP / BMC / MCD)",
+      description: "Property tax PID SAS receipt matching, fire NOC classification & zonal establishment sanctions.",
+      dept: "Urban Local Bodies",
+      badge: "Zonal Rules",
+      utidSample: "APP-2026-MUNI-5590",
+    },
+    {
+      id: "transport",
+      title: "Commercial Goods Carrier & Fitness",
+      description: "VAHAN chassis matching, automated emission verification & Parivahan speed governor clearances.",
+      dept: "MoRTH / Parivahan",
+      badge: "Instant API",
+      utidSample: "APP-2026-RTO-7102",
+    },
+  ],
+  HI: [
+    {
+      id: "msme",
+      title: "MSME और उद्यम पंजीकरण",
+      description: "पैन + आधार बायोमेट्रिक सत्यापन और स्वचालित NIC कोड वैलिडेशन के साथ प्राथमिकता बैंक ऋण।",
+      dept: "MSME मंत्रालय",
+      badge: "फास्ट ट्रैक (48 घंटे)",
+      utidSample: "APP-2026-MSME-0841",
+    },
+    {
+      id: "fssai",
+      title: "FSSAI राज्य एवं केंद्रीय खाद्य लाइसेंस",
+      description: "नामित FoSTaC पर्यवेक्षक जांच, पेयजल IS 10500 रिपोर्ट और वाणिज्यिक रसोई अनुमोदन।",
+      dept: "खाद्य सुरक्षा प्राधिकरण (FSSAI)",
+      badge: "वैधानिक SLA",
+      utidSample: "APP-2026-FSSAI-1904",
+    },
+    {
+      id: "land",
+      title: "कृषि भूमि अकृषिक (NA) रूपांतरण व 7/12",
+      description: "कैडस्ट्रल सर्वेक्षण सत्यापन, नगर नियोजन जोनिंग स्वीकृति और तहसीलदार म्यूटेशन अर्क।",
+      dept: "राजस्व एवं भूमि अभिलेख",
+      badge: "बहु-विभागीय",
+      utidSample: "APP-2026-REV-3301",
+    },
+    {
+      id: "education",
+      title: "पीएम विद्यालक्ष्मी ब्याज सब्सिडी",
+      description: "आधार + अपार (APAAR) छात्र आईडी सत्यापन और राष्ट्रीय क्रेडिट पोर्टल व विश्वविद्यालय प्रवेश सिंक।",
+      dept: "शिक्षा मंत्रालय",
+      badge: "प्रत्यक्ष लाभ (DBT)",
+      utidSample: "APP-2026-EDU-6102",
+    },
+    {
+      id: "municipal",
+      title: "नगर निगम व्यापार लाइसेंस (BBMP / BMC / MCD)",
+      description: "संपत्ति कर PID SAS रसीद मिलान, अग्नि सुरक्षा NOC और क्षेत्रीय स्थापना अनुमोदन।",
+      dept: "शहरी स्थानीय निकाय",
+      badge: "क्षेत्रीय नियम",
+      utidSample: "APP-2026-MUNI-5590",
+    },
+    {
+      id: "transport",
+      title: "वाणिज्यिक माल वाहक परमिट व फिटनेस",
+      description: "वाहन चेसिस मिलान, स्वचालित प्रदूषण जांच और परिवहन स्पीड गवर्नर स्वीकृति।",
+      dept: "सड़क परिवहन एवं राजमार्ग",
+      badge: "त्वरित API",
+      utidSample: "APP-2026-RTO-7102",
+    },
+  ],
+  KN: [
+    {
+      id: "msme",
+      title: "MSME ಮತ್ತು ಉದ್ಯಮ್ ನೋಂದಣಿ",
+      description: "ಪ್ಯಾನ್ + ಆಧಾರ್ ಬಯೋಮೆಟ್ರಿಕ್ ಪರಿಶೀಲನೆ, ಸ್ವಯಂಚಾಲಿತ NIC ಕೋಡ್ ಮತ್ತು ಬ್ಯಾಂಕ್ ಸಾಲ ಮಂಜೂರಾತಿ.",
+      dept: "MSME ಸಚಿವಾಲಯ",
+      badge: "ತ್ವರಿತ (48 ಗಂಟೆ)",
+      utidSample: "APP-2026-MSME-0841",
+    },
+    {
+      id: "fssai",
+      title: "FSSAI ರಾಜ್ಯ ಮತ್ತು ಕೇಂದ್ರ ಆಹಾರ ಪರವಾನಗಿ",
+      description: "FoSTaC ಮೇಲ್ವಿಚಾರಕರ ತಪಾಸಣೆ, ನೀರಿನ ಶುದ್ಧತೆ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಅಡುಗೆಮನೆ ಮಂಜೂರಾತಿ.",
+      dept: "ಆಹಾರ ಸುರಕ್ಷತಾ ಪ್ರಾಧಿಕಾರ (FSSAI)",
+      badge: "ಶಾಸನಬದ್ಧ SLA",
+      utidSample: "APP-2026-FSSAI-1904",
+    },
+    {
+      id: "land",
+      title: "ಕೃಷಿ ಭೂಮಿ ಪರಿವರ್ತನೆ ಮತ್ತು 7/12 (ಪಹಣಿ)",
+      description: "ಸರ್ವೇ ನಕ್ಷೆ ಪರಿಶೀಲನೆ, ನಗರಾಭಿವೃದ್ಧಿ ವಲಯ ಅನುಮೋದನೆ ಮತ್ತು ತಹಶೀಲ್ದಾರ್ ಮ್ಯುಟೇಶನ್.",
+      dept: "ಕಂದಾಯ ಮತ್ತು ಭೂ ದಾಖಲೆಗಳು",
+      badge: "ಬಹು-ಇಲಾಖೆ",
+      utidSample: "APP-2026-REV-3301",
+    },
+    {
+      id: "education",
+      title: "ಪಿಎಂ ವಿದ್ಯಾಲಕ್ಷ್ಮಿ ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ",
+      description: "ಆಧಾರ್ + APAAR ವಿದ್ಯಾರ್ಥಿ ಐಡಿ ಪರಿಶೀಲನೆ ಮತ್ತು ಬ್ಯಾಂಕ್ ಸಾಲ ಅನುಮೋದನೆ.",
+      dept: "ಶಿಕ್ಷಣ ಸಚಿವಾಲಯ",
+      badge: "ನೇರ ಪ್ರಯೋಜನ (DBT)",
+      utidSample: "APP-2026-EDU-6102",
+    },
+    {
+      id: "municipal",
+      title: "ಪಾಲಿಕೆ ವ್ಯಾಪಾರ ಪರವಾನಗಿ (BBMP / BMC)",
+      description: "ಆಸ್ತಿ ತೆರಿಗೆ PID SAS ರಶೀದಿ ಹೊಂದಾಣಿಕೆ ಮತ್ತು ವಲಯ ಅನುಮತಿ.",
+      dept: "ನಗರ ಸ್ಥಳೀಯ ಸಂಸ್ಥೆಗಳು",
+      badge: "ವಲಯ ನಿಯಮಗಳು",
+      utidSample: "APP-2026-MUNI-5590",
+    },
+    {
+      id: "transport",
+      title: "ವಾಣಿಜ್ಯ ವಾಹನ ಪರ್ಮಿಟ್ ಮತ್ತು ಫಿಟ್‌ನೆಸ್",
+      description: "ವಾಹನ ಚಾಸಿಸ್ ಪರಿಶೀಲನೆ ಮತ್ತು ಸಾರಿಗೆ ವೇಗ ನಿಯಂತ್ರಕ ಪ್ರಮಾಣಪತ್ರ.",
+      dept: "ಸಾರಿಗೆ ಇಲಾಖೆ",
+      badge: "ತ್ವರಿತ API",
+      utidSample: "APP-2026-RTO-7102",
+    },
+  ],
+  MR: [
+    {
+      id: "msme",
+      title: "MSME आणि उद्यम नोंदणी",
+      description: "पॅन + आधार बायोमेट्रिक पडताळणी आणि थेट बँक कर्ज मंजुरी.",
+      dept: "MSME मंत्रालय",
+      badge: "जलद (४८ तास)",
+      utidSample: "APP-2026-MSME-0841",
+    },
+    {
+      id: "fssai",
+      title: "FSSAI अन्न सुरक्षा परवाना",
+      description: "FoSTaC पर्यवेक्षक तपासणी, पाण्याची शुद्धता तपासणी अहवाल आणि परवाना.",
+      dept: "अन्न सुरक्षा प्राधिकरण",
+      badge: "शासकीय SLA",
+      utidSample: "APP-2026-FSSAI-1904",
+    },
+    {
+      id: "land",
+      title: "शेतजमीन अकृषिक (NA) रूपांतरण व ७/१२",
+      description: "जमीन मोजणी नकाशा तपासणी, नगर रचना झोनिंग आणि तहसीलदार फेरफार नोंद.",
+      dept: "महसूल व भूमी अभिलेख",
+      badge: "बहु-विभागीय",
+      utidSample: "APP-2026-REV-3301",
+    },
+    {
+      id: "education",
+      title: "पीएम विद्यालक्ष्मी व्याज अनुदान",
+      description: "आधार + APAAR विद्यार्थी ओळख पडताळणी आणि थेट शैक्षणिक कर्ज लाभ.",
+      dept: "शिक्षण मंत्रालय",
+      badge: "थेट लाभ (DBT)",
+      utidSample: "APP-2026-EDU-6102",
+    },
+    {
+      id: "municipal",
+      title: "महानगरपालिका व्यवसाय परवाना (BMC / PMC)",
+      description: "मालमत्ता कर PID पावती पडताळणी आणि व्यवसाय परवाना मंजुरी.",
+      dept: "स्थानिक स्वराज्य संस्था",
+      badge: "क्षेत्रीय नियम",
+      utidSample: "APP-2026-MUNI-5590",
+    },
+    {
+      id: "transport",
+      title: "व्यावसायिक वाहन परमिट व योग्यता",
+      description: "वाहन चेसिस पडताळणी आणि परिवहन फिटनेस प्रमाणपत्र.",
+      dept: "परिवहन विभाग",
+      badge: "झटपट API",
+      utidSample: "APP-2026-RTO-7102",
+    },
+  ],
+  TA: { ...([] as any) },
+  TE: { ...([] as any) },
+  BN: { ...([] as any) },
+  GU: { ...([] as any) },
+  ML: { ...([] as any) },
+  PA: { ...([] as any) },
+  OR: { ...([] as any) },
+};
+
+const TRANSLATED_TESTIMONIALS: Record<Language, TestimonialItem[]> = {
+  EN: [
+    {
+      name: "Vikram R.",
+      role: "Cloud Kitchen Founder, Bengaluru",
+      comment:
+        "Cut through 4 different departmental portals for my FSSAI and trade license in under 20 minutes without paying touts.",
+      rating: 5,
+      tag: "MSME Food Business",
+      initials: "VR",
+      color: "from-blue-600 to-cyan-500",
+    },
+    {
+      name: "Pooja Sharma",
+      role: "CSC Center Operator, Pune",
+      comment:
+        "The UTID single-tracking feature saves me hours when answering citizen status queries across multiple departments.",
+      rating: 5,
+      tag: "VLE Operations",
+      initials: "PS",
+      color: "from-purple-600 to-pink-500",
+    },
+    {
+      name: "Ankit Verma",
+      role: "Overseas Postgrad Student",
+      comment:
+        "Guided me through MEA Apostille, Forex declarations, and verification step-by-step with exact document checklists.",
+      rating: 5,
+      tag: "Higher Education",
+      initials: "AV",
+      color: "from-emerald-600 to-teal-500",
+    },
+  ],
+  HI: [
+    {
+      name: "विक्रम आर.",
+      role: "क्लाउड किचन संस्थापक, बेंगलुरु",
+      comment:
+        "बिना किसी दलाल को पैसे दिए 20 मिनट से भी कम समय में मेरे FSSAI और ट्रेड लाइसेंस के लिए 4 अलग-अलग सरकारी पोर्टलों का काम पूरा हो गया।",
+      rating: 5,
+      tag: "MSME खाद्य व्यवसाय",
+      initials: "VR",
+      color: "from-blue-600 to-cyan-500",
+    },
+    {
+      name: "पूजा शर्मा",
+      role: "CSC केंद्र संचालक, पुणे",
+      comment:
+        "सिंगल UTID ट्रैकिंग सुविधा से विभिन्न विभागों के नागरिक स्थिति के सवालों का जवाब देने में मेरा घंटों का समय बचता है।",
+      rating: 5,
+      tag: "VLE संचालन",
+      initials: "PS",
+      color: "from-purple-600 to-pink-500",
+    },
+    {
+      name: "अंकित वर्मा",
+      role: "विदेशी स्नातकोत्तर छात्र",
+      comment:
+        "सटीक दस्तावेज़ चेकलिस्ट के साथ MEA अपोस्टिल, विदेशी मुद्रा घोषणा और सत्यापन में कदम-दर-कदम मार्गदर्शन मिला।",
+      rating: 5,
+      tag: "उच्च शिक्षा",
+      initials: "AV",
+      color: "from-emerald-600 to-teal-500",
+    },
+  ],
+  KN: [
+    {
+      name: "ವಿಕ್ರಮ್ ಆರ್.",
+      role: "ಕ್ಲೌಡ್ ಕಿಚನ್ ಸಂಸ್ಥಾಪಕ, ಬೆಂಗಳೂರು",
+      comment:
+        "ಯಾವುದೇ ಮಧ್ಯವರ್ತಿಗಳಿಗೆ ಹಣ ನೀಡದೆ 20 ನಿಮಿಷಗಳಲ್ಲಿ ನನ್ನ FSSAI ಮತ್ತು ವ್ಯಾಪಾರ ಪರವಾನಗಿಯನ್ನು 4 ಬೇರೆ ಬೇರೆ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ಪೂರ್ಣಗೊಳಿಸಿದೆ.",
+      rating: 5,
+      tag: "MSME ಆಹಾರ ಉದ್ಯಮ",
+      initials: "VR",
+      color: "from-blue-600 to-cyan-500",
+    },
+    {
+      name: "ಪೂಜಾ ಶರ್ಮಾ",
+      role: "ಸಿಎಸ್‌ಸಿ ಕೇಂದ್ರ ನಿರ್ವಾಹಕಿ, ಪುಣೆ",
+      comment:
+        "UTID ಟ್ರ್ಯಾಕಿಂಗ್ ವೈಶಿಷ್ಟ್ಯವು ವಿವಿಧ ಇಲಾಖೆಗಳ ಅರ್ಜಿಗಳ ಸ್ಥಿತಿಯನ್ನು ನಾಗರಿಕರಿಗೆ ತಿಳಿಸಲು ನನಗೆ ಗಂಟೆಗಳ ಸಮಯವನ್ನು ಉಳಿಸುತ್ತದೆ.",
+      rating: 5,
+      tag: "VLE ಕಾರ್ಯಾಚರಣೆ",
+      initials: "PS",
+      color: "from-purple-600 to-pink-500",
+    },
+    {
+      name: "ಅಂಕಿತ್ ವರ್ಮಾ",
+      role: "ವಿದೇಶಿ ಸ್ನಾತಕೋತ್ತರ ವಿದ್ಯಾರ್ಥಿ",
+      comment:
+        "ಸರಿಯಾದ ದಾಖಲೆಗಳ ಪಟ್ಟಿಯೊಂದಿಗೆ MEA ದೃಢೀಕರಣ ಮತ್ತು ವಿದೇಶಿ ವ್ಯಾಸಂಗದ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡಿತು.",
+      rating: 5,
+      tag: "ಉನ್ನತ ಶಿಕ್ಷಣ",
+      initials: "AV",
+      color: "from-emerald-600 to-teal-500",
+    },
+  ],
+  MR: [
+    {
+      name: "विक्रम आर.",
+      role: "क्लाउड किचन संस्थापक, बंगळुरू",
+      comment:
+        "कोणत्याही एजंटला पैसे न देता २० मिनिटांत माझ्या FSSAI आणि व्यवसाय परवान्यासाठी ४ वेगवेगळ्या पोर्टल्सचे काम पूर्ण झाले.",
+      rating: 5,
+      tag: "MSME अन्न व्यवसाय",
+      initials: "VR",
+      color: "from-blue-600 to-cyan-500",
+    },
+    {
+      name: "पूजा शर्मा",
+      role: "CSC केंद्र चालक, पुणे",
+      comment:
+        "UTID ट्रॅकिंगमुळे विविध विभागांच्या अर्जांची स्थिती नागरिकांना सांगताना माझा तासनतास वेळ वाचतो.",
+      rating: 5,
+      tag: "VLE कार्यप्रणाली",
+      initials: "PS",
+      color: "from-purple-600 to-pink-500",
+    },
+    {
+      name: "अंकित वर्मा",
+      role: "परदेशी पदव्युत्तर विद्यार्थी",
+      comment:
+        "परदेशातील शिक्षणासाठी आवश्यक कागदपत्रांची अचूक यादी आणि MEA पडताळणी टप्प्याटप्प्याने सुलभ झाली.",
+      rating: 5,
+      tag: "उच्च शिक्षण",
+      initials: "AV",
+      color: "from-emerald-600 to-teal-500",
+    },
+  ],
+  TA: { ...([] as any) },
+  TE: { ...([] as any) },
+  BN: { ...([] as any) },
+  GU: { ...([] as any) },
+  ML: { ...([] as any) },
+  PA: { ...([] as any) },
+  OR: { ...([] as any) },
+};
+
+// Fallback fill for remaining languages
+ALL_SUPPORTED.forEach((lang) => {
+  if (!TRANSLATED_SERVICES[lang] || !Array.isArray(TRANSLATED_SERVICES[lang]) || TRANSLATED_SERVICES[lang].length === 0) {
+    TRANSLATED_SERVICES[lang] = TRANSLATED_SERVICES.EN;
+  }
+  if (!TRANSLATED_TESTIMONIALS[lang] || !Array.isArray(TRANSLATED_TESTIMONIALS[lang]) || TRANSLATED_TESTIMONIALS[lang].length === 0) {
+    TRANSLATED_TESTIMONIALS[lang] = TRANSLATED_TESTIMONIALS.EN;
+  }
+});
 
 export default function LandingPage() {
   const router = useRouter();
@@ -524,6 +817,14 @@ export default function LandingPage() {
   // Active translation dictionary
   const t = useMemo(() => {
     return LANDING_TRANSLATIONS[language] || LANDING_TRANSLATIONS.EN;
+  }, [language]);
+
+  const currentServices = useMemo(() => {
+    return TRANSLATED_SERVICES[language] || TRANSLATED_SERVICES.EN;
+  }, [language]);
+
+  const currentTestimonials = useMemo(() => {
+    return TRANSLATED_TESTIMONIALS[language] || TRANSLATED_TESTIMONIALS.EN;
   }, [language]);
 
   const currentLangObj = useMemo(() => {
@@ -1024,7 +1325,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICES_DATA.map((svc) => (
+            {currentServices.map((svc) => (
               <div
                 key={svc.id}
                 className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg flex flex-col justify-between space-y-4 hover:border-blue-500/40 transition-colors group"
@@ -1084,7 +1385,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((test, idx) => (
+            {currentTestimonials.map((test, idx) => (
               <div
                 key={idx}
                 className="p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg flex flex-col justify-between space-y-5 hover:border-emerald-500/40 transition-colors"
