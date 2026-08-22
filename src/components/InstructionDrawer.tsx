@@ -32,6 +32,7 @@ import { CommonMistakesSection } from "@/components/CommonMistakesSection";
 import { LegalReferencesList } from "@/components/LegalReferenceChip";
 import { ShareAndBookmark } from "@/components/ShareAndBookmark";
 import { HelplineSidebar } from "@/components/HelplineSidebar";
+import PreFlightReviewModal from "@/components/PreFlightReviewModal";
 import { EnhancedJourneyStep, DocumentRequirement } from "@/types/journey";
 
 type TabKey = "dept" | "instructions" | "docs" | "redirection";
@@ -64,6 +65,7 @@ export const InstructionDrawer: React.FC = () => {
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<TabKey>("dept");
   const [drawerWidth, setDrawerWidth] = useState<number>(640);
+  const [isPreflightModalOpen, setIsPreflightModalOpen] = useState<boolean>(false);
   const isDraggingRef = useRef<boolean>(false);
   const t = useMemo(() => (translations as Record<string, typeof translations.EN>)[language] || translations.EN, [language]);
 
@@ -496,20 +498,32 @@ export const InstructionDrawer: React.FC = () => {
           </div>
 
           {/* Footer CTAs */}
-          <div className="p-5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-3">
+          <div className="p-5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2.5">
             {isInProgress && (
-              <button
-                type="button"
-                onClick={() => {
-                  toggleStepStatus(step.id, "COMPLETED");
-                  showToast(`✓ Step ${step.stepNumber} marked as completed! 🎉`, "success");
-                  closeStepDrawer();
-                }}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>{t.markCompleted}</span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsPreflightModalOpen(true)}
+                  className="px-3.5 py-2.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs rounded-xl border border-emerald-300 dark:border-emerald-800 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                  title="Run data-quality pre-checks before final step submission"
+                >
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>Pre-Flight Gate</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleStepStatus(step.id, "COMPLETED");
+                    showToast(`✓ Step ${step.stepNumber} marked as completed! 🎉`, "success");
+                    closeStepDrawer();
+                  }}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{t.markCompleted}</span>
+                </button>
+              </>
             )}
 
             {isCompleted && (
@@ -546,6 +560,19 @@ export const InstructionDrawer: React.FC = () => {
 
         </div>
       </div>
+
+      {/* Pre-Flight Quality Gate Modal */}
+      <PreFlightReviewModal
+        isOpen={isPreflightModalOpen}
+        onClose={() => setIsPreflightModalOpen(false)}
+        onProceed={() => {
+          toggleStepStatus(step.id, "COMPLETED");
+          showToast(`✓ Step ${step.stepNumber} passed Pre-Flight Quality Gate & marked completed! 🎉`, "success");
+          closeStepDrawer();
+        }}
+        stepTitle={`Step ${stepNumber}: ${stepTitle}`}
+        journeyTitle={activeJourney.department || "Statutory Department Clearance"}
+      />
     </div>
   );
 };

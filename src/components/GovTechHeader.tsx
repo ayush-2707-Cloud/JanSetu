@@ -28,6 +28,7 @@ import { Language } from "@/types/journey";
 import { translations } from "@/data/translations";
 import { MunicipalComparisonModal } from "@/components/MunicipalComparisonModal";
 import { QATestingModal } from "@/components/QATestingModal";
+import PreFlightReviewModal from "@/components/PreFlightReviewModal";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "BN", label: "Bengali", native: "বাংলা" },
@@ -62,6 +63,7 @@ export const GovTechHeader: React.FC = () => {
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isMunicipalModalOpen, setIsMunicipalModalOpen] = useState(false);
   const [isQAModalOpen, setIsQAModalOpen] = useState(false);
+  const [isPreflightModalOpen, setIsPreflightModalOpen] = useState(false);
   const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   return (
@@ -226,8 +228,19 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Center Quick Tools: Municipal Comparison Trigger */}
+        {/* Center Quick Tools: Municipal Comparison & Pre-Flight Quality Gate */}
         <div className="flex items-center gap-2">
+          {/* Pre-Flight Quality Gate Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsPreflightModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/50 border border-emerald-800/80 hover:text-emerald-300 hover:bg-emerald-900/60 transition-all cursor-pointer shadow-xs"
+            title="Run data-quality pre-checks & AI exception validation before filing"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Pre-Flight Gate</span>
+          </button>
+
           {/* Municipal Comparison Modal Trigger */}
           <button
             type="button"
@@ -338,6 +351,12 @@ export const GovTechHeader: React.FC = () => {
       <QATestingModal
         isOpen={isQAModalOpen}
         onClose={() => setIsQAModalOpen(false)}
+      />
+
+      {/* Data-Quality Pre-Flight Validation Quality Gate Modal */}
+      <PreFlightReviewModal
+        isOpen={isPreflightModalOpen}
+        onClose={() => setIsPreflightModalOpen(false)}
       />
     </header>
   );

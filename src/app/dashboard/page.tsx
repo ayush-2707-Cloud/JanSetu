@@ -54,7 +54,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-blue-500" />
-            <span>JanSetu™ (SetuJourney AI) Universal GovTech Bridge • Powered by Next.js App Router</span>
+            <span>JanSetu™ AI Universal GovTech Bridge • Powered by Next.js App Router</span>
           </div>
           <p>© 2026 National e-Governance Division (NeGD). DPDP Act 2023 Compliant • Multi-Language Standard (12 Languages).</p>
         </div>
