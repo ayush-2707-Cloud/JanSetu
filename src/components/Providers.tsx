@@ -11,23 +11,30 @@ import { DPDPConsentModal } from "@/components/DPDPConsentModal";
 import { LanguageWelcomeModal } from "@/components/LanguageWelcomeModal";
 import { FloatingDemoController } from "@/components/FloatingDemoController";
 import { VoiceCopilotFloatingBar } from "@/components/VoiceCopilotFloatingBar";
+import { AccessibilityProvider } from "@/context/AccessibilityContext";
+import AccessibilityToolbar from "@/components/AccessibilityToolbar";
+import MobilePhoneMockup from "@/components/MobilePhoneMockup";
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <ThemeProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <JourneyProvider>
-            {children}
-            <InstructionDrawer />
-            <DigiLockerModal />
-            <DPDPConsentModal />
-            <LanguageWelcomeModal />
-            <FloatingDemoController />
-            <VoiceCopilotFloatingBar />
-          </JourneyProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <AccessibilityProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <JourneyProvider>
+              {children}
+              <InstructionDrawer />
+              <DigiLockerModal />
+              <DPDPConsentModal />
+              <LanguageWelcomeModal />
+              <FloatingDemoController />
+              <VoiceCopilotFloatingBar />
+              <AccessibilityToolbar />
+              <MobilePhoneMockup />
+            </JourneyProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </AccessibilityProvider>
   );
 };
