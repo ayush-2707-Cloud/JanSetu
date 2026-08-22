@@ -403,11 +403,17 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (targetIdx === -1) return j;
 
         const updatedSteps = j.steps.map((step, idx) => {
-          if (step.id === stepId) {
-            // Update step status and mark all child substeps as completed if step is completed
-            const updatedSubsteps = (step.substeps || []).map((sub) => ({
+          // 1. The target step being updated
+          if (idx === targetIdx) {
+            const updatedSubsteps = (step.substeps || []).map((sub, sIdx) => ({
               ...sub,
-              status: (newStatus === "COMPLETED" ? "COMPLETED" : newStatus === "IN_PROGRESS" ? "IN_PROGRESS" : "LOCKED") as StepStatus,
+              status: (
+                newStatus === "COMPLETED"
+                  ? "COMPLETED"
+                  : newStatus === "IN_PROGRESS"
+                  ? (sIdx === 0 ? "IN_PROGRESS" : "LOCKED")
+                  : "LOCKED"
+              ) as StepStatus,
             }));
 
             return {
@@ -418,7 +424,7 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
             };
           }
 
-          // When completing the current step, automatically unlock the next sequential step
+          // 2. When completing the current step, automatically unlock the next sequential step
           if (newStatus === "COMPLETED" && idx === targetIdx + 1 && step.status === "LOCKED") {
             const nextSubsteps = (step.substeps || []).map((sub, sIdx) => ({
               ...sub,
@@ -432,6 +438,24 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
             };
           }
 
+          // 3. STATUTORY CASCADE RULE: When marking ANY prerequisite step as incomplete (IN_PROGRESS or LOCKED),
+          // ALL downstream steps (idx > targetIdx) CANNOT remain completed or in-progress!
+          // They MUST cascade back to LOCKED because their statutory prerequisite is no longer fulfilled.
+          if (newStatus !== "COMPLETED" && idx > targetIdx) {
+            const resetSubsteps = (step.substeps || []).map((sub) => ({
+              ...sub,
+              status: "LOCKED" as StepStatus,
+            }));
+
+            return {
+              ...step,
+              status: "LOCKED" as StepStatus,
+              substeps: resetSubsteps.length > 0 ? resetSubsteps : step.substeps,
+              completedAt: undefined,
+            };
+          }
+
+          // 4. Upstream steps (idx < targetIdx) remain unchanged
           return step;
         });
 

@@ -517,7 +517,7 @@ export const InstructionDrawer: React.FC = () => {
                 type="button"
                 onClick={() => {
                   toggleStepStatus(step.id, "IN_PROGRESS");
-                  showToast(`Step ${step.stepNumber} reopened as In Progress 🔄`, "info");
+                  showToast(`Step ${step.stepNumber} marked as incomplete 🔄 (Dependent downstream steps locked)`, "info");
                   closeStepDrawer();
                 }}
                 className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
