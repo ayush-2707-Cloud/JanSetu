@@ -11,7 +11,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.db.database import init_db
-from app.routers import journeys, progress, sandbox, sessions, alerts, ai, copilot, legal, stamp_duty, notifications, officer, auth, preflight
+from app.routers import (
+    journeys, progress, sandbox, sessions, alerts, ai, copilot, legal,
+    stamp_duty, notifications, officer, auth, preflight, connectors, mdm, audit
+)
 from app.engine.dependency_graph import DependencyResolutionError
 
 # Initialize database tables on application startup
@@ -34,7 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Routers (supporting both track default routes and /api/v1/ prefix)
+# Include API Routers (supporting both track default routes and /api/ prefix)
 app.include_router(auth.router)
 app.include_router(journeys.router)
 app.include_router(progress.router)
@@ -44,6 +47,9 @@ app.include_router(alerts.router)
 app.include_router(ai.router)
 app.include_router(copilot.router, prefix="/api")
 app.include_router(preflight.router, prefix="/api")
+app.include_router(connectors.router, prefix="/api")
+app.include_router(mdm.router, prefix="/api")
+app.include_router(audit.router, prefix="/api")
 app.include_router(legal.router)
 app.include_router(stamp_duty.router)
 app.include_router(notifications.router)
@@ -59,6 +65,9 @@ app.include_router(alerts.router, prefix=settings.API_V1_STR)
 app.include_router(ai.router, prefix=settings.API_V1_STR)
 app.include_router(copilot.router, prefix=settings.API_V1_STR)
 app.include_router(preflight.router, prefix=settings.API_V1_STR)
+app.include_router(connectors.router, prefix=settings.API_V1_STR)
+app.include_router(mdm.router, prefix=settings.API_V1_STR)
+app.include_router(audit.router, prefix=settings.API_V1_STR)
 app.include_router(legal.router, prefix=settings.API_V1_STR)
 app.include_router(stamp_duty.router, prefix=settings.API_V1_STR)
 app.include_router(notifications.router, prefix=settings.API_V1_STR)

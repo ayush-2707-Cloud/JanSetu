@@ -29,6 +29,10 @@ import { translations } from "@/data/translations";
 import { MunicipalComparisonModal } from "@/components/MunicipalComparisonModal";
 import { QATestingModal } from "@/components/QATestingModal";
 import PreFlightReviewModal from "@/components/PreFlightReviewModal";
+import ConnectorHubModal from "@/components/ConnectorHubModal";
+import MDMGoldenRecordModal from "@/components/MDMGoldenRecordModal";
+import AuditTrailModal from "@/components/AuditTrailModal";
+import DepartmentalSLAModal from "@/components/DepartmentalSLAModal";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "BN", label: "Bengali", native: "বাংলা" },
@@ -64,6 +68,10 @@ export const GovTechHeader: React.FC = () => {
   const [isMunicipalModalOpen, setIsMunicipalModalOpen] = useState(false);
   const [isQAModalOpen, setIsQAModalOpen] = useState(false);
   const [isPreflightModalOpen, setIsPreflightModalOpen] = useState(false);
+  const [isConnectorsModalOpen, setIsConnectorsModalOpen] = useState(false);
+  const [isMDMModalOpen, setIsMDMModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isSLAModalOpen, setIsSLAModalOpen] = useState(false);
   const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   return (
@@ -228,27 +236,70 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Center Quick Tools: Municipal Comparison & Pre-Flight Quality Gate */}
-        <div className="flex items-center gap-2">
+        {/* Center Quick Tools: Interoperability Hub, Pre-Flight Gate, MDM & SLA */}
+        <div className="flex items-center gap-1.5 flex-wrap">
           {/* Pre-Flight Quality Gate Trigger */}
           <button
             type="button"
             onClick={() => setIsPreflightModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/50 border border-emerald-800/80 hover:text-emerald-300 hover:bg-emerald-900/60 transition-all cursor-pointer shadow-xs"
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-emerald-400 bg-emerald-950/50 border border-emerald-800/80 hover:text-emerald-300 hover:bg-emerald-900/60 transition-all cursor-pointer shadow-xs"
             title="Run data-quality pre-checks & AI exception validation before filing"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Pre-Flight Gate</span>
           </button>
 
+          {/* Connectors Hub Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsConnectorsModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-blue-400 bg-blue-950/50 border border-blue-800/80 hover:text-blue-300 hover:bg-blue-900/60 transition-all cursor-pointer shadow-xs"
+            title="Reusable Legacy SOAP/XML & Modern REST Connectors Hub"
+          >
+            <FolderTree className="w-3.5 h-3.5 text-blue-400" />
+            <span>Connectors Hub</span>
+          </button>
+
+          {/* MDM Golden Citizen Record Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsMDMModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-teal-400 bg-teal-950/50 border border-teal-800/80 hover:text-teal-300 hover:bg-teal-900/60 transition-all cursor-pointer shadow-xs"
+            title="Master Data Management Golden Citizen Record & Once-Only Auto-Populate"
+          >
+            <UserCheck className="w-3.5 h-3.5 text-teal-400" />
+            <span>Golden Record (MDM)</span>
+          </button>
+
+          {/* Cryptographic Audit Ledger Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsAuditModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-purple-400 bg-purple-950/50 border border-purple-800/80 hover:text-purple-300 hover:bg-purple-900/60 transition-all cursor-pointer shadow-xs"
+            title="Immutable Cryptographic SHA-256 Audit Trail"
+          >
+            <Shield className="w-3.5 h-3.5 text-purple-400" />
+            <span>Audit Ledger</span>
+          </button>
+
+          {/* Departmental SLA Analytics Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsSLAModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-amber-400 bg-amber-950/50 border border-amber-800/80 hover:text-amber-300 hover:bg-amber-900/60 transition-all cursor-pointer shadow-xs"
+            title="Right to Public Services SLA Analytics & Bottleneck Monitor"
+          >
+            <Building2 className="w-3.5 h-3.5 text-amber-400" />
+            <span>SLA Monitor</span>
+          </button>
+
           {/* Municipal Comparison Modal Trigger */}
           <button
             type="button"
             onClick={() => setIsMunicipalModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/90 border border-slate-800 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-slate-300 bg-slate-900/90 border border-slate-800 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
             title="Compare municipal compliance rules (BBMP vs BMC vs MCD)"
           >
-            <Building2 className="w-3.5 h-3.5 text-indigo-400" />
             <span>{t.cityBylawsDiff || "City Bylaws Diff"}</span>
           </button>
         </div>
@@ -357,6 +408,30 @@ export const GovTechHeader: React.FC = () => {
       <PreFlightReviewModal
         isOpen={isPreflightModalOpen}
         onClose={() => setIsPreflightModalOpen(false)}
+      />
+
+      {/* Reusable Connectors Hub Modal */}
+      <ConnectorHubModal
+        isOpen={isConnectorsModalOpen}
+        onClose={() => setIsConnectorsModalOpen(false)}
+      />
+
+      {/* Master Data Management (MDM) Golden Record Modal */}
+      <MDMGoldenRecordModal
+        isOpen={isMDMModalOpen}
+        onClose={() => setIsMDMModalOpen(false)}
+      />
+
+      {/* Cryptographic SHA-256 Audit Trail Modal */}
+      <AuditTrailModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+      />
+
+      {/* Departmental SLA Performance & Bottleneck Analytics Modal */}
+      <DepartmentalSLAModal
+        isOpen={isSLAModalOpen}
+        onClose={() => setIsSLAModalOpen(false)}
       />
     </header>
   );
