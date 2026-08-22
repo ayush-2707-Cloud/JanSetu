@@ -20,7 +20,7 @@ export default function DashboardPage() {
   } = useJourney();
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-300">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative perf-gpu">
       {/* GovTech Header with Language Switcher & Citizen Profile Avatar */}
       <GovTechHeader />
 

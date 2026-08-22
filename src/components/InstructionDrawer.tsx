@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
   X, 
   CheckCircle2, 
@@ -65,7 +65,7 @@ export const InstructionDrawer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>("dept");
   const [drawerWidth, setDrawerWidth] = useState<number>(640);
   const isDraggingRef = useRef<boolean>(false);
-  const t = (translations as Record<string, typeof translations.EN>)[language] || translations.EN;
+  const t = useMemo(() => (translations as Record<string, typeof translations.EN>)[language] || translations.EN, [language]);
 
   // Restore preferred width from localStorage
   useEffect(() => {

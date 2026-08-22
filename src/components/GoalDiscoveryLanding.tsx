@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { 
   Search, 
   Sparkles, 
@@ -104,7 +104,7 @@ export const GoalDiscoveryLanding: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, language]);
 
-  const t = (translations as Record<string, typeof translations.EN>)[language] || translations.EN;
+  const t = useMemo(() => (translations as Record<string, typeof translations.EN>)[language] || translations.EN, [language]);
 
   // Hydrate recently viewed journeys from localStorage
   useEffect(() => {

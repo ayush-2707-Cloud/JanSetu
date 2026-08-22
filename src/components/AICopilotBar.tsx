@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Mic,
   MicOff,
@@ -59,6 +59,8 @@ export const AICopilotBar: React.FC = () => {
     choiceChipsPrompt,
     setChoiceChipsData,
   } = useJourney();
+
+  const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   const [inputQuery, setInputQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -160,8 +162,6 @@ export const AICopilotBar: React.FC = () => {
       executeQuery(inputQuery);
     }
   };
-
-  const t = translations[language] || translations.EN;
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-4">

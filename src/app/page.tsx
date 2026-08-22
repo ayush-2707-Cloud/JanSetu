@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Landmark,
   ShieldCheck,
@@ -58,11 +57,11 @@ export default function LandingPage() {
   const { language, setLanguage } = useJourney();
 
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
-  const [utidInput, setUtidInput] = useState<string>("");
+  const [utidInput, setUtidInput] = useState<string>("APP-2026-MSME-0841");
   const [searchedUtid, setSearchedUtid] = useState<string | null>(null);
   const [isSearchingUtid, setIsSearchingUtid] = useState<boolean>(false);
 
-  // Active translation dictionary
+  // Active translation dictionary - memoized
   const t = useMemo(() => {
     return LANDING_TRANSLATIONS[language] || LANDING_TRANSLATIONS.EN;
   }, [language]);
@@ -79,27 +78,30 @@ export default function LandingPage() {
     return LANGUAGE_OPTIONS.find((l) => l.id === language) || LANGUAGE_OPTIONS[0];
   }, [language]);
 
-  const handleUtidSearch = (e: React.FormEvent) => {
+  const handleUtidSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!utidInput.trim()) return;
     setIsSearchingUtid(true);
     setTimeout(() => {
       setSearchedUtid(utidInput.trim().toUpperCase());
       setIsSearchingUtid(false);
-    }, 300);
-  };
+    }, 180);
+  }, [utidInput]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden transform-gpu">
+    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden perf-gpu">
       
-      {/* BACKGROUND PARTICLES & STATIC AMBIENT GLOWS (Hardware Accelerated) */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-blue-600/12 via-indigo-600/6 to-transparent rounded-full blur-2xl transform-gpu" />
-        <div className="absolute top-[40%] -left-[150px] w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-2xl transform-gpu" />
-        <div className="absolute top-[65%] -right-[150px] w-[550px] h-[550px] bg-indigo-600/8 rounded-full blur-2xl transform-gpu" />
-        {/* Subtle CSS-based grid lines */}
+      {/* 60FPS ZERO-REPAINT GPU AMBIENT BACKDROP */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 perf-gpu" 
+        style={{
+          background: "radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.14) 0%, transparent 55%), radial-gradient(circle at 5% 45%, rgba(37, 99, 235, 0.07) 0%, transparent 35%), radial-gradient(circle at 95% 65%, rgba(79, 70, 229, 0.07) 0%, transparent 35%)",
+          contain: "strict"
+        }}
+      >
+        {/* Subtle Static Grid Pattern */}
         <div 
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: "linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)",
             backgroundSize: "64px 64px"
@@ -108,14 +110,14 @@ export default function LandingPage() {
       </div>
 
       {/* 1. TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md perf-gpu">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo Brand */}
           <Link href="/" className="flex items-center gap-3 group no-underline shrink-0">
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 p-[1.5px] shadow-lg shadow-blue-900/30">
               <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                <Landmark className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform duration-200" />
+                <Landmark className="w-5 h-5 text-blue-400 group-hover:scale-105 transition-transform duration-150" />
               </div>
             </div>
             <div>
@@ -159,41 +161,33 @@ export default function LandingPage() {
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
-              <AnimatePresence>
-                {isLangDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 6 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 overflow-hidden"
-                  >
-                    <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 tracking-wider border-b border-slate-800/80 mb-1">
-                      11 Official Indian Languages
-                    </div>
-                    <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar">
-                      {LANGUAGE_OPTIONS.map((lang) => (
-                        <button
-                          key={lang.id}
-                          type="button"
-                          onClick={() => {
-                            setLanguage(lang.id);
-                            setIsLangDropdownOpen(false);
-                          }}
-                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors cursor-pointer ${
-                            language === lang.id
-                              ? "bg-blue-600 text-white font-bold"
-                              : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
-                          }`}
-                        >
-                          <span>{lang.native}</span>
-                          <span className="text-[10px] opacity-70 font-mono">({lang.id})</span>
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {isLangDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 overflow-hidden animate-in fade-in duration-150">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 tracking-wider border-b border-slate-800/80 mb-1">
+                    11 Official Languages
+                  </div>
+                  <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar">
+                    {LANGUAGE_OPTIONS.map((lang) => (
+                      <button
+                        key={lang.id}
+                        type="button"
+                        onClick={() => {
+                          setLanguage(lang.id);
+                          setIsLangDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors cursor-pointer ${
+                          language === lang.id
+                            ? "bg-blue-600 text-white font-bold"
+                            : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                        }`}
+                      >
+                        <span>{lang.native}</span>
+                        <span className="text-[10px] opacity-70 font-mono">({lang.id})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Officer Portal Link */}
@@ -218,56 +212,36 @@ export default function LandingPage() {
       </header>
 
       {/* 2. HERO SECTION */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-20 sm:pb-24">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14 sm:pt-16 sm:pb-20 content-contain">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
           {/* Left Column: Mission, Typography, Actions, and UTID Single-Search Bar */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-7 text-center lg:text-left">
             
             {/* SIH Hackathon & Department Identification Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-blue-500/30 text-blue-300 text-xs font-bold shadow-xs"
-            >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-blue-500/30 text-blue-300 text-xs font-bold shadow-xs">
               <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>{t.sihBadge}</span>
-            </motion.div>
+            </div>
 
             {/* Main Punchline Hero Typography */}
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.05 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15]"
-            >
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15]">
               <span>{t.heroHeadlineMain} </span>
               <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400 bg-clip-text text-transparent">
                 {t.heroHeadlineHighlight}
               </span>
               <br />
               <span className="text-slate-200">{t.heroHeadlineEnd}</span>
-            </motion.h1>
+            </h1>
 
             {/* Value Proposition Description */}
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.1 }}
-              className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal"
-            >
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
               {t.heroSubtitle}
-            </motion.p>
+            </p>
 
             {/* Primary Action Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.15 }}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2"
-            >
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-1">
               <Link
                 href="/dashboard"
                 className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-blue-700/25 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
@@ -283,15 +257,10 @@ export default function LandingPage() {
                 <UserCheck className="w-4 h-4 text-slate-400" />
                 <span>{t.signInBtn}</span>
               </Link>
-            </motion.div>
+            </div>
 
             {/* Universal Tracking ID (UTID) Tracker Input */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
-              className="pt-4 max-w-xl mx-auto lg:mx-0"
-            >
+            <div className="pt-3 max-w-xl mx-auto lg:mx-0">
               <form onSubmit={handleUtidSearch} className="relative flex items-center">
                 <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
                 <input
@@ -312,11 +281,7 @@ export default function LandingPage() {
 
               {/* Instant UTID Search Mock Result */}
               {searchedUtid && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-3 p-3.5 rounded-2xl bg-blue-950/80 border border-blue-600/50 flex items-center justify-between text-xs"
-                >
+                <div className="mt-3 p-3.5 rounded-2xl bg-blue-950/80 border border-blue-600/50 flex items-center justify-between text-xs animate-in fade-in duration-150">
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div>
@@ -330,19 +295,14 @@ export default function LandingPage() {
                   >
                     View Roadmap →
                   </Link>
-                </motion.div>
+                </div>
               )}
-            </motion.div>
+            </div>
 
           </div>
 
           {/* Right Column: Live Orchestrator 3-Step Execution Mockup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-5"
-          >
+          <div className="lg:col-span-5 perf-gpu">
             <div className="relative rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-blue-500/40 p-5 sm:p-6 shadow-2xl">
               
               {/* Card Header with Status Badge */}
@@ -380,8 +340,8 @@ export default function LandingPage() {
                 {/* Step 2: In-Progress Nodal Scrutiny */}
                 <div className="p-3 rounded-2xl bg-slate-950/90 border border-blue-500/50 flex items-center justify-between gap-3 shadow-xs ring-1 ring-blue-500/20">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 animate-spin">
-                      <Activity className="w-4 h-4" />
+                    <div className="w-7 h-7 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                      <Activity className="w-4 h-4 animate-spin" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-white">{t.mockupStep2Title}</p>
@@ -423,13 +383,13 @@ export default function LandingPage() {
               </div>
 
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>
 
       {/* 3. IMPACT & PERFORMANCE METRICS SECTION */}
-      <section id="impact" className="relative z-10 border-y border-slate-800/80 bg-slate-900/50 py-12 sm:py-16">
+      <section id="impact" className="relative z-10 border-y border-slate-800/80 bg-slate-900/50 py-12 sm:py-16 content-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center space-y-2 mb-10">
@@ -447,28 +407,28 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
             {/* Metric 1 */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors perf-gpu">
               <p className="text-2xl sm:text-4xl font-black text-blue-400 tracking-tight">{t.stat1Value}</p>
               <p className="text-xs sm:text-sm font-bold text-white">{t.stat1Label}</p>
               <p className="text-[11px] text-slate-400">{t.stat1Sub}</p>
             </div>
 
             {/* Metric 2 */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors perf-gpu">
               <p className="text-2xl sm:text-4xl font-black text-indigo-400 tracking-tight">{t.stat2Value}</p>
               <p className="text-xs sm:text-sm font-bold text-white">{t.stat2Label}</p>
               <p className="text-[11px] text-slate-400">{t.stat2Sub}</p>
             </div>
 
             {/* Metric 3 */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors perf-gpu">
               <p className="text-2xl sm:text-4xl font-black text-sky-400 tracking-tight">{t.stat3Value}</p>
               <p className="text-xs sm:text-sm font-bold text-white">{t.stat3Label}</p>
               <p className="text-[11px] text-slate-400">{t.stat3Sub}</p>
             </div>
 
             {/* Metric 4 */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors perf-gpu">
               <p className="text-2xl sm:text-4xl font-black text-emerald-400 tracking-tight">{t.stat4Value}</p>
               <p className="text-xs sm:text-sm font-bold text-white">{t.stat4Label}</p>
               <p className="text-[11px] text-slate-400">{t.stat4Sub}</p>
@@ -479,7 +439,7 @@ export default function LandingPage() {
       </section>
 
       {/* 4. HOW IT WORKS (3-STEP PIPELINE) */}
-      <section id="how-it-works" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section id="how-it-works" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 content-auto">
         
         <div className="text-center space-y-2 mb-12 sm:mb-16">
           <span className="text-xs font-black tracking-widest text-blue-400 uppercase">
@@ -496,7 +456,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           
           {/* Step 1 Card */}
-          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-blue-500/40 transition-colors relative">
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-blue-500/40 transition-colors relative perf-gpu">
             <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-black text-lg">
               01
             </div>
@@ -512,7 +472,7 @@ export default function LandingPage() {
           </div>
 
           {/* Step 2 Card */}
-          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-indigo-500/40 transition-colors relative">
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-indigo-500/40 transition-colors relative perf-gpu">
             <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-black text-lg">
               02
             </div>
@@ -528,7 +488,7 @@ export default function LandingPage() {
           </div>
 
           {/* Step 3 Card */}
-          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors relative">
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors relative perf-gpu">
             <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-lg">
               03
             </div>
@@ -547,7 +507,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5. PRE-ENGINEERED CITIZEN SERVICES (ALL 6 CARDS) */}
-      <section id="services" className="relative z-10 border-t border-slate-800/80 bg-slate-950 py-16 sm:py-24">
+      <section id="services" className="relative z-10 border-t border-slate-800/80 bg-slate-950 py-16 sm:py-20 content-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
@@ -575,7 +535,7 @@ export default function LandingPage() {
             {currentServices.map((srv) => (
               <div
                 key={srv.id}
-                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between group shadow-lg"
+                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between group shadow-lg perf-gpu"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -616,7 +576,7 @@ export default function LandingPage() {
       </section>
 
       {/* 6. CITIZEN REVIEWS & TESTIMONIALS */}
-      <section id="testimonials" className="relative z-10 border-t border-slate-800/80 bg-slate-900/30 py-16 sm:py-24">
+      <section id="testimonials" className="relative z-10 border-t border-slate-800/80 bg-slate-900/30 py-16 sm:py-20 content-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center space-y-2 mb-12 sm:mb-16">
@@ -635,7 +595,7 @@ export default function LandingPage() {
             {currentTestimonials.map((item, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 flex flex-col justify-between shadow-xl"
+                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 flex flex-col justify-between shadow-xl perf-gpu"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -671,8 +631,8 @@ export default function LandingPage() {
       </section>
 
       {/* 7. CALL TO ACTION BANNER */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border border-blue-500/40 text-center space-y-6 shadow-2xl relative overflow-hidden">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 content-auto">
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border border-blue-500/40 text-center space-y-6 shadow-2xl relative overflow-hidden perf-gpu">
           
           <div className="space-y-2 max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
@@ -702,7 +662,7 @@ export default function LandingPage() {
       </section>
 
       {/* 8. FOOTER */}
-      <footer className="border-t border-slate-800 bg-slate-950 py-10 text-xs text-slate-400">
+      <footer className="border-t border-slate-800 bg-slate-950 py-10 text-xs text-slate-400 content-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           
           <div className="flex items-center gap-2.5">

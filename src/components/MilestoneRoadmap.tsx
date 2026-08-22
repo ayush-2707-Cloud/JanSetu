@@ -88,7 +88,7 @@ export const MilestoneRoadmap: React.FC = () => {
   const [isCollabModalOpen, setIsCollabModalOpen] = useState<boolean>(false);
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState<boolean>(false);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const t = (translations as Record<string, typeof translations.EN>)[language] || translations.EN;
+  const t = useMemo(() => (translations as Record<string, typeof translations.EN>)[language] || translations.EN, [language]);
 
   // Auto-scroll to selected step node if activated
   useEffect(() => {

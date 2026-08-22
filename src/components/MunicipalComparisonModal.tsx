@@ -52,7 +52,7 @@ export const MunicipalComparisonModal: React.FC<MunicipalComparisonModalProps> =
   onClose,
 }) => {
   const { language } = useJourney();
-  const t = MUNICIPAL_TRANSLATIONS[language] || MUNICIPAL_TRANSLATIONS.EN;
+  const t = useMemo(() => MUNICIPAL_TRANSLATIONS[language] || MUNICIPAL_TRANSLATIONS.EN, [language]);
 
   // Universal background scroll lock
   useBodyScrollLock(isOpen);

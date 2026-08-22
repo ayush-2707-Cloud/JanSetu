@@ -174,11 +174,15 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden selection:bg-blue-600 selection:text-white">
-      {/* Background Decorative Glows */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden selection:bg-blue-600 selection:text-white perf-gpu">
+      {/* Background Decorative Glows - Hardware Accelerated & Containment Isolated */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 perf-gpu" 
+        style={{
+          background: "radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.12) 0%, transparent 45%), radial-gradient(circle at 90% 50%, rgba(79, 70, 229, 0.10) 0%, transparent 40%), radial-gradient(circle at 50% 90%, rgba(5, 150, 105, 0.08) 0%, transparent 45%)",
+          contain: "strict"
+        }}
+      />
 
       {/* Top GovTech National Header */}
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-8 py-3.5 flex items-center justify-between">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { 
@@ -62,7 +62,7 @@ export const GovTechHeader: React.FC = () => {
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isMunicipalModalOpen, setIsMunicipalModalOpen] = useState(false);
   const [isQAModalOpen, setIsQAModalOpen] = useState(false);
-  const t = translations[language] || translations.EN;
+  const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   return (
     <header className="bg-slate-950 text-white border-b border-slate-800 sticky top-0 z-40">

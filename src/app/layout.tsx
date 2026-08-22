@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full scroll-smooth">
-      <body className={`${inter.className} h-full flex flex-col bg-slate-100 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300`}>
+      <body className={`${inter.className} h-full flex flex-col bg-slate-100 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100`}>
         {/* WCAG 2.1 AA Accessibility: Skip to Main Content Link */}
         <a
           href="#main-content"
