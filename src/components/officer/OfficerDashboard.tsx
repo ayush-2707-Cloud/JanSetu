@@ -30,6 +30,7 @@ import {
 import { officerService } from "@/services/api";
 import { ApplicationReviewDrawer } from "@/components/officer/ApplicationReviewDrawer";
 import { useToast } from "@/context/ToastContext";
+import WorkflowRuleManagerModal from "@/components/WorkflowRuleManagerModal";
 
 const DEPARTMENT_TABS: { id: DepartmentCode | "ALL"; label: string; icon: string }[] = [
   { id: "ALL", label: "All Departments", icon: "🏛️" },
@@ -59,6 +60,7 @@ export const OfficerDashboard: React.FC = () => {
   // Selected Application for Drawer Review
   const [selectedApp, setSelectedApp] = useState<OfficerApplication | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState<boolean>(false);
 
   const fetchApplications = async () => {
     setIsLoading(true);
@@ -193,7 +195,15 @@ export const OfficerDashboard: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsWorkflowModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white flex items-center gap-2 transition-all shadow-md cursor-pointer"
+            >
+              <span>⚙️ Workflow Rule Manager (DAG)</span>
+            </button>
+
             <button
               type="button"
               onClick={fetchApplications}
@@ -435,6 +445,15 @@ export const OfficerDashboard: React.FC = () => {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onDecisionSubmitted={handleDecisionSubmitted}
+      />
+
+      {/* No-Code Configurable DAG Rule Manager Modal */}
+      <WorkflowRuleManagerModal
+        isOpen={isWorkflowModalOpen}
+        onClose={() => setIsWorkflowModalOpen(false)}
+        onRuleUpdated={() => {
+          showToast("✓ DAG workflow dependencies updated and broadcasted live! 🚀", "success");
+        }}
       />
 
     </div>

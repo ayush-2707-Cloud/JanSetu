@@ -33,6 +33,9 @@ import ConnectorHubModal from "@/components/ConnectorHubModal";
 import MDMGoldenRecordModal from "@/components/MDMGoldenRecordModal";
 import AuditTrailModal from "@/components/AuditTrailModal";
 import DepartmentalSLAModal from "@/components/DepartmentalSLAModal";
+import VisualDataHarmonizerModal from "@/components/VisualDataHarmonizerModal";
+import MeriPehchaanSSOModal from "@/components/MeriPehchaanSSOModal";
+import LiveEventStreamToast from "@/components/LiveEventStreamToast";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "BN", label: "Bengali", native: "বাংলা" },
@@ -72,6 +75,8 @@ export const GovTechHeader: React.FC = () => {
   const [isMDMModalOpen, setIsMDMModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [isSLAModalOpen, setIsSLAModalOpen] = useState(false);
+  const [isHarmonizerModalOpen, setIsHarmonizerModalOpen] = useState(false);
+  const [isSSOModalOpen, setIsSSOModalOpen] = useState(false);
   const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   return (
@@ -282,6 +287,26 @@ export const GovTechHeader: React.FC = () => {
             <span>Audit Ledger</span>
           </button>
 
+          {/* Visual Data Harmonizer Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsHarmonizerModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-indigo-400 bg-indigo-950/50 border border-indigo-800/80 hover:text-indigo-300 hover:bg-indigo-900/60 transition-all cursor-pointer shadow-xs"
+            title="IndEA 2.0 Canonical Schema Harmonizer & MDM Mapper"
+          >
+            <span>🔄 Harmonizer (IndEA)</span>
+          </button>
+
+          {/* Federated SSO MeriPehchaan Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsSSOModalOpen(true)}
+            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-orange-400 bg-orange-950/50 border border-orange-800/80 hover:text-orange-300 hover:bg-orange-900/60 transition-all cursor-pointer shadow-xs"
+            title="MeriPehchaan (Jan Parichay) Federated Single Sign-On"
+          >
+            <span>🇮🇳 MeriPehchaan SSO</span>
+          </button>
+
           {/* Departmental SLA Analytics Trigger */}
           <button
             type="button"
@@ -433,6 +458,21 @@ export const GovTechHeader: React.FC = () => {
         isOpen={isSLAModalOpen}
         onClose={() => setIsSLAModalOpen(false)}
       />
+
+      {/* IndEA 2.0 Visual Data Harmonizer Modal */}
+      <VisualDataHarmonizerModal
+        isOpen={isHarmonizerModalOpen}
+        onClose={() => setIsHarmonizerModalOpen(false)}
+      />
+
+      {/* MeriPehchaan (Jan Parichay) Federated SSO Modal */}
+      <MeriPehchaanSSOModal
+        isOpen={isSSOModalOpen}
+        onClose={() => setIsSSOModalOpen(false)}
+      />
+
+      {/* Global Real-Time Server-Sent Events (SSE) Toast Listener */}
+      <LiveEventStreamToast />
     </header>
   );
 };

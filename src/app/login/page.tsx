@@ -32,6 +32,7 @@ import { useToast } from "@/context/ToastContext";
 import { AuthPortalType } from "@/types/auth";
 import { Language } from "@/types/journey";
 import { LOGIN_TRANSLATIONS } from "@/data/loginTranslations";
+import MeriPehchaanSSOModal from "@/components/MeriPehchaanSSOModal";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "EN", label: "English", native: "English" },
@@ -55,6 +56,7 @@ function LoginContent() {
   const { showToast } = useToast();
 
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [isSSOModalOpen, setIsSSOModalOpen] = useState(false);
   const portalParam = searchParams.get("portal");
   const [activeTab, setActiveTab] = useState<"CITIZEN" | "OFFICER" | "REGISTER">(
     portalParam === "officer" || portalParam === "admin" ? "OFFICER" : "CITIZEN"
@@ -420,6 +422,27 @@ function LoginContent() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
+                {/* Federated SSO Divider & National Gateway Button */}
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-800" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-slate-900 px-2 text-[10px] font-bold text-slate-500">
+                      Or Authenticate via National ID
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSSOModalOpen(true)}
+                  className="w-full py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-orange-600/20 via-slate-800 to-emerald-600/20 hover:from-orange-600/30 hover:to-emerald-600/30 text-white border border-slate-700 hover:border-slate-600 transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-sm"
+                >
+                  <span className="text-base">🇮🇳</span>
+                  <span>Sign in with MeriPehchaan (मेरी पहचान / Jan Parichay)</span>
+                </button>
+
                 {/* Evaluator Demo Quick Fills */}
                 <div className="pt-3 border-t border-slate-800/80 space-y-2">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -759,6 +782,17 @@ function LoginContent() {
           </div>
         </div>
       )}
+
+      {/* MeriPehchaan (Jan Parichay) Federated SSO Modal */}
+      <MeriPehchaanSSOModal
+        isOpen={isSSOModalOpen}
+        onClose={() => setIsSSOModalOpen(false)}
+        onSuccess={() => {
+          setIsSSOModalOpen(false);
+          showToast("✓ Authenticated via MeriPehchaan (Jan Parichay) National Gateway! 🎉", "success");
+          router.push("/dashboard");
+        }}
+      />
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950 px-4 sm:px-8 py-3 text-center text-[11px] text-slate-500">

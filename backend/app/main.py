@@ -13,7 +13,8 @@ from app.config import settings
 from app.db.database import init_db
 from app.routers import (
     journeys, progress, sandbox, sessions, alerts, ai, copilot, legal,
-    stamp_duty, notifications, officer, auth, preflight, connectors, mdm, audit
+    stamp_duty, notifications, officer, auth, preflight, connectors, mdm, audit,
+    indea_harmonizer, sso, events, admin_workflow, sla
 )
 from app.engine.dependency_graph import DependencyResolutionError
 
@@ -49,6 +50,11 @@ app.include_router(copilot.router, prefix="/api")
 app.include_router(preflight.router, prefix="/api")
 app.include_router(connectors.router, prefix="/api")
 app.include_router(mdm.router, prefix="/api")
+app.include_router(indea_harmonizer.router, prefix="/api")
+app.include_router(sso.router, prefix="/api")
+app.include_router(events.router, prefix="/api")
+app.include_router(admin_workflow.router, prefix="/api")
+app.include_router(sla.router, prefix="/api")
 app.include_router(audit.router, prefix="/api")
 app.include_router(legal.router)
 app.include_router(stamp_duty.router)
@@ -67,6 +73,11 @@ app.include_router(copilot.router, prefix=settings.API_V1_STR)
 app.include_router(preflight.router, prefix=settings.API_V1_STR)
 app.include_router(connectors.router, prefix=settings.API_V1_STR)
 app.include_router(mdm.router, prefix=settings.API_V1_STR)
+app.include_router(indea_harmonizer.router, prefix=settings.API_V1_STR)
+app.include_router(sso.router, prefix=settings.API_V1_STR)
+app.include_router(events.router, prefix=settings.API_V1_STR)
+app.include_router(admin_workflow.router, prefix=settings.API_V1_STR)
+app.include_router(sla.router, prefix=settings.API_V1_STR)
 app.include_router(audit.router, prefix=settings.API_V1_STR)
 app.include_router(legal.router, prefix=settings.API_V1_STR)
 app.include_router(stamp_duty.router, prefix=settings.API_V1_STR)
