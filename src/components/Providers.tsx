@@ -3,6 +3,7 @@
 import React from "react";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { JourneyProvider } from "@/context/JourneyContext";
 import { InstructionDrawer } from "@/components/InstructionDrawer";
 import { DigiLockerModal } from "@/components/DigiLockerModal";
@@ -15,15 +16,17 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({ children })
   return (
     <ThemeProvider>
       <ToastProvider>
-        <JourneyProvider>
-          {children}
-          <InstructionDrawer />
-          <DigiLockerModal />
-          <DPDPConsentModal />
-          <LanguageWelcomeModal />
-          <FloatingDemoController />
-          <VoiceCopilotFloatingBar />
-        </JourneyProvider>
+        <AuthProvider>
+          <JourneyProvider>
+            {children}
+            <InstructionDrawer />
+            <DigiLockerModal />
+            <DPDPConsentModal />
+            <LanguageWelcomeModal />
+            <FloatingDemoController />
+            <VoiceCopilotFloatingBar />
+          </JourneyProvider>
+        </AuthProvider>
       </ToastProvider>
     </ThemeProvider>
   );

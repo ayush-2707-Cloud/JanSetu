@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useJourney } from "@/context/JourneyContext";
 import { useTheme, Theme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 import { Language } from "@/types/journey";
 import { translations } from "@/data/translations";
 import { MunicipalComparisonModal } from "@/components/MunicipalComparisonModal";
@@ -45,6 +46,7 @@ const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
 export const GovTechHeader: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const {
     language,
     setLanguage,
@@ -224,46 +226,13 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Top-Level Role Toggle Switcher: [ Citizen View ] | [ Department Officer View ] */}
-        <div className="flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner text-xs">
-          {/* Citizen View Tab */}
-          <Link
-            href="/"
-            onClick={() => {
-              if (pathname === "/officer") {
-                navigateToHome();
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl font-extrabold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
-              pathname !== "/officer"
-                ? "bg-blue-600 text-white shadow-md"
-                : "text-slate-400 hover:text-slate-200"
-            }`}
-            title="Switch to Citizen Journey & Roadmap Portal"
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Citizen View</span>
-          </Link>
-
-          {/* Department Officer View Tab */}
-          <Link
-            href="/officer"
-            className={`px-3 py-1.5 rounded-xl font-extrabold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
-              pathname === "/officer"
-                ? "bg-blue-600 text-white shadow-md"
-                : "text-slate-400 hover:text-slate-200"
-            }`}
-            title="Switch to Department Officer Back-Office Scrutiny Dashboard"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
-            <span>Department Officer View</span>
-          </Link>
-
+        {/* Center Quick Tools: Municipal Comparison Trigger */}
+        <div className="flex items-center gap-2">
           {/* Municipal Comparison Modal Trigger */}
           <button
             type="button"
             onClick={() => setIsMunicipalModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer ml-1"
+            className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/90 border border-slate-800 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
             title="Compare municipal compliance rules (BBMP vs BMC vs MCD)"
           >
             <Building2 className="w-3.5 h-3.5 text-indigo-400" />
@@ -271,7 +240,7 @@ export const GovTechHeader: React.FC = () => {
           </button>
         </div>
 
-        {/* Action Controls & Active Profile Avatar */}
+        {/* Action Controls & Authenticated User Identity */}
         <div className="flex items-center gap-3">
           
           {activeScreen === "ROADMAP" && (
@@ -303,18 +272,57 @@ export const GovTechHeader: React.FC = () => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full" />
           </div>
 
-          {/* Active Citizen Profile Avatar */}
-          <div className="flex items-center gap-2.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-emerald-500 text-white font-black text-xs flex items-center gap-0.5 justify-center shadow-md">
-              <span>AK</span>
+          {/* Authenticated User Session / Logout Control */}
+          {user ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+                <div className={`w-7 h-7 rounded-full text-white font-black text-[11px] flex items-center justify-center shadow-md ${
+                  user.role === "OFFICER_ROLE" || user.role === "ADMIN_ROLE"
+                    ? "bg-gradient-to-tr from-indigo-600 to-purple-600"
+                    : "bg-gradient-to-tr from-blue-600 to-emerald-500"
+                }`}>
+                  <span>{user.full_name.substring(0, 2).toUpperCase()}</span>
+                </div>
+                <div className="hidden sm:block text-left">
+                  <span className="font-semibold block text-slate-200 leading-none truncate max-w-[120px]">
+                    {user.full_name}
+                  </span>
+                  <span className={`text-[10px] flex items-center gap-1 ${
+                    user.role === "OFFICER_ROLE" || user.role === "ADMIN_ROLE"
+                      ? "text-indigo-400"
+                      : "text-emerald-400"
+                  }`}>
+                    {user.role === "OFFICER_ROLE" || user.role === "ADMIN_ROLE" ? (
+                      <>
+                        <ShieldCheck className="w-2.5 h-2.5 inline" /> Official / Admin
+                      </>
+                    ) : (
+                      <>
+                        <UserCheck className="w-2.5 h-2.5 inline" /> Citizen Verified
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Logout Button */}
+              <button
+                type="button"
+                onClick={logout}
+                className="px-2.5 py-1.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-red-950/80 text-slate-400 hover:text-red-300 border border-slate-800 hover:border-red-800 transition-colors cursor-pointer"
+                title="Secure Sign Out"
+              >
+                Sign Out
+              </button>
             </div>
-            <div className="hidden sm:block">
-              <span className="font-semibold block text-slate-200 leading-none">Anand Kumar</span>
-              <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-                <UserCheck className="w-2.5 h-2.5 inline" /> DigiLocker Verified
-              </span>
-            </div>
-          </div>
+          ) : (
+            <Link
+              href="/login"
+              className="px-3.5 py-1.5 rounded-xl font-extrabold text-xs bg-blue-600 hover:bg-blue-500 text-white shadow-md transition-all cursor-pointer no-underline"
+            >
+              Sign In / Portal
+            </Link>
+          )}
 
         </div>
 

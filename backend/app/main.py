@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.db.database import init_db
-from app.routers import journeys, progress, sandbox, sessions, alerts, ai, copilot, legal, stamp_duty, notifications, officer
+from app.routers import journeys, progress, sandbox, sessions, alerts, ai, copilot, legal, stamp_duty, notifications, officer, auth
 from app.engine.dependency_graph import DependencyResolutionError
 
 # Initialize database tables on application startup
@@ -35,6 +35,7 @@ app.add_middleware(
 )
 
 # Include API Routers (supporting both track default routes and /api/v1/ prefix)
+app.include_router(auth.router)
 app.include_router(journeys.router)
 app.include_router(progress.router)
 app.include_router(sandbox.router)
@@ -48,6 +49,7 @@ app.include_router(notifications.router)
 app.include_router(officer.router)
 
 # Also expose under versioned /api/v1 prefix
+app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(journeys.router, prefix=settings.API_V1_STR)
 app.include_router(progress.router, prefix=settings.API_V1_STR)
 app.include_router(sandbox.router, prefix=settings.API_V1_STR)

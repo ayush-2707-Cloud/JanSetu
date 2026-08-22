@@ -1177,6 +1177,124 @@ export const officerService = {
   },
 };
 
+// ── Unified Authentication API Service ──
+
+import type {
+  LoginCredentials,
+  LoginResponse as AuthLoginResponse,
+  RegisterPayload,
+  ForgotPasswordPayload,
+  ForgotPasswordResponse,
+  UserProfile,
+} from "@/types/auth";
+
+export const authService = {
+  /**
+   * Authenticate Citizen or Department Officer.
+   */
+  login: async (credentials: LoginCredentials): Promise<AuthLoginResponse> => {
+    const live = await safeFetch<AuthLoginResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
+    if (live) return live;
+
+    // Fallback authentication mock
+    const isOfficer = credentials.portal_type === "OFFICER";
+    const userRole = isOfficer ? "OFFICER_ROLE" : "CITIZEN_ROLE";
+
+    const user: UserProfile = isOfficer
+      ? {
+          user_id: credentials.identifier || "OFFICER-KA-9942",
+          username: credentials.identifier || "OFFICER-KA-9942",
+          full_name: "Shri S. Ranganathan",
+          email: "ranganathan.s@msme.gov.in",
+          phone: "+91 98450 11223",
+          role: "OFFICER_ROLE",
+          department: "MSME",
+          designation: "Assistant Commissioner / Nodal Scrutiny Officer",
+          aadhaar_masked: "XXXX-XXXX-1102",
+          pan_masked: "GOVTK****Z",
+          is_digilocker_verified: true,
+          created_at: "2025-08-01T09:00:00Z",
+        }
+      : {
+          user_id: "CITIZEN-KA-10029",
+          username: credentials.identifier || "anand_kumar",
+          full_name: "Anand Kumar",
+          email: "anand.kumar@citizen.gov.in",
+          phone: "+91 98765 43210",
+          role: "CITIZEN_ROLE",
+          designation: "Individual Citizen / Proprietor",
+          aadhaar_masked: "XXXX-XXXX-4912",
+          pan_masked: "ABCPS****K",
+          is_digilocker_verified: true,
+          created_at: "2026-01-15T10:00:00Z",
+        };
+
+    return {
+      success: true,
+      message: `Welcome, ${user.full_name}! Authentication successful.`,
+      access_token: `JWT-${userRole}-${Math.random().toString(36).substring(2, 10)}`,
+      token_type: "Bearer",
+      user,
+      redirect_url: isOfficer ? "/officer" : "/",
+    };
+  },
+
+  /**
+   * Register a new Citizen account with DigiLocker profile.
+   */
+  register: async (payload: RegisterPayload): Promise<AuthLoginResponse> => {
+    const live = await safeFetch<AuthLoginResponse>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (live) return live;
+
+    const user: UserProfile = {
+      user_id: `CITIZEN-${(payload.state || "KA").substring(0, 2).toUpperCase()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+      username: payload.username,
+      full_name: payload.full_name,
+      email: payload.email,
+      phone: payload.phone,
+      role: "CITIZEN_ROLE",
+      designation: "Registered Citizen",
+      aadhaar_masked: payload.aadhaar_number ? `XXXX-XXXX-${payload.aadhaar_number.slice(-4)}` : "XXXX-XXXX-9901",
+      pan_masked: "N/A",
+      is_digilocker_verified: true,
+      created_at: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      message: `Account created successfully for ${user.full_name}!`,
+      access_token: `JWT-CITIZEN_ROLE-${Math.random().toString(36).substring(2, 10)}`,
+      token_type: "Bearer",
+      user,
+      redirect_url: "/",
+    };
+  },
+
+  /**
+   * Simulated OTP recovery for forgotten password or username.
+   */
+  forgotPassword: async (payload: ForgotPasswordPayload): Promise<ForgotPasswordResponse> => {
+    const live = await safeFetch<ForgotPasswordResponse>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (live) return live;
+
+    return {
+      success: true,
+      message: `Password reset verification OTP has been dispatched to your registered address.`,
+      masked_target: payload.identifier.includes("@") ? payload.identifier : "***@citizen.gov.in",
+      otp_reference_id: `OTP-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+    };
+  },
+};
+
 
 
 
