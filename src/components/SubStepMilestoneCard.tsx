@@ -40,7 +40,7 @@ interface SubStepMilestoneCardProps {
   onOpenDigiLocker?: (stepId: string) => void;
 }
 
-export const SubStepMilestoneCard: React.FC<SubStepMilestoneCardProps> = ({
+const SubStepMilestoneCardComponent: React.FC<SubStepMilestoneCardProps> = ({
   step,
   journeyId,
   isExpandedDefault = false,
@@ -600,13 +600,17 @@ For: {{enterpriseName}}`,
         )}
       </div>
 
-      {/* Embedded Legal Draft Generation Modal */}
-      <LegalDraftModal
-        isOpen={isDraftModalOpen}
-        onClose={() => setIsDraftModalOpen(false)}
-        template={activeDraftTemplate}
-        onTriggerDigiLockerSign={(docTitle) => (onOpenDigiLocker ? onOpenDigiLocker(step.id) : openDigiLockerModal(step.id))}
-      />
+      {/* Embedded Legal Draft Generation Modal - Lazy Mounted */}
+      {isDraftModalOpen && (
+        <LegalDraftModal
+          isOpen={isDraftModalOpen}
+          onClose={() => setIsDraftModalOpen(false)}
+          template={activeDraftTemplate}
+          onTriggerDigiLockerSign={(docTitle) => (onOpenDigiLocker ? onOpenDigiLocker(step.id) : openDigiLockerModal(step.id))}
+        />
+      )}
     </>
   );
 };
+
+export const SubStepMilestoneCard = React.memo(SubStepMilestoneCardComponent);

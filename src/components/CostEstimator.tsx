@@ -13,7 +13,7 @@ interface CostEstimatorProps {
  * Accumulated cost breakdown for a journey.
  * Shows government fees, professional charges, and total estimated range.
  */
-export const CostEstimator: React.FC<CostEstimatorProps> = ({
+const CostEstimatorComponent: React.FC<CostEstimatorProps> = ({
   journey,
   language,
 }) => {
@@ -126,3 +126,5 @@ export const CostEstimator: React.FC<CostEstimatorProps> = ({
     </div>
   );
 };
+
+export const CostEstimator = React.memo(CostEstimatorComponent);

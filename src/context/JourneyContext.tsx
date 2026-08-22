@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
+import React, { createContext, useContext, useState, useMemo, useEffect, useCallback } from "react";
 import { UniversalJourney, StepStatus, Language } from "@/types/journey";
 import { mockJourneys } from "@/data/mockJourneys";
 import { CopilotAction, journeyService } from "@/services/api";
@@ -244,23 +244,23 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [isInitialized, activeScreen, activeJourneyId, journeysData, selectedStepId, isDrawerOpen]);
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     try {
       localStorage.setItem(STORAGE_KEYS.LANG, lang);
     } catch {
       // Ignore
     }
-  };
+  }, []);
 
-  const openLanguageModal = () => setIsLanguageModalOpen(true);
-  const closeLanguageModal = () => setIsLanguageModalOpen(false);
+  const openLanguageModal = useCallback(() => setIsLanguageModalOpen(true), []);
+  const closeLanguageModal = useCallback(() => setIsLanguageModalOpen(false), []);
 
   const activeJourney = useMemo(() => {
     return journeysData.find((j) => j.journeyId === activeJourneyId) || journeysData[0];
   }, [journeysData, activeJourneyId]);
 
-  const selectJourneyById = (id: string) => {
+  const selectJourneyById = useCallback((id: string) => {
     const targetId = JOURNEY_ID_ALIASES[id] || id;
     setActiveJourneyId(targetId);
     setActiveScreenState("ROADMAP");
@@ -290,21 +290,21 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } catch {
       // Ignore
     }
-  };
+  }, [journeysData]);
 
-  const setSelectedCategoryId = (catId: string) => {
+  const setSelectedCategoryId = useCallback((catId: string) => {
     setSelectedCategoryIdState(catId);
-  };
+  }, []);
 
-  const setSelectedSubcategoryId = (subcatId: string) => {
+  const setSelectedSubcategoryId = useCallback((subcatId: string) => {
     setSelectedSubcategoryIdState(subcatId);
-  };
+  }, []);
 
-  const setActiveScreen = (screen: "LANDING" | "ROADMAP") => {
+  const setActiveScreen = useCallback((screen: "LANDING" | "ROADMAP") => {
     setActiveScreenState(screen);
-  };
+  }, []);
 
-  const navigateToHome = () => {
+  const navigateToHome = useCallback(() => {
     setActiveScreenState("LANDING");
     setSearchQuery("");
     setSelectedCategoryIdState("ALL");
@@ -333,9 +333,9 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         // Ignore
       }
     }
-  };
+  }, []);
 
-  const openStepDrawer = (stepId: string) => {
+  const openStepDrawer = useCallback((stepId: string) => {
     const targetStepId = STEP_ID_ALIASES[stepId] || stepId;
     const exists = activeJourney.steps.some((s) => s.id === targetStepId);
     if (!exists) {
@@ -352,13 +352,20 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
     setSelectedStepId(targetStepId);
     setIsDrawerOpen(true);
-  };
+  }, [activeJourney.steps]);
 
-  const closeStepDrawer = () => {
+  const closeStepDrawer = useCallback(() => {
     setIsDrawerOpen(false);
-  };
+  }, []);
 
-  const openDigiLockerModal = (stepId: string) => {
+  const triggerConsentFlow = useCallback((docType: string, purpose: string, onGranted: () => void) => {
+    setConsentDocType(docType);
+    setConsentPurpose(purpose);
+    setPendingConsentCallback(() => onGranted);
+    setIsConsentModalOpen(true);
+  }, []);
+
+  const openDigiLockerModal = useCallback((stepId: string) => {
     const step = activeJourney.steps.find((s) => s.id === stepId);
     const docType = step?.instructions.digiLockerDocType || "Govt Certificate";
     const purpose = `Statutory identity & eligibility verification for ${step?.title || "Step"}`;
@@ -367,34 +374,27 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setDigiLockerStepId(stepId);
       setIsDigiLockerModalOpen(true);
     });
-  };
+  }, [activeJourney.steps, triggerConsentFlow]);
 
-  const closeDigiLockerModal = () => {
+  const closeDigiLockerModal = useCallback(() => {
     setIsDigiLockerModalOpen(false);
     setDigiLockerStepId(null);
-  };
+  }, []);
 
-  const triggerConsentFlow = (docType: string, purpose: string, onGranted: () => void) => {
-    setConsentDocType(docType);
-    setConsentPurpose(purpose);
-    setPendingConsentCallback(() => onGranted);
-    setIsConsentModalOpen(true);
-  };
-
-  const grantConsent = () => {
+  const grantConsent = useCallback(() => {
     setIsConsentModalOpen(false);
     if (pendingConsentCallback) {
       pendingConsentCallback();
       setPendingConsentCallback(null);
     }
-  };
+  }, [pendingConsentCallback]);
 
-  const cancelConsent = () => {
+  const cancelConsent = useCallback(() => {
     setIsConsentModalOpen(false);
     setPendingConsentCallback(null);
-  };
+  }, []);
 
-  const toggleStepStatus = (stepId: string, newStatus: StepStatus) => {
+  const toggleStepStatus = useCallback((stepId: string, newStatus: StepStatus) => {
     setJourneysData((prevJourneys) =>
       prevJourneys.map((j) => {
         if (j.journeyId !== activeJourneyId) return j;
@@ -469,10 +469,10 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         };
       })
     );
-  };
+  }, [activeJourneyId]);
 
   // Automatically completes current IN_PROGRESS step and unlocks next LOCKED step
-  const completeActiveStepAndUnlockNext = () => {
+  const completeActiveStepAndUnlockNext = useCallback(() => {
     setJourneysData((prevJourneys) =>
       prevJourneys.map((j) => {
         if (j.journeyId !== activeJourneyId) return j;
@@ -519,9 +519,9 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         };
       })
     );
-  };
+  }, [activeJourneyId]);
 
-  const completeSubStep = (stepId: string, substepId: string) => {
+  const completeSubStep = useCallback((stepId: string, substepId: string) => {
     setJourneysData((prevJourneys) =>
       prevJourneys.map((j) => {
         if (j.journeyId !== activeJourneyId) return j;
@@ -583,15 +583,15 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // Call backend in non-blocking background
     journeyService.completeStep(activeJourneyId, stepId);
-  };
+  }, [activeJourneyId]);
 
-  const completeDigiLockerVerification = (stepId: string) => {
+  const completeDigiLockerVerification = useCallback((stepId: string) => {
     toggleStepStatus(stepId, "COMPLETED");
     closeDigiLockerModal();
     openStepDrawer(stepId);
-  };
+  }, [toggleStepStatus, closeDigiLockerModal, openStepDrawer]);
 
-  const resetJourney = () => {
+  const resetJourney = useCallback(() => {
     setJourneysData(mockJourneys);
     setFilterStatus("ALL");
     setSelectedStepId(null);
@@ -609,7 +609,7 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } catch {
       // Ignore
     }
-  };
+  }, []);
 
   // Generative UI Action Dispatcher: Intercepts AI tool calls and animates the UI automatically
   const executeCopilotAction = async (action: CopilotAction) => {

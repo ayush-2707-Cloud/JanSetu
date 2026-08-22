@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { 
   Check, 
   Lock, 
@@ -53,7 +53,7 @@ import { JourneyGanttChart } from "@/components/JourneyGanttChart";
 import { RoadmapExportModal } from "@/components/RoadmapExportModal";
 import { OfflineVaultModal } from "@/components/OfflineVaultModal";
 import { CoApplicantCollaborationModal } from "@/components/CoApplicantCollaborationModal";
-import { EnhancedJourney, EnhancedJourneyStep } from "@/types/journey";
+import { EnhancedJourney, EnhancedJourneyStep, JourneyStep } from "@/types/journey";
 
 export const MilestoneRoadmap: React.FC = () => {
   const router = useRouter();
@@ -142,13 +142,16 @@ export const MilestoneRoadmap: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeJourney, selectedStepId, isDrawerOpen, openStepDrawer]);
 
-  // Scroll listener for back-to-top FAB
+  // Scroll listener for back-to-top FAB (throttled with rAF)
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (window.scrollY > 250) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowBackToTop(window.scrollY > 250);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -166,10 +169,12 @@ export const MilestoneRoadmap: React.FC = () => {
     }
   }, []);
 
-  const steps = activeJourney.steps.filter((step) => {
-    if (filterStatus === "ALL") return true;
-    return step.status === filterStatus;
-  });
+  const steps: JourneyStep[] = useMemo(() => {
+    return activeJourney.steps.filter((step: JourneyStep) => {
+      if (filterStatus === "ALL") return true;
+      return step.status === filterStatus;
+    });
+  }, [activeJourney.steps, filterStatus]);
 
   const totalSteps = activeJourney.steps.length;
   const enhancedJourney = activeJourney as EnhancedJourney;
@@ -835,53 +840,67 @@ export const MilestoneRoadmap: React.FC = () => {
         </button>
       </div>
 
-      {/* Proactive License Expiry & Renewal Calendar Modal */}
-      <LicenseRenewalCalendarModal
-        isOpen={isRenewalModalOpen}
-        onClose={() => setIsRenewalModalOpen(false)}
-        journey={activeJourney}
-      />
+      {/* Proactive License Expiry & Renewal Calendar Modal - Lazy Mounted */}
+      {isRenewalModalOpen && (
+        <LicenseRenewalCalendarModal
+          isOpen={isRenewalModalOpen}
+          onClose={() => setIsRenewalModalOpen(false)}
+          journey={activeJourney}
+        />
+      )}
 
-      {/* State e-Stamp Duty Calculator Modal */}
-      <StampDutyCalculatorModal
-        isOpen={isStampModalOpen}
-        onClose={() => setIsStampModalOpen(false)}
-      />
+      {/* State e-Stamp Duty Calculator Modal - Lazy Mounted */}
+      {isStampModalOpen && (
+        <StampDutyCalculatorModal
+          isOpen={isStampModalOpen}
+          onClose={() => setIsStampModalOpen(false)}
+        />
+      )}
 
-      {/* SMS & WhatsApp Status Notification Dispatch Sandbox */}
-      <SMSWhatsAppDispatchModal
-        isOpen={isSMSModalOpen}
-        onClose={() => setIsSMSModalOpen(false)}
-        journeyTitle={activeJourney.title}
-        stepTitle={currentActiveStep.title}
-      />
+      {/* SMS & WhatsApp Status Notification Dispatch Sandbox - Lazy Mounted */}
+      {isSMSModalOpen && (
+        <SMSWhatsAppDispatchModal
+          isOpen={isSMSModalOpen}
+          onClose={() => setIsSMSModalOpen(false)}
+          journeyTitle={activeJourney.title}
+          stepTitle={currentActiveStep.title}
+        />
+      )}
 
-      {/* Geo-Located Nodal Officer & CSC Center Finder Modal */}
-      <NodalOfficeFinder
-        isOpen={isNodalModalOpen}
-        onClose={() => setIsNodalModalOpen(false)}
-      />
+      {/* Geo-Located Nodal Officer & CSC Center Finder Modal - Lazy Mounted */}
+      {isNodalModalOpen && (
+        <NodalOfficeFinder
+          isOpen={isNodalModalOpen}
+          onClose={() => setIsNodalModalOpen(false)}
+        />
+      )}
 
-      {/* Export Statutory Citizen Dossier Modal */}
-      <RoadmapExportModal
-        isOpen={isExportModalOpen}
-        onClose={() => setIsExportModalOpen(false)}
-        journey={activeJourney}
-        language={language}
-      />
+      {/* Export Statutory Citizen Dossier Modal - Lazy Mounted */}
+      {isExportModalOpen && (
+        <RoadmapExportModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          journey={activeJourney}
+          language={language}
+        />
+      )}
 
-      {/* Offline Encrypted Document Vault Modal */}
-      <OfflineVaultModal
-        isOpen={isVaultModalOpen}
-        onClose={() => setIsVaultModalOpen(false)}
-      />
+      {/* Offline Encrypted Document Vault Modal - Lazy Mounted */}
+      {isVaultModalOpen && (
+        <OfflineVaultModal
+          isOpen={isVaultModalOpen}
+          onClose={() => setIsVaultModalOpen(false)}
+        />
+      )}
 
-      {/* Multi-Party Co-Applicant Collaboration Modal */}
-      <CoApplicantCollaborationModal
-        isOpen={isCollabModalOpen}
-        onClose={() => setIsCollabModalOpen(false)}
-        journey={activeJourney}
-      />
+      {/* Multi-Party Co-Applicant Collaboration Modal - Lazy Mounted */}
+      {isCollabModalOpen && (
+        <CoApplicantCollaborationModal
+          isOpen={isCollabModalOpen}
+          onClose={() => setIsCollabModalOpen(false)}
+          journey={activeJourney}
+        />
+      )}
 
     </div>
   );

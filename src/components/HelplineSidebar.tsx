@@ -124,7 +124,7 @@ function HelplineTypeIcon({ type }: { type: Helpline["type"] }) {
   }
 }
 
-export const HelplineSidebar: React.FC<HelplineSidebarProps> = ({
+const HelplineSidebarComponent: React.FC<HelplineSidebarProps> = ({
   activeStep,
   domainId,
   helplineIds,
@@ -478,3 +478,5 @@ const HelplineGridCard: React.FC<HelplineGridCardProps> = ({
     </div>
   );
 };
+
+export const HelplineSidebar = React.memo(HelplineSidebarComponent);

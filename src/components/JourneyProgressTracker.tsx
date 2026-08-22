@@ -67,7 +67,7 @@ const i18n = {
  * Shows overall percentage, completed / in-progress / remaining stats,
  * estimated time left, and a "Go to current step" button.
  */
-export const JourneyProgressTracker: React.FC<JourneyProgressTrackerProps> = ({
+const JourneyProgressTrackerComponent: React.FC<JourneyProgressTrackerProps> = ({
   journey,
   language,
   compact = false,
@@ -343,3 +343,5 @@ export const JourneyProgressTracker: React.FC<JourneyProgressTrackerProps> = ({
     </div>
   );
 };
+
+export const JourneyProgressTracker = React.memo(JourneyProgressTrackerComponent);
