@@ -247,7 +247,7 @@ export const GovTechHeader: React.FC = () => {
             <button
               onClick={() => {
                 navigateToHome();
-                router.push("/");
+                router.push("/dashboard");
               }}
               className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
             >
