@@ -33,6 +33,11 @@ import {
 } from "lucide-react";
 import { useJourney } from "@/context/JourneyContext";
 import { Language } from "@/types/journey";
+import {
+  LANDING_TRANSLATIONS,
+  TRANSLATED_SERVICES,
+  TRANSLATED_TESTIMONIALS,
+} from "@/data/landingTranslations";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "EN", label: "English", native: "English" },
@@ -48,766 +53,9 @@ const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "OR", label: "Odia", native: "ଓଡ଼ିଆ" },
 ];
 
-// Multilingual Content Dictionary for Landing Page
-const LANDING_TRANSLATIONS: Record<Language, {
-  brandName: string;
-  brandTagline: string;
-  interoperabilityStatus: string;
-  navHowItWorks: string;
-  navServices: string;
-  navImpact: string;
-  navTestimonials: string;
-  officerPortalBtn: string;
-  launchCopilotBtn: string;
-  sihBadge: string;
-  heroHeadlineMain: string;
-  heroHeadlineHighlight: string;
-  heroHeadlineEnd: string;
-  heroSubtitle: string;
-  primaryCta: string;
-  signInBtn: string;
-  trackPlaceholder: string;
-  trackButton: string;
-  trackSearching: string;
-  mockupHeader: string;
-  mockupStep1Title: string;
-  mockupStep1Dept: string;
-  mockupStep1Badge: string;
-  mockupStep2Title: string;
-  mockupStep2Dept: string;
-  mockupStep2Badge: string;
-  mockupStep3Title: string;
-  mockupStep3Dept: string;
-  mockupStep3Badge: string;
-  mockupEngineStatus: string;
-  mockupNoDeadlock: string;
-  impactTag: string;
-  impactTitle: string;
-  impactSubtitle: string;
-  stat1Value: string;
-  stat1Label: string;
-  stat1Sub: string;
-  stat2Value: string;
-  stat2Label: string;
-  stat2Sub: string;
-  stat3Value: string;
-  stat3Label: string;
-  stat3Sub: string;
-  stat4Value: string;
-  stat4Label: string;
-  stat4Sub: string;
-  howItWorksTag: string;
-  howItWorksTitle: string;
-  howItWorksSubtitle: string;
-  step1Title: string;
-  step1Desc: string;
-  step1Tag: string;
-  step2Title: string;
-  step2Desc: string;
-  step2Tag: string;
-  step3Title: string;
-  step3Desc: string;
-  step3Tag: string;
-  servicesTag: string;
-  servicesTitle: string;
-  servicesSubtitle: string;
-  viewAllJourneys: string;
-  testimonialsTag: string;
-  testimonialsTitle: string;
-  testimonialsSubtitle: string;
-  ctaBannerTitle: string;
-  ctaBannerDesc: string;
-  ctaBannerBtn: string;
-  footerTagline: string;
-  footerGovNotice: string;
-}> = {
-  EN: {
-    brandName: "SetuJourney AI",
-    brandTagline: "National Middleware for Statutory Approvals",
-    interoperabilityStatus: "Live Interoperability Active",
-    navHowItWorks: "How It Works",
-    navServices: "Services",
-    navImpact: "Impact",
-    navTestimonials: "Testimonials",
-    officerPortalBtn: "Officer Portal",
-    launchCopilotBtn: "Launch Copilot",
-    sihBadge: "SIH 2026 • Government of Maharashtra • PS ID: SIH26129",
-    heroHeadlineMain: "One Platform.",
-    heroHeadlineHighlight: "Every Government Approval.",
-    heroHeadlineEnd: "Zero Bureaucracy.",
-    heroSubtitle: "The intelligent middleware layer that connects fragmented state and central portals. Say what you want to achieve, and let our AI engine orchestrate the entire legal and approval roadmap.",
-    primaryCta: "Start Citizen Journey Roadmap",
-    signInBtn: "Sign In / Register",
-    trackPlaceholder: "Track application by UTID (e.g. APP-2026-MSME-0841)",
-    trackButton: "Track Status",
-    trackSearching: "Searching...",
-    mockupHeader: "Live Roadmap Orchestrator",
-    mockupStep1Title: "Step 1: Income Tax & PAN Match",
-    mockupStep1Dept: "UIDAI / Income Tax Dept",
-    mockupStep1Badge: "DigiLocker Verified",
-    mockupStep2Title: "Step 2: MSME Classification",
-    mockupStep2Dept: "Ministry of MSME • Nodal Scrutiny",
-    mockupStep2Badge: "Officer Scrutiny Active",
-    mockupStep3Title: "Step 3: FSSAI License Sanction",
-    mockupStep3Dept: "Food Safety Authority (FSSAI)",
-    mockupStep3Badge: "Prerequisites Ready",
-    mockupEngineStatus: "Deterministic Engine Status",
-    mockupNoDeadlock: "Zero Circular Deadlocks",
-    impactTag: "Measurable Public Value Delivery",
-    impactTitle: "Transforming Citizen-to-Government Engagement",
-    impactSubtitle: "Live quantitative performance metrics across connected state and central ministries.",
-    stat1Value: "18,500+",
-    stat1Label: "Applications Orchestrated",
-    stat1Sub: "Cross-departmental citizen journeys completed",
-    stat2Value: "72%",
-    stat2Label: "Reduction in Processing Delays",
-    stat2Sub: "Deterministic prerequisite validation",
-    stat3Value: "14+",
-    stat3Label: "State & Central Portals Connected",
-    stat3Sub: "DigiLocker, API Setu, FSSAI, MSME & Revenue",
-    stat4Value: "100%",
-    stat4Label: "DPDP 2025 Privacy Compliant",
-    stat4Sub: "Zero non-consensual data retention",
-    howItWorksTag: "Architecture Workflow",
-    howItWorksTitle: "How SetuJourney AI Orchestrates Approvals",
-    howItWorksSubtitle: "Three-step frictionless pipeline turning natural intent into statutory compliance.",
-    step1Title: "Natural Voice / Text Intent",
-    step1Desc: "Describe your real-life goal in natural English, Hindi, or Kannada. Our GovTech Copilot parses statutory dependencies into actionable steps.",
-    step1Tag: "Multilingual GenAI",
-    step2Title: "Deterministic Dependency Resolution",
-    step2Desc: "Our statutory knowledge graph sequences all inter-department prerequisites, eliminating endless portal hopping and repeated document re-uploads.",
-    step2Tag: "DAG Engine",
-    step3Title: "Consent-Backed Execution & UTID Tracking",
-    step3Desc: "Fetch digitally signed credentials through DigiLocker with DPDP 2025 consent, generating a Universal Tracking Identifier (UTID) for live tracking.",
-    step3Tag: "API Setu & DigiLocker",
-    servicesTag: "Full Statutory Coverage",
-    servicesTitle: "Pre-Engineered Citizen Journeys",
-    servicesSubtitle: "Out-of-the-box workflows for life events, business incorporation, municipal permissions, and educational grants.",
-    viewAllJourneys: "View All 14+ Journeys",
-    testimonialsTag: "Citizen & Operator Feedback",
-    testimonialsTitle: "Trusted by Citizens, VLEs & Business Owners",
-    testimonialsSubtitle: "Real-world stories from citizens accelerating clearances and avoiding bureaucratic hurdles.",
-    ctaBannerTitle: "Ready to Accelerate Your Government Approvals?",
-    ctaBannerDesc: "Launch the citizen copilot to discover step-by-step statutory roadmaps, draft legal templates, and verify DigiLocker documents in minutes.",
-    ctaBannerBtn: "Launch Dashboard & Copilot",
-    footerTagline: "Universal Citizen Middleware for cross-departmental clearances, deterministic legal dependencies, and automated officer scrutiny.",
-    footerGovNotice: "© 2026 SetuJourney AI / JanSetu™. Powered by Next.js 14 App Router & FastAPI.",
-  },
-  HI: {
-    brandName: "सेतुजर्नी AI (जनसेतु)",
-    brandTagline: "वैधानिक अनुमोदनों के लिए राष्ट्रीय मध्यवर्ती प्रणाली",
-    interoperabilityStatus: "लाइव इंटरऑपरेबिलिटी सक्रिय",
-    navHowItWorks: "यह कैसे काम करता है",
-    navServices: "सेवाएं",
-    navImpact: "प्रभाव और आंकड़े",
-    navTestimonials: "प्रशंसापत्र",
-    officerPortalBtn: "अधिकारी पोर्टल",
-    launchCopilotBtn: "को-पायलट शुरू करें",
-    sihBadge: "SIH 2026 • महाराष्ट्र शासन • PS ID: SIH26129",
-    heroHeadlineMain: "एक ही मंच।",
-    heroHeadlineHighlight: "हर सरकारी अनुमोदन।",
-    heroHeadlineEnd: "शून्य नौकरशाही।",
-    heroSubtitle: "एक बुद्धिमान मिडलवेयर जो सभी अलग-अलग राज्य और केंद्रीय पोर्टलों को जोड़ता है। अपना लक्ष्य बताएं और हमारा AI इंजन पूरे कानूनी और अनुमोदन रोडमैप को तैयार करेगा।",
-    primaryCta: "नागरिक यात्रा रोडमैप शुरू करें",
-    signInBtn: "लॉगिन / पंजीकरण",
-    trackPlaceholder: "UTID द्वारा आवेदन ट्रैक करें (उदा. APP-2026-MSME-0841)",
-    trackButton: "स्थिति देखें",
-    trackSearching: "खोज रहे हैं...",
-    mockupHeader: "लाइव रोडमैप ऑर्केस्ट्रेटर",
-    mockupStep1Title: "चरण 1: आयकर और पैन सत्यापन",
-    mockupStep1Dept: "UIDAI / आयकर विभाग",
-    mockupStep1Badge: "डिजिलॉकर सत्यापित",
-    mockupStep2Title: "चरण 2: MSME वर्गीकरण",
-    mockupStep2Dept: "MSME मंत्रालय • नोडल जांच",
-    mockupStep2Badge: "अधिकारी जांच सक्रिय",
-    mockupStep3Title: "चरण 3: FSSAI लाइसेंस स्वीकृति",
-    mockupStep3Dept: "खाद्य सुरक्षा प्राधिकरण (FSSAI)",
-    mockupStep3Badge: "आवश्यकताएं तैयार",
-    mockupEngineStatus: "डिटरमिनिस्टिक इंजन स्थिति",
-    mockupNoDeadlock: "शून्य सर्कुलर गतिरोध",
-    impactTag: "मापने योग्य सार्वजनिक मूल्य",
-    impactTitle: "नागरिक और सरकार के जुड़ाव में क्रांति",
-    impactSubtitle: "जुड़े हुए राज्य और केंद्रीय मंत्रालयों के वास्तविक प्रदर्शन मेट्रिक्स।",
-    stat1Value: "18,500+",
-    stat1Label: "आवेदन सफलतापूर्वक पूरे",
-    stat1Sub: "अंतर-विभागीय नागरिक यात्राएं संपन्न",
-    stat2Value: "72%",
-    stat2Label: "प्रक्रिया में लगने वाले समय में कमी",
-    stat2Sub: "सटीक पूर्व-शर्त सत्यापन",
-    stat3Value: "14+",
-    stat3Label: "राज्य एवं केंद्रीय पोर्टल जुड़े",
-    stat3Sub: "डिजिलॉकर, API सेतु, FSSAI, MSME और राजस्व",
-    stat4Value: "100%",
-    stat4Label: "DPDP 2025 गोपनीयता अनुपालन",
-    stat4Sub: "शून्य अनावश्यक डेटा भंडारण",
-    howItWorksTag: "कार्यप्रणाली",
-    howItWorksTitle: "सेतुजर्नी AI कैसे काम करता है",
-    howItWorksSubtitle: "तीन आसान चरणों में आपकी आवश्यकता को वैधानिक अनुपालन में बदलता है।",
-    step1Title: "प्राकृतिक आवाज / टेक्स्ट से लक्ष्य बताएं",
-    step1Desc: "अंग्रेजी, हिंदी या कन्नड़ में अपना वास्तविक जीवन लक्ष्य बताएं। AI Copilot कानूनी चरणों में विभाजित करता है।",
-    step1Tag: "बहुभाषी GenAI",
-    step2Title: "सटीक निर्भरता समाधान",
-    step2Desc: "हमारा नॉलेज ग्राफ सभी अंतर-विभागीय पूर्व-शर्तों को क्रमबद्ध करता है, जिससे बार-बार पोर्टल बदलने की जरूरत नहीं होती।",
-    step2Tag: "DAG इंजन",
-    step3Title: "सहमति आधारित निष्पादन और UTID ट्रैकिंग",
-    step3Desc: "DPDP 2025 सहमति के साथ डिजिलॉकर से डिजिटल दस्तावेज प्राप्त करें और लाइव UTID से ट्रैक करें।",
-    step3Tag: "API सेतु व डिजिलॉकर",
-    servicesTag: "पूर्ण वैधानिक कवरेज",
-    servicesTitle: "पूर्व-निर्मित नागरिक यात्राएं",
-    servicesSubtitle: "व्यापार, संपत्ति, शिक्षा अनुदान और नगर निगम अनुमतियों के लिए तत्काल रोडमैप।",
-    viewAllJourneys: "सभी 14+ यात्राएं देखें",
-    testimonialsTag: "नागरिक व ऑपरेटर प्रतिक्रिया",
-    testimonialsTitle: "नागरिकों और उद्यमियों का विश्वास",
-    testimonialsSubtitle: "बिचौलियों के बिना त्वरित सरकारी स्वीकृतियां प्राप्त करने वाले नागरिकों की कहानियां।",
-    ctaBannerTitle: "क्या आप अपनी सरकारी स्वीकृतियां तेज करने के लिए तैयार हैं?",
-    ctaBannerDesc: "नागरिक को-पायलट शुरू करें और चरण-दर-चरण वैधानिक रोडमैप प्राप्त करें।",
-    ctaBannerBtn: "डैशबोर्ड और को-पायलट खोलें",
-    footerTagline: "अंतर-विभागीय स्वीकृतियों और स्वचालित अधिकारी जांच के लिए सार्वभौमिक नागरिक मिडलवेयर।",
-    footerGovNotice: "© 2026 सेतुजर्नी AI / जनसेतु™ • Next.js 14 और FastAPI द्वारा संचालित।",
-  },
-  KN: {
-    brandName: "ಸೇತುಜರ್ನಿ AI (ಜನಸೇತು)",
-    brandTagline: "ಶಾಸನಬದ್ಧ ಅನುಮೋದನೆಗಳ ರಾಷ್ಟ್ರೀಯ ಮಿಡಲ್‌ವೇರ್",
-    interoperabilityStatus: "ಲೈವ್ ಇಂಟರ್‌ಆಪರೇಬಿಲಿಟಿ ಸಕ್ರಿಯ",
-    navHowItWorks: "ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ",
-    navServices: "ಸೇವೆಗಳು",
-    navImpact: "ಪ್ರಭಾವ",
-    navTestimonials: "ಅಭಿಪ್ರಾಯಗಳು",
-    officerPortalBtn: "ಅಧಿಕಾರಿ ಪೋರ್ಟಲ್",
-    launchCopilotBtn: "ಕೋ-ಪೈಲಟ್ ಪ್ರಾರಂಭಿಸಿ",
-    sihBadge: "SIH 2026 • ಮಹಾರಾಷ್ಟ್ರ ಸರ್ಕಾರ • PS ID: SIH26129",
-    heroHeadlineMain: "ಒಂದೇ ವೇದಿಕೆ.",
-    heroHeadlineHighlight: "ಪ್ರತಿಯೊಂದು ಸರ್ಕಾರಿ ಅನುಮೋದನೆ.",
-    heroHeadlineEnd: "ಶೂನ್ಯ ಅಧಿಕಾರಶಾಹಿ.",
-    heroSubtitle: "ರಾಜ್ಯ ಮತ್ತು ಕೇಂದ್ರ ಪೋರ್ಟಲ್‌ಗಳನ್ನು ಸಂಪರ್ಕಿಸುವ ಬುದ್ಧಿವಂತ ಮಿಡಲ್‌ವೇರ್. ನಿಮ್ಮ ಗುರಿಯನ್ನು ತಿಳಿಸಿ, ನಮ್ಮ AI ಸಂಪೂರ್ಣ ಮಾರ್ಗಸೂಚಿಯನ್ನು ಸಿದ್ಧಪಡಿಸುತ್ತದೆ.",
-    primaryCta: "ನಾಗರಿಕ ಮಾರ್ಗಸೂಚಿ ಪ್ರಾರಂಭಿಸಿ",
-    signInBtn: "ಲಾಗಿನ್ / ನೋಂದಣಿ",
-    trackPlaceholder: "UTID ಮೂಲಕ ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ (ಉದಾ. APP-2026-MSME-0841)",
-    trackButton: "ಸ್ಥಿತಿ ನೋಡಿ",
-    trackSearching: "ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
-    mockupHeader: "ಲೈವ್ ರೋಡ್‌ಮ್ಯಾಪ್ ಆರ್ಕೆಸ್ಟ್ರೇಟರ್",
-    mockupStep1Title: "ಹಂತ 1: ಆದಾಯ ತೆರಿಗೆ ಮತ್ತು ಪ್ಯಾನ್ ಹೊಂದಾಣಿಕೆ",
-    mockupStep1Dept: "UIDAI / ಆದಾಯ ತೆರಿಗೆ ಇಲಾಖೆ",
-    mockupStep1Badge: "ಡಿಜಿಲಾಕರ್ ಪರಿಶೀಲಿತ",
-    mockupStep2Title: "ಹಂತ 2: MSME ವರ್ಗೀಕರಣ",
-    mockupStep2Dept: "MSME ಸಚಿವಾಲಯ",
-    mockupStep2Badge: "ಅಧಿಕಾರಿ ಪರಿಶೀಲನೆ ಸಕ್ರಿಯ",
-    mockupStep3Title: "ಹಂತ 3: FSSAI ಪರವಾನಗಿ ಮಂಜೂರಾತಿ",
-    mockupStep3Dept: "ಆಹಾರ ಸುರಕ್ಷತಾ ಪ್ರಾಧಿಕಾರ (FSSAI)",
-    mockupStep3Badge: "ಸಿದ್ಧವಾಗಿದೆ",
-    mockupEngineStatus: "ಎಂಜಿನ್ ಸ್ಥಿತಿ",
-    mockupNoDeadlock: "ಶೂನ್ಯ ಅಡೆತಡೆಗಳು",
-    impactTag: "ಸಾರ್ವಜನಿಕ ಮೌಲ್ಯ ವಿತರಣೆ",
-    impactTitle: "ನಾಗರಿಕ-ಸರ್ಕಾರಿ ಸಂಬಂಧದ ಪರಿವರ್ತನೆ",
-    impactSubtitle: "ಸಂಪರ್ಕಿತ ಇಲಾಖೆಗಳಲ್ಲಿನ ನೇರ ಪ್ರಮಾಣಿತ ಕಾರ್ಯಕ್ಷಮತೆ.",
-    stat1Value: "18,500+",
-    stat1Label: "ಪೂರ್ಣಗೊಂಡ ಅರ್ಜಿಗಳು",
-    stat1Sub: "ಯಶಸ್ವಿ ನಾಗರಿಕ ಅನುಮೋದನೆಗಳು",
-    stat2Value: "72%",
-    stat2Label: "ಪ್ರಕ್ರಿಯೆಯ ವಿಳಂಬದಲ್ಲಿ ಇಳಿಕೆ",
-    stat2Sub: "ನಿಖರವಾದ ಹಂತಗಳ ಮೌಲ್ಯಮಾಪನ",
-    stat3Value: "14+",
-    stat3Label: "ಸಂಪರ್ಕಿತ ಸರ್ಕಾರಿ ಪೋರ್ಟಲ್‌ಗಳು",
-    stat3Sub: "ಡಿಜಿಲಾಕರ್, API ಸೇತು, MSME ಮತ್ತು ಕಂದಾಯ",
-    stat4Value: "100%",
-    stat4Label: "DPDP 2025 ಗೌಪ್ಯತೆ ಬದ್ಧತೆ",
-    stat4Sub: "ಶೂನ್ಯ ಅನಗತ್ಯ ಡೇಟಾ ಸಂಗ್ರಹಣೆ",
-    howItWorksTag: "ಕಾರ್ಯವಿಧಾನ",
-    howItWorksTitle: "ಸೇತುಜರ್ನಿ AI ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
-    howItWorksSubtitle: "ಮೂರು ಸುಲಭ ಹಂತಗಳಲ್ಲಿ ಕಾನೂನುಬದ್ಧ ಅನುಮೋದನೆಗಳನ್ನು ಪಡೆಯಿರಿ.",
-    step1Title: "ಧ್ವನಿ ಅಥವಾ ಪಠ್ಯದ ಮೂಲಕ ಗುರಿ ತಿಳಿಸಿ",
-    step1Desc: "ಕನ್ನಡ, ಹಿಂದಿ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಅಗತ್ಯವನ್ನು ವಿವರಿಸಿ.",
-    step1Tag: "ಬಹುಭಾಷಾ AI",
-    step2Title: "ಅಗತ್ಯ ದಾಖಲೆಗಳ ಅನುಕ್ರಮ ನಿರ್ಣಯ",
-    step2Desc: "ಯಾವುದೇ ಪೋರ್ಟಲ್ ಅಲೆದಾಟವಿಲ್ಲದೆ ಹಂತಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.",
-    step2Tag: "DAG ಎಂಜಿನ್",
-    step3Title: "ಡಿಜಿಲಾಕರ್ ದೃಢೀಕರಣ ಮತ್ತು UTID ಟ್ರ್ಯಾಕಿಂಗ್",
-    step3Desc: "ಡಿಜಿಲಾಕರ್ ಮೂಲಕ ಸುರಕ್ಷಿತ ದಾಖಲೆ ಪಡೆದು ಲೈವ್ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.",
-    step3Tag: "API ಸೇತು ಮತ್ತು ಡಿಜಿಲಾಕರ್",
-    servicesTag: "ಸಂಪೂರ್ಣ ವ್ಯಾಪ್ತಿ",
-    servicesTitle: "ಸಿದ್ಧ ನಾಗರಿಕ ಮಾರ್ಗಸೂಚಿಗಳು",
-    servicesSubtitle: "ಉದ್ಯಮ, ಕೃಷಿ ಭೂಮಿ ಪರಿವರ್ತನೆ ಮತ್ತು ಪರವಾನಗಿಗಳಿಗಾಗಿ ತಕ್ಷಣದ ಪರಿಹಾರ.",
-    viewAllJourneys: "ಎಲ್ಲಾ 14+ ಸೇವೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
-    testimonialsTag: "ನಾಗರಿಕರ ಅಭಿಪ್ರಾಯ",
-    testimonialsTitle: "ನಾಗರಿಕರು ಮತ್ತು ವ್ಯಾಪಾರಿಗಳ ವಿಶ್ವಾಸ",
-    testimonialsSubtitle: "ಮಧ್ಯವರ್ತಿಗಳಿಲ್ಲದೆ ತ್ವರಿತ ಅನುಮೋದನೆ ಪಡೆದ ನಾಗರಿಕರ ಅನುಭವಗಳು.",
-    ctaBannerTitle: "ನಿಮ್ಮ ಸರ್ಕಾರಿ ಅನುಮೋದನೆಗಳನ್ನು ವೇಗಗೊಳಿಸಲು ಸಿದ್ಧರಿದ್ದೀರಾ?",
-    ctaBannerDesc: "ನಾಗರಿಕ ಕೋ-ಪೈಲಟ್ ಪ್ರಾರಂಭಿಸಿ ಮತ್ತು ನಿಮಿಷಗಳಲ್ಲಿ ಹಂತ-ಹಂತದ ಮಾರ್ಗಸೂಚಿ ಪಡೆಯಿರಿ.",
-    ctaBannerBtn: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ತೆರೆಯಿರಿ",
-    footerTagline: "ಸರ್ಕಾರಿ ಅನುಮೋದನೆಗಳ ಸುಗಮ ನಿರ್ವಹಣೆಗೆ ಏಕೈಕ ಡಿಜಿಟಲ್ ಸೇತು.",
-    footerGovNotice: "© 2026 ಸೇತುಜರ್ನಿ AI / ಜನಸೇತು™ • Next.js 14 ಮತ್ತು FastAPI ಮೂಲಕ ನಿರ್ಮಿಸಲಾಗಿದೆ.",
-  },
-  MR: {
-    brandName: "सेतू जर्नी AI (जनसेतू)",
-    brandTagline: "शासकीय मंजुरींसाठी राष्ट्रीय डिजिटल मंच",
-    interoperabilityStatus: "थेट आंतर-प्रणाली सक्रिय",
-    navHowItWorks: "कार्यपद्धती",
-    navServices: "सेवा",
-    navImpact: "प्रभाव",
-    navTestimonials: "प्रतिक्रिया",
-    officerPortalBtn: "अधिकारी पोर्टल",
-    launchCopilotBtn: "को-पायलट सुरू करा",
-    sihBadge: "SIH 2026 • महाराष्ट्र शासन • PS ID: SIH26129",
-    heroHeadlineMain: "एकच व्यासपीठ.",
-    heroHeadlineHighlight: "प्रत्येक शासकीय मंजुरी.",
-    heroHeadlineEnd: "शून्य लालफितीचा कारभार.",
-    heroSubtitle: "विविध शासकीय पोर्टल्सना जोडणारा बुद्धिमान दुवा. आपले उद्दिष्ट सांगा, आमचे AI संपूर्ण कायदेशीर मार्ग दाखवेल.",
-    primaryCta: "नागरी रोडमॅप सुरू करा",
-    signInBtn: "लॉगिन / नोंदणी",
-    trackPlaceholder: "UTID द्वारे स्थिती तपासा (उदा. APP-2026-MSME-0841)",
-    trackButton: "स्थिती तपासा",
-    trackSearching: "शोधत आहे...",
-    mockupHeader: "थेट रोडमॅप ऑर्केस्ट्रेटर",
-    mockupStep1Title: "टप्पा १: आयकर आणि पॅन जुळणी",
-    mockupStep1Dept: "UIDAI / आयकर विभाग",
-    mockupStep1Badge: "डिजीलॉकर प्रमाणित",
-    mockupStep2Title: "टप्पा २: MSME वर्गीकरण",
-    mockupStep2Dept: "MSME मंत्रालय • नोडल छाननी",
-    mockupStep2Badge: "अधिकारी तपासणी सुरू",
-    mockupStep3Title: "टप्पा ३: FSSAI परवाना मंजुरी",
-    mockupStep3Dept: "अन्न सुरक्षा प्राधिकरण",
-    mockupStep3Badge: "आवश्यकता सज्ज",
-    mockupEngineStatus: "इंजिन स्थिती",
-    mockupNoDeadlock: "शून्य अडथळा",
-    impactTag: "मोजता येण्याजोगा सार्वजनिक फायदा",
-    impactTitle: "नागरिक-शासकीय संवादातील क्रांती",
-    impactSubtitle: "जोडलेल्या शासकीय विभागांचे थेट कार्यप्रदर्शन.",
-    stat1Value: "18,500+",
-    stat1Label: "यशस्वी अर्ज",
-    stat1Sub: "नागरी प्रक्रिया पूर्ण",
-    stat2Value: "72%",
-    stat2Label: "प्रक्रियेच्या वेळेत घट",
-    stat2Sub: "अचूक पूर्व-तपासणी",
-    stat3Value: "14+",
-    stat3Label: "जोडलेली शासकीय पोर्टल्स",
-    stat3Sub: "डिजीलॉकर, API सेतू, महसूल",
-    stat4Value: "100%",
-    stat4Label: "DPDP 2025 गोपनीयता",
-    stat4Sub: "शून्य विनापरवानगी डेटा साठा",
-    howItWorksTag: "प्रक्रिया",
-    howItWorksTitle: "सेतू जर्नी AI कसे कार्य करते",
-    howItWorksSubtitle: "तीन सोप्या टप्प्यांत शासकीय कामे पूर्ण करा.",
-    step1Title: "आवाज किंवा मजकुराने सांगा",
-    step1Desc: "मराठी, हिंदी किंवा इंग्रजीत आपले उद्दिष्ट सांगा.",
-    step1Tag: "बहुभाषिक AI",
-    step2Title: "अचूक टप्पे निश्चिती",
-    step2Desc: "कोणत्याही पोर्टलवर न भटकता सर्व मंजुऱ्या एकाच ठिकाणी.",
-    step2Tag: "DAG इंजिन",
-    step3Title: "डिजीलॉकर आणि UTID ट्रॅकिंग",
-    step3Desc: "सुरक्षित दस्तऐवज पडताळणी आणि थेट UTID ट्रॅकिंग.",
-    step3Tag: "API सेतू",
-    servicesTag: "संपूर्ण शासकीय सेवा",
-    servicesTitle: "तयार नागरी रोडमॅप",
-    servicesSubtitle: "व्यवसाय, शेतजमीन अकृषिक (NA) आणि परवानग्यांसाठी त्वरित उपाय.",
-    viewAllJourneys: "सर्व १४+ सेवा पहा",
-    testimonialsTag: "नागरिकांचे अनुभव",
-    testimonialsTitle: "उद्योजक व नागरिकांचा विश्वास",
-    testimonialsSubtitle: "दलालांशिवाय थेट शासकीय मंजुरी मिळवणाऱ्या नागरिकांचे अनुभव.",
-    ctaBannerTitle: "शासकीय कामे जलद गतीने पूर्ण करण्यास सज्ज आहात?",
-    ctaBannerDesc: "नागरी को-पायलट सुरू करा आणि काही मिनिटांत कायदेशीर रोडमॅप मिळवा.",
-    ctaBannerBtn: "डॅशबोर्ड उघडा",
-    footerTagline: "शासकीय मंजुऱ्या सुलभ करणारी राष्ट्रीय डिजिटल प्रणाली.",
-    footerGovNotice: "© 2026 सेतू जर्नी AI / जनसेतू™ • Next.js 14 आणि FastAPI वर आधारित.",
-  },
-  // Default fallbacks mapping to standard terms for remaining languages
-  TA: { ...({} as any) },
-  TE: { ...({} as any) },
-  BN: { ...({} as any) },
-  GU: { ...({} as any) },
-  ML: { ...({} as any) },
-  PA: { ...({} as any) },
-  OR: { ...({} as any) },
-};
-
-// Fallback fill for remaining languages to avoid undefined
-const ALL_SUPPORTED = ["TA", "TE", "BN", "GU", "ML", "PA", "OR"] as Language[];
-ALL_SUPPORTED.forEach((lang) => {
-  LANDING_TRANSLATIONS[lang] = {
-    ...LANDING_TRANSLATIONS.EN,
-    brandName: `SetuJourney AI (${lang})`,
-  };
-});
-
-interface ServiceItem {
-  id: string;
-  title: string;
-  description: string;
-  dept: string;
-  badge: string;
-  utidSample: string;
-}
-
-interface TestimonialItem {
-  name: string;
-  role: string;
-  comment: string;
-  rating: number;
-  tag: string;
-  initials: string;
-  color: string;
-}
-
-const TRANSLATED_SERVICES: Record<Language, ServiceItem[]> = {
-  EN: [
-    {
-      id: "msme",
-      title: "MSME & Udyam Enterprise Setup",
-      description: "PAN + Aadhaar biometric verification with automatic NIC-2008 code validation & priority bank credit.",
-      dept: "Ministry of MSME",
-      badge: "Fast Track (48h)",
-      utidSample: "APP-2026-MSME-0841",
-    },
-    {
-      id: "fssai",
-      title: "FSSAI State & Central Food License",
-      description: "Nominated FoSTaC supervisor check, water potability IS 10500 reports & commercial kitchen sanctions.",
-      dept: "Food Safety & Standards (FSSAI)",
-      badge: "Statutory SLA",
-      utidSample: "APP-2026-FSSAI-1904",
-    },
-    {
-      id: "land",
-      title: "Agricultural Land Conversion & 7/12",
-      description: "Cadastral survey verification, town planning zoning approvals & Tahsildar mutation extracts.",
-      dept: "Revenue & Land Records",
-      badge: "Multi-Agency",
-      utidSample: "APP-2026-REV-3301",
-    },
-    {
-      id: "education",
-      title: "PM Vidyalaxmi Interest Subsidy",
-      description: "Aadhaar + APAAR student ID validation with national credit portal & university admission sync.",
-      dept: "Ministry of Education",
-      badge: "Direct Benefit",
-      utidSample: "APP-2026-EDU-6102",
-    },
-    {
-      id: "municipal",
-      title: "Municipal Trade License (BBMP / BMC / MCD)",
-      description: "Property tax PID SAS receipt matching, fire NOC classification & zonal establishment sanctions.",
-      dept: "Urban Local Bodies",
-      badge: "Zonal Rules",
-      utidSample: "APP-2026-MUNI-5590",
-    },
-    {
-      id: "transport",
-      title: "Commercial Goods Carrier & Fitness",
-      description: "VAHAN chassis matching, automated emission verification & Parivahan speed governor clearances.",
-      dept: "MoRTH / Parivahan",
-      badge: "Instant API",
-      utidSample: "APP-2026-RTO-7102",
-    },
-  ],
-  HI: [
-    {
-      id: "msme",
-      title: "MSME और उद्यम पंजीकरण",
-      description: "पैन + आधार बायोमेट्रिक सत्यापन और स्वचालित NIC कोड वैलिडेशन के साथ प्राथमिकता बैंक ऋण।",
-      dept: "MSME मंत्रालय",
-      badge: "फास्ट ट्रैक (48 घंटे)",
-      utidSample: "APP-2026-MSME-0841",
-    },
-    {
-      id: "fssai",
-      title: "FSSAI राज्य एवं केंद्रीय खाद्य लाइसेंस",
-      description: "नामित FoSTaC पर्यवेक्षक जांच, पेयजल IS 10500 रिपोर्ट और वाणिज्यिक रसोई अनुमोदन।",
-      dept: "खाद्य सुरक्षा प्राधिकरण (FSSAI)",
-      badge: "वैधानिक SLA",
-      utidSample: "APP-2026-FSSAI-1904",
-    },
-    {
-      id: "land",
-      title: "कृषि भूमि अकृषिक (NA) रूपांतरण व 7/12",
-      description: "कैडस्ट्रल सर्वेक्षण सत्यापन, नगर नियोजन जोनिंग स्वीकृति और तहसीलदार म्यूटेशन अर्क।",
-      dept: "राजस्व एवं भूमि अभिलेख",
-      badge: "बहु-विभागीय",
-      utidSample: "APP-2026-REV-3301",
-    },
-    {
-      id: "education",
-      title: "पीएम विद्यालक्ष्मी ब्याज सब्सिडी",
-      description: "आधार + अपार (APAAR) छात्र आईडी सत्यापन और राष्ट्रीय क्रेडिट पोर्टल व विश्वविद्यालय प्रवेश सिंक।",
-      dept: "शिक्षा मंत्रालय",
-      badge: "प्रत्यक्ष लाभ (DBT)",
-      utidSample: "APP-2026-EDU-6102",
-    },
-    {
-      id: "municipal",
-      title: "नगर निगम व्यापार लाइसेंस (BBMP / BMC / MCD)",
-      description: "संपत्ति कर PID SAS रसीद मिलान, अग्नि सुरक्षा NOC और क्षेत्रीय स्थापना अनुमोदन।",
-      dept: "शहरी स्थानीय निकाय",
-      badge: "क्षेत्रीय नियम",
-      utidSample: "APP-2026-MUNI-5590",
-    },
-    {
-      id: "transport",
-      title: "वाणिज्यिक माल वाहक परमिट व फिटनेस",
-      description: "वाहन चेसिस मिलान, स्वचालित प्रदूषण जांच और परिवहन स्पीड गवर्नर स्वीकृति।",
-      dept: "सड़क परिवहन एवं राजमार्ग",
-      badge: "त्वरित API",
-      utidSample: "APP-2026-RTO-7102",
-    },
-  ],
-  KN: [
-    {
-      id: "msme",
-      title: "MSME ಮತ್ತು ಉದ್ಯಮ್ ನೋಂದಣಿ",
-      description: "ಪ್ಯಾನ್ + ಆಧಾರ್ ಬಯೋಮೆಟ್ರಿಕ್ ಪರಿಶೀಲನೆ, ಸ್ವಯಂಚಾಲಿತ NIC ಕೋಡ್ ಮತ್ತು ಬ್ಯಾಂಕ್ ಸಾಲ ಮಂಜೂರಾತಿ.",
-      dept: "MSME ಸಚಿವಾಲಯ",
-      badge: "ತ್ವರಿತ (48 ಗಂಟೆ)",
-      utidSample: "APP-2026-MSME-0841",
-    },
-    {
-      id: "fssai",
-      title: "FSSAI ರಾಜ್ಯ ಮತ್ತು ಕೇಂದ್ರ ಆಹಾರ ಪರವಾನಗಿ",
-      description: "FoSTaC ಮೇಲ್ವಿಚಾರಕರ ತಪಾಸಣೆ, ನೀರಿನ ಶುದ್ಧತೆ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಅಡುಗೆಮನೆ ಮಂಜೂರಾತಿ.",
-      dept: "ಆಹಾರ ಸುರಕ್ಷತಾ ಪ್ರಾಧಿಕಾರ (FSSAI)",
-      badge: "ಶಾಸನಬದ್ಧ SLA",
-      utidSample: "APP-2026-FSSAI-1904",
-    },
-    {
-      id: "land",
-      title: "ಕೃಷಿ ಭೂಮಿ ಪರಿವರ್ತನೆ ಮತ್ತು 7/12 (ಪಹಣಿ)",
-      description: "ಸರ್ವೇ ನಕ್ಷೆ ಪರಿಶೀಲನೆ, ನಗರಾಭಿವೃದ್ಧಿ ವಲಯ ಅನುಮೋದನೆ ಮತ್ತು ತಹಶೀಲ್ದಾರ್ ಮ್ಯುಟೇಶನ್.",
-      dept: "ಕಂದಾಯ ಮತ್ತು ಭೂ ದಾಖಲೆಗಳು",
-      badge: "ಬಹು-ಇಲಾಖೆ",
-      utidSample: "APP-2026-REV-3301",
-    },
-    {
-      id: "education",
-      title: "ಪಿಎಂ ವಿದ್ಯಾಲಕ್ಷ್ಮಿ ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ",
-      description: "ಆಧಾರ್ + APAAR ವಿದ್ಯಾರ್ಥಿ ಐಡಿ ಪರಿಶೀಲನೆ ಮತ್ತು ಬ್ಯಾಂಕ್ ಸಾಲ ಅನುಮೋದನೆ.",
-      dept: "ಶಿಕ್ಷಣ ಸಚಿವಾಲಯ",
-      badge: "ನೇರ ಪ್ರಯೋಜನ (DBT)",
-      utidSample: "APP-2026-EDU-6102",
-    },
-    {
-      id: "municipal",
-      title: "ಪಾಲಿಕೆ ವ್ಯಾಪಾರ ಪರವಾನಗಿ (BBMP / BMC)",
-      description: "ಆಸ್ತಿ ತೆರಿಗೆ PID SAS ರಶೀದಿ ಹೊಂದಾಣಿಕೆ ಮತ್ತು ವಲಯ ಅನುಮತಿ.",
-      dept: "ನಗರ ಸ್ಥಳೀಯ ಸಂಸ್ಥೆಗಳು",
-      badge: "ವಲಯ ನಿಯಮಗಳು",
-      utidSample: "APP-2026-MUNI-5590",
-    },
-    {
-      id: "transport",
-      title: "ವಾಣಿಜ್ಯ ವಾಹನ ಪರ್ಮಿಟ್ ಮತ್ತು ಫಿಟ್‌ನೆಸ್",
-      description: "ವಾಹನ ಚಾಸಿಸ್ ಪರಿಶೀಲನೆ ಮತ್ತು ಸಾರಿಗೆ ವೇಗ ನಿಯಂತ್ರಕ ಪ್ರಮಾಣಪತ್ರ.",
-      dept: "ಸಾರಿಗೆ ಇಲಾಖೆ",
-      badge: "ತ್ವರಿತ API",
-      utidSample: "APP-2026-RTO-7102",
-    },
-  ],
-  MR: [
-    {
-      id: "msme",
-      title: "MSME आणि उद्यम नोंदणी",
-      description: "पॅन + आधार बायोमेट्रिक पडताळणी आणि थेट बँक कर्ज मंजुरी.",
-      dept: "MSME मंत्रालय",
-      badge: "जलद (४८ तास)",
-      utidSample: "APP-2026-MSME-0841",
-    },
-    {
-      id: "fssai",
-      title: "FSSAI अन्न सुरक्षा परवाना",
-      description: "FoSTaC पर्यवेक्षक तपासणी, पाण्याची शुद्धता तपासणी अहवाल आणि परवाना.",
-      dept: "अन्न सुरक्षा प्राधिकरण",
-      badge: "शासकीय SLA",
-      utidSample: "APP-2026-FSSAI-1904",
-    },
-    {
-      id: "land",
-      title: "शेतजमीन अकृषिक (NA) रूपांतरण व ७/१२",
-      description: "जमीन मोजणी नकाशा तपासणी, नगर रचना झोनिंग आणि तहसीलदार फेरफार नोंद.",
-      dept: "महसूल व भूमी अभिलेख",
-      badge: "बहु-विभागीय",
-      utidSample: "APP-2026-REV-3301",
-    },
-    {
-      id: "education",
-      title: "पीएम विद्यालक्ष्मी व्याज अनुदान",
-      description: "आधार + APAAR विद्यार्थी ओळख पडताळणी आणि थेट शैक्षणिक कर्ज लाभ.",
-      dept: "शिक्षण मंत्रालय",
-      badge: "थेट लाभ (DBT)",
-      utidSample: "APP-2026-EDU-6102",
-    },
-    {
-      id: "municipal",
-      title: "महानगरपालिका व्यवसाय परवाना (BMC / PMC)",
-      description: "मालमत्ता कर PID पावती पडताळणी आणि व्यवसाय परवाना मंजुरी.",
-      dept: "स्थानिक स्वराज्य संस्था",
-      badge: "क्षेत्रीय नियम",
-      utidSample: "APP-2026-MUNI-5590",
-    },
-    {
-      id: "transport",
-      title: "व्यावसायिक वाहन परमिट व योग्यता",
-      description: "वाहन चेसिस पडताळणी आणि परिवहन फिटनेस प्रमाणपत्र.",
-      dept: "परिवहन विभाग",
-      badge: "झटपट API",
-      utidSample: "APP-2026-RTO-7102",
-    },
-  ],
-  TA: { ...([] as any) },
-  TE: { ...([] as any) },
-  BN: { ...([] as any) },
-  GU: { ...([] as any) },
-  ML: { ...([] as any) },
-  PA: { ...([] as any) },
-  OR: { ...([] as any) },
-};
-
-const TRANSLATED_TESTIMONIALS: Record<Language, TestimonialItem[]> = {
-  EN: [
-    {
-      name: "Vikram R.",
-      role: "Cloud Kitchen Founder, Bengaluru",
-      comment:
-        "Cut through 4 different departmental portals for my FSSAI and trade license in under 20 minutes without paying touts.",
-      rating: 5,
-      tag: "MSME Food Business",
-      initials: "VR",
-      color: "from-blue-600 to-cyan-500",
-    },
-    {
-      name: "Pooja Sharma",
-      role: "CSC Center Operator, Pune",
-      comment:
-        "The UTID single-tracking feature saves me hours when answering citizen status queries across multiple departments.",
-      rating: 5,
-      tag: "VLE Operations",
-      initials: "PS",
-      color: "from-purple-600 to-pink-500",
-    },
-    {
-      name: "Ankit Verma",
-      role: "Overseas Postgrad Student",
-      comment:
-        "Guided me through MEA Apostille, Forex declarations, and verification step-by-step with exact document checklists.",
-      rating: 5,
-      tag: "Higher Education",
-      initials: "AV",
-      color: "from-emerald-600 to-teal-500",
-    },
-  ],
-  HI: [
-    {
-      name: "विक्रम आर.",
-      role: "क्लाउड किचन संस्थापक, बेंगलुरु",
-      comment:
-        "बिना किसी दलाल को पैसे दिए 20 मिनट से भी कम समय में मेरे FSSAI और ट्रेड लाइसेंस के लिए 4 अलग-अलग सरकारी पोर्टलों का काम पूरा हो गया।",
-      rating: 5,
-      tag: "MSME खाद्य व्यवसाय",
-      initials: "VR",
-      color: "from-blue-600 to-cyan-500",
-    },
-    {
-      name: "पूजा शर्मा",
-      role: "CSC केंद्र संचालक, पुणे",
-      comment:
-        "सिंगल UTID ट्रैकिंग सुविधा से विभिन्न विभागों के नागरिक स्थिति के सवालों का जवाब देने में मेरा घंटों का समय बचता है।",
-      rating: 5,
-      tag: "VLE संचालन",
-      initials: "PS",
-      color: "from-purple-600 to-pink-500",
-    },
-    {
-      name: "अंकित वर्मा",
-      role: "विदेशी स्नातकोत्तर छात्र",
-      comment:
-        "सटीक दस्तावेज़ चेकलिस्ट के साथ MEA अपोस्टिल, विदेशी मुद्रा घोषणा और सत्यापन में कदम-दर-कदम मार्गदर्शन मिला।",
-      rating: 5,
-      tag: "उच्च शिक्षा",
-      initials: "AV",
-      color: "from-emerald-600 to-teal-500",
-    },
-  ],
-  KN: [
-    {
-      name: "ವಿಕ್ರಮ್ ಆರ್.",
-      role: "ಕ್ಲೌಡ್ ಕಿಚನ್ ಸಂಸ್ಥಾಪಕ, ಬೆಂಗಳೂರು",
-      comment:
-        "ಯಾವುದೇ ಮಧ್ಯವರ್ತಿಗಳಿಗೆ ಹಣ ನೀಡದೆ 20 ನಿಮಿಷಗಳಲ್ಲಿ ನನ್ನ FSSAI ಮತ್ತು ವ್ಯಾಪಾರ ಪರವಾನಗಿಯನ್ನು 4 ಬೇರೆ ಬೇರೆ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ಪೂರ್ಣಗೊಳಿಸಿದೆ.",
-      rating: 5,
-      tag: "MSME ಆಹಾರ ಉದ್ಯಮ",
-      initials: "VR",
-      color: "from-blue-600 to-cyan-500",
-    },
-    {
-      name: "ಪೂಜಾ ಶರ್ಮಾ",
-      role: "ಸಿಎಸ್‌ಸಿ ಕೇಂದ್ರ ನಿರ್ವಾಹಕಿ, ಪುಣೆ",
-      comment:
-        "UTID ಟ್ರ್ಯಾಕಿಂಗ್ ವೈಶಿಷ್ಟ್ಯವು ವಿವಿಧ ಇಲಾಖೆಗಳ ಅರ್ಜಿಗಳ ಸ್ಥಿತಿಯನ್ನು ನಾಗರಿಕರಿಗೆ ತಿಳಿಸಲು ನನಗೆ ಗಂಟೆಗಳ ಸಮಯವನ್ನು ಉಳಿಸುತ್ತದೆ.",
-      rating: 5,
-      tag: "VLE ಕಾರ್ಯಾಚರಣೆ",
-      initials: "PS",
-      color: "from-purple-600 to-pink-500",
-    },
-    {
-      name: "ಅಂಕಿತ್ ವರ್ಮಾ",
-      role: "ವಿದೇಶಿ ಸ್ನಾತಕೋತ್ತರ ವಿದ್ಯಾರ್ಥಿ",
-      comment:
-        "ಸರಿಯಾದ ದಾಖಲೆಗಳ ಪಟ್ಟಿಯೊಂದಿಗೆ MEA ದೃಢೀಕರಣ ಮತ್ತು ವಿದೇಶಿ ವ್ಯಾಸಂಗದ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡಿತು.",
-      rating: 5,
-      tag: "ಉನ್ನತ ಶಿಕ್ಷಣ",
-      initials: "AV",
-      color: "from-emerald-600 to-teal-500",
-    },
-  ],
-  MR: [
-    {
-      name: "विक्रम आर.",
-      role: "क्लाउड किचन संस्थापक, बंगळुरू",
-      comment:
-        "कोणत्याही एजंटला पैसे न देता २० मिनिटांत माझ्या FSSAI आणि व्यवसाय परवान्यासाठी ४ वेगवेगळ्या पोर्टल्सचे काम पूर्ण झाले.",
-      rating: 5,
-      tag: "MSME अन्न व्यवसाय",
-      initials: "VR",
-      color: "from-blue-600 to-cyan-500",
-    },
-    {
-      name: "पूजा शर्मा",
-      role: "CSC केंद्र चालक, पुणे",
-      comment:
-        "UTID ट्रॅकिंगमुळे विविध विभागांच्या अर्जांची स्थिती नागरिकांना सांगताना माझा तासनतास वेळ वाचतो.",
-      rating: 5,
-      tag: "VLE कार्यप्रणाली",
-      initials: "PS",
-      color: "from-purple-600 to-pink-500",
-    },
-    {
-      name: "अंकित वर्मा",
-      role: "परदेशी पदव्युत्तर विद्यार्थी",
-      comment:
-        "परदेशातील शिक्षणासाठी आवश्यक कागदपत्रांची अचूक यादी आणि MEA पडताळणी टप्प्याटप्प्याने सुलभ झाली.",
-      rating: 5,
-      tag: "उच्च शिक्षण",
-      initials: "AV",
-      color: "from-emerald-600 to-teal-500",
-    },
-  ],
-  TA: { ...([] as any) },
-  TE: { ...([] as any) },
-  BN: { ...([] as any) },
-  GU: { ...([] as any) },
-  ML: { ...([] as any) },
-  PA: { ...([] as any) },
-  OR: { ...([] as any) },
-};
-
-// Fallback fill for remaining languages
-ALL_SUPPORTED.forEach((lang) => {
-  if (!TRANSLATED_SERVICES[lang] || !Array.isArray(TRANSLATED_SERVICES[lang]) || TRANSLATED_SERVICES[lang].length === 0) {
-    TRANSLATED_SERVICES[lang] = TRANSLATED_SERVICES.EN;
-  }
-  if (!TRANSLATED_TESTIMONIALS[lang] || !Array.isArray(TRANSLATED_TESTIMONIALS[lang]) || TRANSLATED_TESTIMONIALS[lang].length === 0) {
-    TRANSLATED_TESTIMONIALS[lang] = TRANSLATED_TESTIMONIALS.EN;
-  }
-});
-
 export default function LandingPage() {
   const router = useRouter();
-  const { language, setLanguage, openLanguageModal } = useJourney();
+  const { language, setLanguage } = useJourney();
 
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [utidInput, setUtidInput] = useState<string>("");
@@ -842,523 +90,522 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-600 selection:text-white font-sans relative overflow-x-hidden transform-gpu">
+    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden transform-gpu">
       
-      {/* ── 1. Top Navigation Bar ── */}
-      <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      {/* BACKGROUND PARTICLES & STATIC AMBIENT GLOWS (Hardware Accelerated) */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-blue-600/12 via-indigo-600/6 to-transparent rounded-full blur-2xl transform-gpu" />
+        <div className="absolute top-[40%] -left-[150px] w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-2xl transform-gpu" />
+        <div className="absolute top-[65%] -right-[150px] w-[550px] h-[550px] bg-indigo-600/8 rounded-full blur-2xl transform-gpu" />
+        {/* Subtle CSS-based grid lines */}
+        <div 
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage: "linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)",
+            backgroundSize: "64px 64px"
+          }}
+        />
+      </div>
+
+      {/* 1. TOP NAVIGATION BAR */}
+      <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
           
-          {/* Left: Logo & Live Status Dot */}
-          <Link href="/" className="flex items-center gap-3 no-underline group cursor-pointer">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md">
-              <Landmark className="w-5 h-5 text-white" />
+          {/* Logo Brand */}
+          <Link href="/" className="flex items-center gap-3 group no-underline shrink-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 p-[1.5px] shadow-lg shadow-blue-900/30">
+              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                <Landmark className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform duration-200" />
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tight text-white">{t.brandName}</span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
+                <span className="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-blue-300 transition-colors">
+                  {t.brandName}
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-700/80 shadow-xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  {t.interoperabilityStatus}
+                  <span className="hidden sm:inline">{t.interoperabilityStatus}</span>
+                  <span className="sm:hidden">Live</span>
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium">{t.brandTagline}</p>
+              <p className="text-[10px] text-slate-400 hidden sm:block font-medium tracking-wide">
+                {t.brandTagline}
+              </p>
             </div>
           </Link>
 
-          {/* Middle: Anchor Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-bold text-slate-300">
-            <a href="#how-it-works" className="hover:text-blue-400 transition-colors no-underline">
-              {t.navHowItWorks}
-            </a>
-            <a href="#services" className="hover:text-blue-400 transition-colors no-underline">
-              {t.navServices}
-            </a>
-            <a href="#impact" className="hover:text-blue-400 transition-colors no-underline">
-              {t.navImpact}
-            </a>
-            <a href="#testimonials" className="hover:text-blue-400 transition-colors no-underline">
-              {t.navTestimonials}
-            </a>
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-300">
+            <a href="#how-it-works" className="hover:text-white transition-colors cursor-pointer">{t.navHowItWorks}</a>
+            <a href="#services" className="hover:text-white transition-colors cursor-pointer">{t.navServices}</a>
+            <a href="#impact" className="hover:text-white transition-colors cursor-pointer">{t.navImpact}</a>
+            <a href="#testimonials" className="hover:text-white transition-colors cursor-pointer">{t.navTestimonials}</a>
           </nav>
 
-          {/* Right: Language Selector + Officer Portal + Launch Copilot CTA */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Action Controls: Language Switcher, Officer Portal, Launch Copilot */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
             
-            {/* Direct Language Switcher Dropdown */}
+            {/* Multilingual Selector Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 border border-slate-700/80 hover:border-blue-500/80 text-slate-200 hover:text-white transition-all shadow-xs cursor-pointer"
                 title="Change Platform Language"
               >
                 <Globe className="w-3.5 h-3.5 text-blue-400" />
-                <span className="font-bold">{currentLangObj.native}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
+                <span>{currentLangObj.native}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
-              {isLangDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsLangDropdownOpen(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 max-h-72 overflow-y-auto">
-                    <div className="px-2 py-1 text-[10px] font-extrabold uppercase text-slate-400 border-b border-slate-800">
-                      Select Language (भाषा)
+              <AnimatePresence>
+                {isLangDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 overflow-hidden"
+                  >
+                    <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 tracking-wider border-b border-slate-800/80 mb-1">
+                      11 Official Indian Languages
                     </div>
-                    {LANGUAGE_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => {
-                          setLanguage(opt.id);
-                          setIsLangDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
-                          language === opt.id
-                            ? "bg-blue-600 text-white font-extrabold"
-                            : "text-slate-300 hover:bg-slate-800 hover:text-white font-medium"
-                        }`}
-                      >
-                        <span>{opt.native}</span>
-                        <span className="text-[10px] opacity-70 font-mono">{opt.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+                    <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar">
+                      {LANGUAGE_OPTIONS.map((lang) => (
+                        <button
+                          key={lang.id}
+                          type="button"
+                          onClick={() => {
+                            setLanguage(lang.id);
+                            setIsLangDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors cursor-pointer ${
+                            language === lang.id
+                              ? "bg-blue-600 text-white font-bold"
+                              : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                          }`}
+                        >
+                          <span>{lang.native}</span>
+                          <span className="text-[10px] opacity-70 font-mono">({lang.id})</span>
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
+            {/* Officer Portal Link */}
             <Link
               href="/login?portal=officer"
-              className="hidden sm:inline-flex text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition-all no-underline"
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition-colors hidden sm:flex items-center gap-1.5 cursor-pointer"
             >
-              {t.officerPortalBtn}
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{t.officerPortalBtn}</span>
             </Link>
 
+            {/* Launch Copilot / Dashboard CTA */}
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-extrabold text-xs bg-blue-600 hover:bg-blue-500 text-white shadow-md transition-transform active:scale-95 no-underline cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             >
-              <Bot className="w-4 h-4" />
+              <Bot className="w-4 h-4 text-blue-100" />
               <span>{t.launchCopilotBtn}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-
         </div>
       </header>
 
-      {/* ── 2. Hero Section ── */}
-      <section className="relative pt-10 pb-16 sm:pt-16 sm:pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      {/* 2. HERO SECTION */}
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-20 sm:pb-24">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* Left Column: Headlines & Dual CTAs */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* SIH PS Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 shadow-sm text-[11px] font-bold text-slate-300">
-              <Award className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-amber-400 font-extrabold">SIH 2026</span>
-              <span className="text-slate-600">•</span>
+          {/* Left Column: Mission, Typography, Actions, and UTID Single-Search Bar */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left">
+            
+            {/* SIH Hackathon & Department Identification Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-blue-500/30 text-blue-300 text-xs font-bold shadow-xs"
+            >
+              <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>{t.sihBadge}</span>
-            </div>
+            </motion.div>
 
-            {/* Bold Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15]">
-              {t.heroHeadlineMain}{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-300">
+            {/* Main Punchline Hero Typography */}
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.05 }}
+              className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15]"
+            >
+              <span>{t.heroHeadlineMain} </span>
+              <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400 bg-clip-text text-transparent">
                 {t.heroHeadlineHighlight}
-              </span>{" "}
-              {t.heroHeadlineEnd}
-            </h1>
+              </span>
+              <br />
+              <span className="text-slate-200">{t.heroHeadlineEnd}</span>
+            </motion.h1>
 
-            {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl font-normal">
+            {/* Value Proposition Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.1 }}
+              className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal"
+            >
               {t.heroSubtitle}
-            </p>
+            </motion.p>
 
-            {/* Dual CTAs */}
-            <div className="space-y-4 pt-2">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                {/* Primary CTA */}
-                <Link
-                  href="/dashboard"
-                  className="px-6 py-3.5 rounded-xl font-black text-sm bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-transform active:scale-95 no-underline cursor-pointer group"
-                >
-                  <Sparkles className="w-4 h-4 text-blue-200" />
-                  <span>{t.primaryCta}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
+            {/* Primary Action Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.15 }}
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2"
+            >
+              <Link
+                href="/dashboard"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-blue-700/25 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              >
+                <span>{t.primaryCta}</span>
+                <ArrowRight className="w-4 h-4 text-blue-200" />
+              </Link>
 
-                <Link
-                  href="/login"
-                  className="px-5 py-3.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-colors flex items-center justify-center gap-2 no-underline"
-                >
-                  <UserCheck className="w-4 h-4 text-emerald-400" />
-                  <span>{t.signInBtn}</span>
-                </Link>
-              </div>
+              <Link
+                href="/login"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-white text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <UserCheck className="w-4 h-4 text-slate-400" />
+                <span>{t.signInBtn}</span>
+              </Link>
+            </motion.div>
 
-              {/* Secondary CTA: Quick UTID Tracker */}
-              <form onSubmit={handleUtidSearch} className="max-w-md">
-                <div className="relative flex items-center">
-                  <Search className="w-4 h-4 absolute left-3.5 text-slate-400 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={utidInput}
-                    onChange={(e) => setUtidInput(e.target.value)}
-                    placeholder={t.trackPlaceholder}
-                    className="w-full pl-10 pr-28 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSearchingUtid}
-                    className="absolute right-1.5 px-3 py-1.5 bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
-                  >
-                    {isSearchingUtid ? t.trackSearching : t.trackButton}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Quick UTID Result Card */}
-            {searchedUtid && (
-              <div className="p-4 bg-slate-900 border border-blue-500/40 rounded-2xl shadow-xl relative space-y-2 max-w-md animate-in fade-in">
+            {/* Universal Tracking ID (UTID) Tracker Input */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.2 }}
+              className="pt-4 max-w-xl mx-auto lg:mx-0"
+            >
+              <form onSubmit={handleUtidSearch} className="relative flex items-center">
+                <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
+                <input
+                  type="text"
+                  value={utidInput}
+                  onChange={(e) => setUtidInput(e.target.value)}
+                  placeholder={t.trackPlaceholder}
+                  className="w-full pl-11 pr-28 sm:pr-32 py-3 bg-slate-900/90 border border-slate-800 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-inner transition-colors"
+                />
                 <button
-                  onClick={() => setSearchedUtid(null)}
-                  className="absolute top-3 right-3 text-slate-400 hover:text-white p-1"
+                  type="submit"
+                  disabled={isSearchingUtid}
+                  className="absolute right-2 px-3 sm:px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  {isSearchingUtid ? t.trackSearching : t.trackButton}
                 </button>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-black text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-400/20">
-                    {searchedUtid}
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">
-                    In Scrutiny Queue
-                  </span>
-                </div>
-                <p className="text-xs font-bold text-white">
-                  Udyam Enterprise & Priority Credit Verification
-                </p>
-                <p className="text-[11px] text-slate-400">
-                  Stage: <strong className="text-slate-200">NIC Code & Enterprise Scrutiny</strong> • SLA Remaining: <strong className="text-emerald-400">31.5 hrs</strong>
-                </p>
-                <div className="pt-2">
+              </form>
+
+              {/* Instant UTID Search Mock Result */}
+              {searchedUtid && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-3 p-3.5 rounded-2xl bg-blue-950/80 border border-blue-600/50 flex items-center justify-between text-xs"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-white">UTID: {searchedUtid}</p>
+                      <p className="text-[11px] text-blue-200">Current Stage: Municipal Fire Safety NOC (Step 2/3) • SLA: 22h remaining</p>
+                    </div>
+                  </div>
                   <Link
                     href="/dashboard"
-                    className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 no-underline"
+                    className="text-[11px] font-bold text-blue-300 hover:text-white underline"
                   >
-                    <span>Open full visual journey in Dashboard</span>
-                    <ArrowRight className="w-3 h-3" />
+                    View Roadmap →
                   </Link>
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </motion.div>
 
           </div>
 
-          {/* Right Column: Interactive Visual Mockup (3-Step Progress Bar) */}
-          <div className="lg:col-span-5">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+          {/* Right Column: Live Orchestrator 3-Step Execution Mockup */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-5"
+          >
+            <div className="relative rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-blue-500/40 p-5 sm:p-6 shadow-2xl">
               
-              {/* Header Mockup */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              {/* Card Header with Status Badge */}
+              <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  <span className="text-[11px] font-mono font-bold text-slate-400 ml-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-bold text-slate-200 tracking-wide">
                     {t.mockupHeader}
                   </span>
                 </div>
-                <span className="text-[10px] font-black font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                  UTID: APP-2026-MSME
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-blue-950 text-blue-300 border border-blue-700/60">
+                  DAG-ORCH-2026
                 </span>
               </div>
 
-              {/* 3-Step Live Progress Visualization */}
-              <div className="space-y-4">
+              {/* Active Step-by-Step Simulation Trail */}
+              <div className="py-4 space-y-3.5">
                 
-                {/* Step 1: Income Tax / PAN (Completed) */}
-                <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/40">
-                        ✓
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-white">{t.mockupStep1Title}</h4>
-                        <span className="text-[10px] text-slate-400">{t.mockupStep1Dept}</span>
-                      </div>
+                {/* Step 1: DigiLocker Verified */}
+                <div className="p-3 rounded-2xl bg-slate-950/90 border border-emerald-500/30 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                      <CheckCircle2 className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                      {t.mockupStep1Badge}
-                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-white">{t.mockupStep1Title}</p>
+                      <p className="text-[10px] text-slate-400">{t.mockupStep1Dept}</p>
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full w-full rounded-full" />
-                  </div>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700/60">
+                    {t.mockupStep1Badge}
+                  </span>
                 </div>
 
-                {/* Step 2: MSME Enterprise Classification (In Progress) */}
-                <div className="p-3.5 bg-blue-950/30 border border-blue-500/40 rounded-2xl space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold border border-blue-400/40">
-                        ⚙
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-white">{t.mockupStep2Title}</h4>
-                        <span className="text-[10px] text-slate-400">{t.mockupStep2Dept}</span>
-                      </div>
+                {/* Step 2: In-Progress Nodal Scrutiny */}
+                <div className="p-3 rounded-2xl bg-slate-950/90 border border-blue-500/50 flex items-center justify-between gap-3 shadow-xs ring-1 ring-blue-500/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 animate-spin">
+                      <Activity className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                      {t.mockupStep2Badge}
-                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-white">{t.mockupStep2Title}</p>
+                      <p className="text-[10px] text-slate-400">{t.mockupStep2Dept}</p>
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-500 to-indigo-400 h-full w-2/3 rounded-full" />
-                  </div>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 border border-blue-600/70">
+                    {t.mockupStep2Badge}
+                  </span>
                 </div>
 
-                {/* Step 3: FSSAI State Food License (Unlocked Next) */}
-                <div className="p-3.5 bg-slate-950 border border-slate-800/80 rounded-2xl space-y-2 opacity-80">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold border border-slate-700">
-                        3
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-slate-300">{t.mockupStep3Title}</h4>
-                        <span className="text-[10px] text-slate-500">{t.mockupStep3Dept}</span>
-                      </div>
+                {/* Step 3: Pending FSSAI Grant */}
+                <div className="p-3 rounded-2xl bg-slate-950/50 border border-slate-800/80 flex items-center justify-between gap-3 opacity-80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                      <Clock className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                      {t.mockupStep3Badge}
-                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-slate-300">{t.mockupStep3Title}</p>
+                      <p className="text-[10px] text-slate-500">{t.mockupStep3Dept}</p>
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-slate-700 h-full w-0 rounded-full" />
-                  </div>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+                    {t.mockupStep3Badge}
+                  </span>
                 </div>
 
               </div>
 
-              {/* Micro Footer Notice */}
-              <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl flex items-center justify-between text-[11px]">
-                <span className="text-slate-400">{t.mockupEngineStatus}</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 inline" /> {t.mockupNoDeadlock}
+              {/* Card Footer: SLA & Autonomous Execution Metric */}
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{t.mockupEngineStatus}: <strong className="text-emerald-300">{t.mockupNoDeadlock}</strong></span>
+                </span>
+                <span className="font-mono text-blue-300 font-semibold">
+                  API Setu Federated
                 </span>
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
 
-      {/* ── 3. Live Stats & Impact Counter ("Helps We Did") ── */}
-      <section id="impact" className="py-14 bg-slate-900/60 border-y border-slate-800">
+      {/* 3. IMPACT & PERFORMANCE METRICS SECTION */}
+      <section id="impact" className="relative z-10 border-y border-slate-800/80 bg-slate-900/50 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-2xl mx-auto space-y-2 mb-10">
-            <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-400/20 text-xs font-bold uppercase tracking-wider">
+          <div className="text-center space-y-2 mb-10">
+            <span className="text-xs font-black tracking-widest text-blue-400 uppercase">
               {t.impactTag}
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               {t.impactTitle}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
               {t.impactSubtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg hover:border-blue-500/40 transition-colors">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-400 border border-blue-400/20 flex items-center justify-center mb-4">
-                <Activity className="w-5 h-5" />
-              </div>
-              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-1">{t.stat1Value}</p>
-              <h3 className="text-sm font-bold text-slate-200 mb-1">{t.stat1Label}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{t.stat1Sub}</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            
+            {/* Metric 1 */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+              <p className="text-2xl sm:text-4xl font-black text-blue-400 tracking-tight">{t.stat1Value}</p>
+              <p className="text-xs sm:text-sm font-bold text-white">{t.stat1Label}</p>
+              <p className="text-[11px] text-slate-400">{t.stat1Sub}</p>
             </div>
 
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg hover:border-blue-500/40 transition-colors">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-400 border border-blue-400/20 flex items-center justify-center mb-4">
-                <TrendingUp className="w-5 h-5" />
-              </div>
-              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-1">{t.stat2Value}</p>
-              <h3 className="text-sm font-bold text-slate-200 mb-1">{t.stat2Label}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{t.stat2Sub}</p>
+            {/* Metric 2 */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+              <p className="text-2xl sm:text-4xl font-black text-indigo-400 tracking-tight">{t.stat2Value}</p>
+              <p className="text-xs sm:text-sm font-bold text-white">{t.stat2Label}</p>
+              <p className="text-[11px] text-slate-400">{t.stat2Sub}</p>
             </div>
 
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg hover:border-blue-500/40 transition-colors">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-400 border border-blue-400/20 flex items-center justify-center mb-4">
-                <Globe2 className="w-5 h-5" />
-              </div>
-              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-1">{t.stat3Value}</p>
-              <h3 className="text-sm font-bold text-slate-200 mb-1">{t.stat3Label}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{t.stat3Sub}</p>
+            {/* Metric 3 */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+              <p className="text-2xl sm:text-4xl font-black text-sky-400 tracking-tight">{t.stat3Value}</p>
+              <p className="text-xs sm:text-sm font-bold text-white">{t.stat3Label}</p>
+              <p className="text-[11px] text-slate-400">{t.stat3Sub}</p>
             </div>
 
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg hover:border-blue-500/40 transition-colors">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600/10 text-blue-400 border border-blue-400/20 flex items-center justify-center mb-4">
-                <Lock className="w-5 h-5" />
-              </div>
-              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-1">{t.stat4Value}</p>
-              <h3 className="text-sm font-bold text-slate-200 mb-1">{t.stat4Label}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{t.stat4Sub}</p>
+            {/* Metric 4 */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-1 hover:border-slate-700 transition-colors">
+              <p className="text-2xl sm:text-4xl font-black text-emerald-400 tracking-tight">{t.stat4Value}</p>
+              <p className="text-xs sm:text-sm font-bold text-white">{t.stat4Label}</p>
+              <p className="text-[11px] text-slate-400">{t.stat4Sub}</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4. HOW IT WORKS (3-STEP PIPELINE) */}
+      <section id="how-it-works" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        
+        <div className="text-center space-y-2 mb-12 sm:mb-16">
+          <span className="text-xs font-black tracking-widest text-blue-400 uppercase">
+            {t.howItWorksTag}
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            {t.howItWorksTitle}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
+            {t.howItWorksSubtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          
+          {/* Step 1 Card */}
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-blue-500/40 transition-colors relative">
+            <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-black text-lg">
+              01
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded">
+                {t.step1Tag}
+              </span>
+              <h3 className="text-base sm:text-lg font-bold text-white">{t.step1Title}</h3>
+              <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                {t.step1Desc}
+              </p>
+            </div>
+          </div>
+
+          {/* Step 2 Card */}
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-indigo-500/40 transition-colors relative">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-black text-lg">
+              02
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950 px-2 py-0.5 rounded">
+                {t.step2Tag}
+              </span>
+              <h3 className="text-base sm:text-lg font-bold text-white">{t.step2Title}</h3>
+              <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                {t.step2Desc}
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 Card */}
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors relative">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-lg">
+              03
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">
+                {t.step3Tag}
+              </span>
+              <h3 className="text-base sm:text-lg font-bold text-white">{t.step3Title}</h3>
+              <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                {t.step3Desc}
+              </p>
             </div>
           </div>
 
         </div>
       </section>
 
-      {/* ── 4. "How It Works" (3-Step Visual Breakdown) ── */}
-      <section id="how-it-works" className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-10">
+      {/* 5. PRE-ENGINEERED CITIZEN SERVICES (ALL 6 CARDS) */}
+      <section id="services" className="relative z-10 border-t border-slate-800/80 bg-slate-950 py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-400/20 text-xs font-bold uppercase tracking-wider">
-              {t.howItWorksTag}
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-              {t.howItWorksTitle}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              {t.howItWorksSubtitle}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl flex flex-col justify-between space-y-5 hover:border-indigo-500/40 transition-colors group">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black text-slate-600 group-hover:text-indigo-400 transition-colors font-mono">01</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">{t.step1Tag}</span>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-400/20 flex items-center justify-center">
-                  <Bot className="w-5 h-5" />
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight">{t.step1Title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{t.step1Desc}</p>
-              </div>
-              <div className="pt-3 border-t border-slate-800/80">
-                <Link href="/dashboard" className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 no-underline">
-                  <span>Launch Copilot</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl flex flex-col justify-between space-y-5 hover:border-indigo-500/40 transition-colors group">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black text-slate-600 group-hover:text-indigo-400 transition-colors font-mono">02</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">{t.step2Tag}</span>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-400/20 flex items-center justify-center">
-                  <Layers className="w-5 h-5" />
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight">{t.step2Title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{t.step2Desc}</p>
-              </div>
-              <div className="pt-3 border-t border-slate-800/80">
-                <Link href="/dashboard" className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 no-underline">
-                  <span>Explore Roadmaps</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl flex flex-col justify-between space-y-5 hover:border-indigo-500/40 transition-colors group">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black text-slate-600 group-hover:text-indigo-400 transition-colors font-mono">03</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">{t.step3Tag}</span>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-400 border border-indigo-400/20 flex items-center justify-center">
-                  <FileCheck className="w-5 h-5" />
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight">{t.step3Title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{t.step3Desc}</p>
-              </div>
-              <div className="pt-3 border-t border-slate-800/80">
-                <Link href="/dashboard" className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 no-underline">
-                  <span>Verify Documents</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── 5. Connected Citizen Services Grid ── */}
-      <section id="services" className="py-16 bg-slate-900/40 border-y border-slate-800 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-10">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2 max-w-2xl">
-              <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-400/20 text-xs font-bold uppercase tracking-wider">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div>
+              <span className="text-xs font-black tracking-widest text-blue-400 uppercase">
                 {t.servicesTag}
               </span>
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight mt-1">
                 {t.servicesTitle}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-400 max-w-xl mt-1">
                 {t.servicesSubtitle}
               </p>
             </div>
-
             <Link
               href="/dashboard"
-              className="px-5 py-2.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-colors flex items-center gap-2 shrink-0 self-start md:self-auto no-underline cursor-pointer"
+              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 shrink-0"
             >
               <span>{t.viewAllJourneys}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentServices.map((svc) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentServices.map((srv) => (
               <div
-                key={svc.id}
-                className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg flex flex-col justify-between space-y-4 hover:border-blue-500/40 transition-colors group"
+                key={srv.id}
+                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-900 transition-all flex flex-col justify-between group shadow-lg"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-400/20">
-                      {svc.dept}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 border border-blue-700/60">
+                      {srv.dept}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-400 font-mono">
-                      {svc.badge}
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/60">
+                      {srv.badge}
                     </span>
                   </div>
 
                   <h3 className="text-base font-bold text-white group-hover:text-blue-300 transition-colors">
-                    {svc.title}
+                    {srv.title}
                   </h3>
 
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {svc.description}
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    {srv.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-slate-500">
-                    UTID: {svc.utidSample}
+                <div className="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-400">
+                    UTID: {srv.utidSample}
                   </span>
                   <Link
                     href="/dashboard"
-                    className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 no-underline"
+                    className="text-xs font-bold text-blue-400 group-hover:translate-x-1 transition-transform flex items-center gap-1"
                   >
-                    <span>Launch</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <span>Execute</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>
@@ -1368,52 +615,52 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 6. Testimonials / Feedback Grid ── */}
-      <section id="testimonials" className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-10">
+      {/* 6. CITIZEN REVIEWS & TESTIMONIALS */}
+      <section id="testimonials" className="relative z-10 border-t border-slate-800/80 bg-slate-900/30 py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wider">
+          <div className="text-center space-y-2 mb-12 sm:mb-16">
+            <span className="text-xs font-black tracking-widest text-blue-400 uppercase">
               {t.testimonialsTag}
             </span>
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
               {t.testimonialsTitle}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
               {t.testimonialsSubtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {currentTestimonials.map((test, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {currentTestimonials.map((item, idx) => (
               <div
                 key={idx}
-                className="p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-lg flex flex-col justify-between space-y-5 hover:border-emerald-500/40 transition-colors"
+                className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 flex flex-col justify-between shadow-xl"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-amber-400">
-                      {[...Array(test.rating)].map((_, i) => (
+                    <div className="flex text-amber-400">
+                      {[...Array(item.rating)].map((_, i) => (
                         <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                      {test.tag}
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+                      {item.tag}
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed italic">
-                    "{test.comment}"
+                  <p className="text-xs text-slate-200 leading-relaxed italic font-normal">
+                    "{item.comment}"
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800 flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-full bg-gradient-to-tr ${test.color} text-white font-black text-xs flex items-center justify-center shadow-md`}>
-                    {test.initials}
+                <div className="pt-4 border-t border-slate-800/80 flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${item.color} flex items-center justify-center text-white font-black text-xs shadow-md`}>
+                    {item.initials}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white">{test.name}</h4>
-                    <p className="text-[11px] text-slate-400">{test.role}</p>
+                    <p className="text-xs font-bold text-white">{item.name}</p>
+                    <p className="text-[10px] text-slate-400">{item.role}</p>
                   </div>
                 </div>
               </div>
@@ -1423,88 +670,52 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 7. Call To Action Banner ── */}
-      <section className="py-14 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 border border-blue-500/30 rounded-3xl p-8 sm:p-10 text-center space-y-5 shadow-2xl">
+      {/* 7. CALL TO ACTION BANNER */}
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border border-blue-500/40 text-center space-y-6 shadow-2xl relative overflow-hidden">
+          
           <div className="space-y-2 max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
               {t.ctaBannerTitle}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-blue-200">
               {t.ctaBannerDesc}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/dashboard"
-              className="px-7 py-3 rounded-xl font-black text-sm bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-transform active:scale-95 no-underline cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-white text-slate-950 hover:bg-slate-100 text-sm font-black transition-all hover:scale-[1.02] shadow-lg cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-blue-200" />
-              <span>{t.ctaBannerBtn}</span>
-              <ArrowRight className="w-4 h-4" />
+              {t.ctaBannerBtn}
             </Link>
-
             <Link
-              href="/login"
-              className="px-5 py-3 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors no-underline"
+              href="/login?portal=officer"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-blue-950/80 hover:bg-blue-900 border border-blue-500/50 text-white text-sm font-bold transition-all cursor-pointer"
             >
-              {t.signInBtn}
+              {t.officerPortalBtn}
             </Link>
           </div>
+
         </div>
       </section>
 
-      {/* ── 8. Modern Public Infrastructure Footer ── */}
-      <footer className="border-t border-slate-800 bg-slate-950 px-4 sm:px-6 lg:px-8 py-10 text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-6">
-          <div className="space-y-2 md:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-                <Landmark className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-black text-white tracking-tight">{t.brandName}</span>
-            </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">{t.footerTagline}</p>
+      {/* 8. FOOTER */}
+      <footer className="border-t border-slate-800 bg-slate-950 py-10 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          
+          <div className="flex items-center gap-2.5">
+            <Landmark className="w-4 h-4 text-blue-400" />
+            <span className="font-bold text-white">{t.brandName}</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-[11px]">{t.footerTagline}</span>
           </div>
 
-          <div className="space-y-1.5">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Platform Links</h4>
-            <ul className="space-y-1 text-[11px]">
-              <li><Link href="/dashboard" className="hover:text-blue-400 transition-colors no-underline">Citizen Milestone Dashboard</Link></li>
-              <li><Link href="/officer" className="hover:text-blue-400 transition-colors no-underline">Officer Scrutiny Hub</Link></li>
-              <li><Link href="/login" className="hover:text-blue-400 transition-colors no-underline">Unified Auth Portal</Link></li>
-              <li><Link href="/qa" className="hover:text-blue-400 transition-colors no-underline">QA Testing Checklist</Link></li>
-            </ul>
-          </div>
+          <p className="text-[11px]">
+            {t.footerGovNotice}
+          </p>
 
-          <div className="space-y-1.5">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Statutory Standards</h4>
-            <ul className="space-y-1 text-[11px]">
-              <li className="text-slate-400">DPDP Act 2023 Compliant</li>
-              <li className="text-slate-400">IT Act 2000 Section 43</li>
-              <li className="text-slate-400">DigiLocker & API Setu</li>
-              <li className="text-slate-400">WCAG 2.1 Level AA</li>
-            </ul>
-          </div>
-
-          <div className="space-y-1.5">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Nodal Ministry</h4>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Government of Maharashtra • Smart India Hackathon 2026.
-            </p>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <p>{t.footerGovNotice}</p>
-          <div className="flex items-center gap-3">
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 inline" /> DPDP 2025 Compliant
-            </span>
-            <span>•</span>
-            <span>Zero Non-Consensual Data Retention</span>
-          </div>
         </div>
       </footer>
 

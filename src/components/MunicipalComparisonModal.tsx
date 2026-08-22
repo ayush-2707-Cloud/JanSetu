@@ -39,6 +39,8 @@ import {
   getNearestMunicipalityByCoords,
 } from "@/data/municipalities";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { useJourney } from "@/context/JourneyContext";
+import { MUNICIPAL_TRANSLATIONS } from "@/data/municipalTranslations";
 
 interface MunicipalComparisonModalProps {
   isOpen: boolean;
@@ -49,6 +51,9 @@ export const MunicipalComparisonModal: React.FC<MunicipalComparisonModalProps> =
   isOpen,
   onClose,
 }) => {
+  const { language } = useJourney();
+  const t = MUNICIPAL_TRANSLATIONS[language] || MUNICIPAL_TRANSLATIONS.EN;
+
   // Universal background scroll lock
   useBodyScrollLock(isOpen);
 
@@ -259,13 +264,13 @@ export const MunicipalComparisonModal: React.FC<MunicipalComparisonModalProps> =
                   id="municipal-modal-title"
                   className="text-base font-black text-white flex items-center gap-2 flex-wrap"
                 >
-                  <span>Municipal Corporation Compliance Diff Engine</span>
+                  <span>{t.modalTitle}</span>
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/25 text-indigo-300 border border-indigo-400/30">
                     Bylaw & SLA Matrix
                   </span>
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Compare trade licenses, SLAs, mandatory NOCs, and subsidies tailored to your specific sector.
+                  {t.modalSubtitle}
                 </p>
               </div>
             </div>

@@ -19,6 +19,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { useJourney } from "@/context/JourneyContext";
+import { translations } from "@/data/translations";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { copilotService, CopilotResponse, CopilotAction } from "@/services/api";
@@ -160,6 +161,8 @@ export const AICopilotBar: React.FC = () => {
     }
   };
 
+  const t = translations[language] || translations.EN;
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-4">
       {/* Copilot Active Command Center Card */}
@@ -178,14 +181,14 @@ export const AICopilotBar: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
-                    Civic Copilot™ Autonomous AI Agent
+                    {t.civicCopilotTitle || "Civic Copilot™ Autonomous AI Agent"}
                   </h2>
                   <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700/80">
-                    Generative UI Live
+                    {t.genUiLiveBadge || "Generative UI Live"}
                   </span>
                 </div>
                 <p className="text-xs text-blue-200/80">
-                  Speak or type naturally — AI autonomously controls the screen, opens drawers & verifies documents
+                  {t.civicCopilotSub || "Speak or type naturally — AI autonomously controls the screen, opens drawers & verifies documents"}
                 </p>
               </div>
             </div>
@@ -209,7 +212,7 @@ export const AICopilotBar: React.FC = () => {
                 title={isMuted ? "Unmute Copilot Voice Feedback" : "Mute Copilot Voice Feedback"}
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                <span className="hidden sm:inline">{isMuted ? "Voice Off" : "Voice On"}</span>
+                <span className="hidden sm:inline">{isMuted ? (t.voiceOff || "Voice Off") : (t.voiceOn || "Voice On")}</span>
               </button>
             </div>
           </div>
@@ -340,7 +343,7 @@ export const AICopilotBar: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap pt-1">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
               <HelpCircle className="w-3 h-3 text-blue-400" />
-              Try Asking:
+              {t.tryAsking || "Try Asking:"}
             </span>
             {QUICK_PROMPTS.map((p, idx) => (
               <button

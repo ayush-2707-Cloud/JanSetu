@@ -236,7 +236,7 @@ export const GovTechHeader: React.FC = () => {
             title="Compare municipal compliance rules (BBMP vs BMC vs MCD)"
           >
             <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-            <span>City Bylaws Diff</span>
+            <span>{t.cityBylawsDiff || "City Bylaws Diff"}</span>
           </button>
         </div>
 

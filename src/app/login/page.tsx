@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -23,21 +23,51 @@ import {
   FileCheck,
   Landmark,
   Layers,
+  Globe,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useJourney } from "@/context/JourneyContext";
 import { useToast } from "@/context/ToastContext";
 import { AuthPortalType } from "@/types/auth";
+import { Language } from "@/types/journey";
+import { LOGIN_TRANSLATIONS } from "@/data/loginTranslations";
+
+const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
+  { id: "EN", label: "English", native: "English" },
+  { id: "HI", label: "Hindi", native: "हिन्दी" },
+  { id: "KN", label: "Kannada", native: "ಕನ್ನಡ" },
+  { id: "MR", label: "Marathi", native: "मराठी" },
+  { id: "TA", label: "Tamil", native: "தமிழ்" },
+  { id: "TE", label: "Telugu", native: "తెలుగు" },
+  { id: "BN", label: "Bengali", native: "বাংলা" },
+  { id: "GU", label: "Gujarati", native: "ગુજરાતી" },
+  { id: "ML", label: "Malayalam", native: "മലയാളം" },
+  { id: "PA", label: "Punjabi", native: "ਪੰਜਾਬੀ" },
+  { id: "OR", label: "Odia", native: "ଓଡ଼ିଆ" },
+];
 
 function LoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, login, register, requestPasswordReset, logout, isAuthenticated } = useAuth();
+  const { language, setLanguage } = useJourney();
   const { showToast } = useToast();
 
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const portalParam = searchParams.get("portal");
   const [activeTab, setActiveTab] = useState<"CITIZEN" | "OFFICER" | "REGISTER">(
     portalParam === "officer" || portalParam === "admin" ? "OFFICER" : "CITIZEN"
   );
+
+  // Active translation dictionary
+  const t = useMemo(() => {
+    return LOGIN_TRANSLATIONS[language] || LOGIN_TRANSLATIONS.EN;
+  }, [language]);
+
+  const currentLangObj = useMemo(() => {
+    return LANGUAGE_OPTIONS.find((l) => l.id === language) || LANGUAGE_OPTIONS[0];
+  }, [language]);
 
   // Form States
   const [identifier, setIdentifier] = useState<string>("");
@@ -160,29 +190,82 @@ function LoginContent() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-black tracking-tight text-white">JanSetu™</span>
+              <span className="text-base font-black tracking-tight text-white">{t.portalTitle}</span>
               <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 uppercase tracking-wider">
                 National Portal
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">Universal Digital Citizen & Officer Gateway</p>
+            <p className="text-[11px] text-slate-400">{t.portalSubtitle}</p>
           </div>
         </Link>
 
-        {isAuthenticated && user && (
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-slate-200">{user.full_name}</p>
-              <p className="text-[10px] text-slate-400 font-mono">{user.role}</p>
-            </div>
+        {/* Right Header: Language Switcher and Auth Status */}
+        <div className="flex items-center gap-3">
+          
+          {/* Multilingual Selector Dropdown */}
+          <div className="relative">
             <button
-              onClick={logout}
-              className="text-xs font-bold px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/50 transition-colors cursor-pointer"
+              type="button"
+              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 border border-slate-700/80 hover:border-blue-500/80 text-slate-200 hover:text-white transition-all shadow-xs cursor-pointer"
+              title="Change Portal Language"
             >
-              Sign Out
+              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <span>{currentLangObj.native}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
+
+            {isLangDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 overflow-hidden animate-in fade-in">
+                <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 tracking-wider border-b border-slate-800/80 mb-1">
+                  11 Official Languages
+                </div>
+                <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar">
+                  {LANGUAGE_OPTIONS.map((lang) => (
+                    <button
+                      key={lang.id}
+                      type="button"
+                      onClick={() => {
+                        setLanguage(lang.id);
+                        setIsLangDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors cursor-pointer ${
+                        language === lang.id
+                          ? "bg-blue-600 text-white font-bold"
+                          : "text-slate-300 hover:bg-slate-800/80 hover:text-white"
+                      }`}
+                    >
+                      <span>{lang.native}</span>
+                      <span className="text-[10px] opacity-70 font-mono">({lang.id})</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
+
+          <Link
+            href="/"
+            className="text-xs font-bold text-slate-400 hover:text-white hidden sm:block"
+          >
+            {t.backToHome}
+          </Link>
+
+          {isAuthenticated && user && (
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <p className="text-xs font-bold text-slate-200">{user.full_name}</p>
+                <p className="text-[10px] text-slate-400 font-mono">{user.role}</p>
+              </div>
+              <button
+                onClick={logout}
+                className="text-xs font-bold px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/50 transition-colors cursor-pointer"
+              >
+                {t.signOutBtn}
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* Main Authentication Card Area */}
@@ -194,21 +277,21 @@ function LoginContent() {
             <div className="text-center space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-400/20 text-[11px] font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Single Sign-On (SSO) & DigiLocker Federated Auth</span>
+                <span>{t.ssoBadge}</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {activeTab === "CITIZEN"
-                  ? "Citizen Access Gateway"
+                  ? t.citizenHeaderTitle
                   : activeTab === "OFFICER"
-                  ? "Department Officer & Admin Scrutiny Hub"
-                  : "New Citizen User Registration"}
+                  ? t.officerHeaderTitle
+                  : t.registerHeaderTitle}
               </h1>
               <p className="text-xs text-slate-400 max-w-md mx-auto">
                 {activeTab === "CITIZEN"
-                  ? "Track statutory roadmaps, verify legal documents, and submit municipal approvals."
+                  ? t.citizenHeaderSubtitle
                   : activeTab === "OFFICER"
-                  ? "Restricted official portal for cross-departmental application review, DigiLocker verification, and SLA decisioning."
-                  : "Create an official citizen identity linked with DigiLocker and API Setu."}
+                  ? t.officerHeaderSubtitle
+                  : t.registerHeaderSubtitle}
               </p>
             </div>
 
@@ -228,7 +311,7 @@ function LoginContent() {
                 }`}
               >
                 <Users className="w-3.5 h-3.5" />
-                <span className="truncate">Citizen Login</span>
+                <span className="truncate">{t.tabCitizen}</span>
               </button>
 
               <button
@@ -245,7 +328,7 @@ function LoginContent() {
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span className="truncate">Officer / Admin</span>
+                <span className="truncate">{t.tabOfficer}</span>
               </button>
 
               <button
@@ -260,7 +343,7 @@ function LoginContent() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-                <span className="truncate">New Register</span>
+                <span className="truncate">{t.tabRegister}</span>
               </button>
             </div>
           </div>
@@ -274,14 +357,14 @@ function LoginContent() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-blue-400" />
-                    <span>Email, Mobile Number, or Username</span>
+                    <span>{t.citizenIdentifierLabel}</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. anand_kumar or anand.kumar@citizen.gov.in"
+                    placeholder={t.citizenIdentifierPlaceholder}
                     className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   />
                 </div>
@@ -290,7 +373,7 @@ function LoginContent() {
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                       <Lock className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Password or DigiLocker PIN</span>
+                      <span>{t.citizenPasswordLabel}</span>
                     </label>
                     <button
                       type="button"
@@ -301,7 +384,7 @@ function LoginContent() {
                       }}
                       className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
                     >
-                      Forgot Username / Password?
+                      {t.forgotPasswordBtn}
                     </button>
                   </div>
                   <div className="relative">
@@ -310,7 +393,7 @@ function LoginContent() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder={t.citizenPasswordPlaceholder}
                       className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors pr-10"
                     />
                     <button
@@ -329,14 +412,14 @@ function LoginContent() {
                   className="w-full py-3.5 rounded-xl font-black text-xs bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Users className="w-4 h-4" />
-                  <span>{isSubmitting ? "Authenticating Citizen..." : "Sign In to Citizen Portal"}</span>
+                  <span>{isSubmitting ? t.citizenSubmittingBtn : t.citizenSubmitBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
                 {/* Evaluator Demo Quick Fills */}
                 <div className="pt-3 border-t border-slate-800/80 space-y-2">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                    ⚡ Evaluator Demo Citizen Profiles:
+                    ⚡ {t.evaluatorBoxTitle}:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
@@ -345,7 +428,7 @@ function LoginContent() {
                       className="text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer"
                     >
                       <strong className="text-xs text-blue-300 block font-bold">Anand Kumar</strong>
-                      <span className="text-[10px] text-slate-400">Proprietor • Udyam / MSME</span>
+                      <span className="text-[10px] text-slate-400">{t.citizenDemo1Label}</span>
                     </button>
                     <button
                       type="button"
@@ -353,7 +436,7 @@ function LoginContent() {
                       className="text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer"
                     >
                       <strong className="text-xs text-emerald-300 block font-bold">Priya Sundaram</strong>
-                      <span className="text-[10px] text-slate-400">FBO Operator • FSSAI</span>
+                      <span className="text-[10px] text-slate-400">{t.citizenDemo2Label}</span>
                     </button>
                   </div>
                 </div>
@@ -367,21 +450,21 @@ function LoginContent() {
                 <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-2.5 text-xs text-amber-300">
                   <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <p className="leading-relaxed text-[11px]">
-                    <strong>Official Back-Office Portal:</strong> Authorized government personnel only. All access is logged with immutable IP & UTID audit records under the Information Technology Act.
+                    <strong>{t.itActNotice}</strong>
                   </p>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>Officer Service ID or Official Email</span>
+                    <span>{t.officerIdentifierLabel}</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. OFFICER-KA-9942 or ranganathan.s@msme.gov.in"
+                    placeholder={t.officerIdentifierPlaceholder}
                     className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                   />
                 </div>
@@ -390,7 +473,7 @@ function LoginContent() {
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                       <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>Govt Security PIN / Access Key</span>
+                      <span>{t.officerPasswordLabel}</span>
                     </label>
                     <button
                       type="button"
@@ -401,7 +484,7 @@ function LoginContent() {
                       }}
                       className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
                     >
-                      Forgot Officer Key?
+                      {t.forgotPasswordBtn}
                     </button>
                   </div>
                   <div className="relative">
@@ -410,7 +493,7 @@ function LoginContent() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder={t.officerPasswordPlaceholder}
                       className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors pr-10"
                     />
                     <button
@@ -429,14 +512,14 @@ function LoginContent() {
                   className="w-full py-3.5 rounded-xl font-black text-xs bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <ShieldCheck className="w-4 h-4" />
-                  <span>{isSubmitting ? "Verifying Official Role..." : "Sign In to Officer Scrutiny Hub"}</span>
+                  <span>{isSubmitting ? t.officerSubmittingBtn : t.officerSubmitBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
                 {/* Evaluator Demo Quick Fills for Officer */}
                 <div className="pt-3 border-t border-slate-800/80 space-y-2">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                    ⚡ Evaluator Demo Officer Credentials:
+                    ⚡ {t.evaluatorBoxTitle}:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
@@ -445,7 +528,7 @@ function LoginContent() {
                       className="text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer"
                     >
                       <strong className="text-xs text-indigo-300 block font-bold">Shri S. Ranganathan</strong>
-                      <span className="text-[10px] text-slate-400">MSME Assistant Commissioner</span>
+                      <span className="text-[10px] text-slate-400">{t.officerDemo1Label}</span>
                     </button>
                     <button
                       type="button"
@@ -453,7 +536,7 @@ function LoginContent() {
                       className="text-left p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer"
                     >
                       <strong className="text-xs text-purple-300 block font-bold">Dr. M. K. Ananth</strong>
-                      <span className="text-[10px] text-slate-400">FSSAI Designated Officer</span>
+                      <span className="text-[10px] text-slate-400">{t.officerDemo2Label}</span>
                     </button>
                   </div>
                 </div>
@@ -465,66 +548,66 @@ function LoginContent() {
               <form onSubmit={handleRegisterSubmit} className="space-y-4 animate-in fade-in text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Full Legal Name (as on Aadhaar)</label>
+                    <label className="font-bold text-slate-300">{t.fullNameLabel}</label>
                     <input
                       type="text"
                       required
                       value={regFullName}
                       onChange={(e) => setRegFullName(e.target.value)}
-                      placeholder="e.g. Ramesh Kumar Verma"
+                      placeholder={t.fullNamePlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Username</label>
+                    <label className="font-bold text-slate-300">{t.usernameLabel}</label>
                     <input
                       type="text"
                       required
                       value={regUsername}
                       onChange={(e) => setRegUsername(e.target.value)}
-                      placeholder="e.g. ramesh_verma"
+                      placeholder={t.usernamePlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Email Address</label>
+                    <label className="font-bold text-slate-300">{t.emailLabel}</label>
                     <input
                       type="email"
                       required
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="e.g. ramesh@example.com"
+                      placeholder={t.emailPlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Mobile Number (+91)</label>
+                    <label className="font-bold text-slate-300">{t.phoneLabel}</label>
                     <input
                       type="tel"
                       required
                       value={regPhone}
                       onChange={(e) => setRegPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
+                      placeholder={t.phonePlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Aadhaar (Optional for DigiLocker)</label>
+                    <label className="font-bold text-slate-300">{t.aadhaarLabel}</label>
                     <input
                       type="text"
                       value={regAadhaar}
                       onChange={(e) => setRegAadhaar(e.target.value)}
-                      placeholder="12-digit UIDAI Number"
+                      placeholder={t.aadhaarPlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Domicile State</label>
+                    <label className="font-bold text-slate-300">{t.stateLabel}</label>
                     <select
                       value={regState}
                       onChange={(e) => setRegState(e.target.value)}
@@ -536,29 +619,33 @@ function LoginContent() {
                       <option value="Delhi">Delhi NCT</option>
                       <option value="Uttar Pradesh">Uttar Pradesh</option>
                       <option value="Gujarat">Gujarat</option>
+                      <option value="West Bengal">West Bengal</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Punjab">Punjab</option>
+                      <option value="Odisha">Odisha</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Password</label>
+                    <label className="font-bold text-slate-300">{t.passwordLabel}</label>
                     <input
                       type="password"
                       required
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder={t.passwordPlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-bold text-slate-300">Confirm Password</label>
+                    <label className="font-bold text-slate-300">{t.confirmPasswordLabel}</label>
                     <input
                       type="password"
                       required
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder={t.confirmPasswordPlaceholder}
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
@@ -567,7 +654,7 @@ function LoginContent() {
                 <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-[11px] text-emerald-300 flex items-center gap-2">
                   <FileCheck className="w-4 h-4 shrink-0 text-emerald-400" />
                   <span>
-                    Registering provisions a secure DigiLocker token and DPDP Act 2023 compliant consent record.
+                    {t.digilockerSafeNotice}
                   </span>
                 </div>
 
@@ -577,7 +664,7 @@ function LoginContent() {
                   className="w-full py-3.5 rounded-xl font-black text-xs bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>{isSubmitting ? "Creating Account..." : "Create Verified Citizen Account"}</span>
+                  <span>{isSubmitting ? t.registerSubmittingBtn : t.registerSubmitBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
@@ -600,7 +687,7 @@ function LoginContent() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
                 <HelpCircle className="w-4 h-4" />
-                <span>Account Recovery Portal</span>
+                <span>{t.forgotModalTitle}</span>
               </div>
               <button
                 onClick={() => setIsForgotModalOpen(false)}
@@ -613,17 +700,17 @@ function LoginContent() {
             {!forgotRecoverySent ? (
               <form onSubmit={handleForgotSubmit} className="space-y-4 text-xs">
                 <p className="text-slate-400 leading-relaxed">
-                  Enter your registered email address, mobile number, username, or Officer ID to receive a secure recovery OTP.
+                  {t.forgotModalDesc}
                 </p>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-slate-300">Registered Identifier</label>
+                  <label className="font-bold text-slate-300">{t.forgotInputLabel}</label>
                   <input
                     type="text"
                     required
                     value={forgotIdentifier}
                     onChange={(e) => setForgotIdentifier(e.target.value)}
-                    placeholder="e.g. anand_kumar or +91 98765 43210"
+                    placeholder={t.forgotInputPlaceholder}
                     className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -634,13 +721,13 @@ function LoginContent() {
                     onClick={() => setIsForgotModalOpen(false)}
                     className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold cursor-pointer"
                   >
-                    Cancel
+                    {t.forgotCloseBtn}
                   </button>
                   <button
                     type="submit"
                     className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold cursor-pointer"
                   >
-                    Send Recovery OTP
+                    {t.forgotSubmitBtn}
                   </button>
                 </div>
               </form>
@@ -652,7 +739,7 @@ function LoginContent() {
                 <div className="space-y-1">
                   <h3 className="text-sm font-bold text-white">Recovery Instructions Dispatched</h3>
                   <p className="text-xs text-slate-400">
-                    A verification OTP and password reset link have been dispatched to:
+                    {t.forgotSentSuccess}
                   </p>
                   <p className="text-xs font-mono font-bold text-emerald-400">{recoveryTarget}</p>
                 </div>
@@ -661,7 +748,7 @@ function LoginContent() {
                   onClick={() => setIsForgotModalOpen(false)}
                   className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs cursor-pointer"
                 >
-                  Back to Sign In
+                  {t.forgotCloseBtn}
                 </button>
               </div>
             )}
