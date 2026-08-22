@@ -36,6 +36,10 @@ import DepartmentalSLAModal from "@/components/DepartmentalSLAModal";
 import VisualDataHarmonizerModal from "@/components/VisualDataHarmonizerModal";
 import MeriPehchaanSSOModal from "@/components/MeriPehchaanSSOModal";
 import LiveEventStreamToast from "@/components/LiveEventStreamToast";
+import EnterpriseStandardsModal from "@/components/EnterpriseStandardsModal";
+import ChaosResilienceModal from "@/components/ChaosResilienceModal";
+import CPGRAMSGrievanceModal from "@/components/CPGRAMSGrievanceModal";
+import SystemTelemetryModal from "@/components/SystemTelemetryModal";
 
 const LANGUAGE_OPTIONS: { id: Language; label: string; native: string }[] = [
   { id: "BN", label: "Bengali", native: "বাংলা" },
@@ -77,6 +81,10 @@ export const GovTechHeader: React.FC = () => {
   const [isSLAModalOpen, setIsSLAModalOpen] = useState(false);
   const [isHarmonizerModalOpen, setIsHarmonizerModalOpen] = useState(false);
   const [isSSOModalOpen, setIsSSOModalOpen] = useState(false);
+  const [isStandardsModalOpen, setIsStandardsModalOpen] = useState(false);
+  const [isChaosModalOpen, setIsChaosModalOpen] = useState(false);
+  const [isGrievanceModalOpen, setIsGrievanceModalOpen] = useState(false);
+  const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
   const [isInteropDropdownOpen, setIsInteropDropdownOpen] = useState(false);
   const t = useMemo(() => translations[language] || translations.EN, [language]);
 
@@ -392,7 +400,59 @@ export const GovTechHeader: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Section 3: QA Checklist */}
+                {/* Section 3: Tier-2 Enterprise Architecture & Resiliency */}
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-500 px-2 block">
+                    3. Enterprise Resilience & Observability
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      onClick={() => {
+                        setIsStandardsModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-indigo-300 block font-bold">🏛️ IndEA 2.0 Standards</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">6-Pillar MeitY Audit</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsChaosModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-rose-300 block font-bold">⚡ Chaos & DLQ Engine</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">Circuit Breaker & DLQ</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsGrievanceModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-orange-300 block font-bold">⚖️ CPGRAMS Grievance</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">RTSA Sec 8/10 Drafter</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsTelemetryModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-emerald-300 block font-bold">📈 APM Telemetry</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">Latency & Live Uptime</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section 4: QA Checklist */}
                 <div className="pt-1 border-t border-slate-900">
                   <button
                     onClick={() => {
@@ -402,7 +462,7 @@ export const GovTechHeader: React.FC = () => {
                     className="w-full p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-800/80 text-left flex items-center justify-between transition-colors cursor-pointer"
                   >
                     <span className="text-xs font-bold text-emerald-300">🧪 Interactive QA Testing Checklist</span>
-                    <span className="text-[10px] text-emerald-400 font-mono">107/107 Tests</span>
+                    <span className="text-[10px] text-emerald-400 font-mono">125/125 Tests</span>
                   </button>
                 </div>
               </div>
@@ -550,6 +610,30 @@ export const GovTechHeader: React.FC = () => {
       <MeriPehchaanSSOModal
         isOpen={isSSOModalOpen}
         onClose={() => setIsSSOModalOpen(false)}
+      />
+
+      {/* IndEA 2.0 6-Pillar Standards Compliance Modal */}
+      <EnterpriseStandardsModal
+        isOpen={isStandardsModalOpen}
+        onClose={() => setIsStandardsModalOpen(false)}
+      />
+
+      {/* Chaos Engineering & DLQ Resilience Controls Modal */}
+      <ChaosResilienceModal
+        isOpen={isChaosModalOpen}
+        onClose={() => setIsChaosModalOpen(false)}
+      />
+
+      {/* CPGRAMS & Maharashtra RTSA Grievance Bridge Modal */}
+      <CPGRAMSGrievanceModal
+        isOpen={isGrievanceModalOpen}
+        onClose={() => setIsGrievanceModalOpen(false)}
+      />
+
+      {/* Interoperability Observability & APM Telemetry Modal */}
+      <SystemTelemetryModal
+        isOpen={isTelemetryModalOpen}
+        onClose={() => setIsTelemetryModalOpen(false)}
       />
 
       {/* Global Real-Time Server-Sent Events (SSE) Toast Listener */}

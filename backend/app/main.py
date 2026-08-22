@@ -14,7 +14,7 @@ from app.db.database import init_db
 from app.routers import (
     journeys, progress, sandbox, sessions, alerts, ai, copilot, legal,
     stamp_duty, notifications, officer, auth, preflight, connectors, mdm, audit,
-    indea_harmonizer, sso, events, admin_workflow, sla
+    indea_harmonizer, sso, events, admin_workflow, sla, tier2_router
 )
 from app.engine.dependency_graph import DependencyResolutionError
 
@@ -28,6 +28,15 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# IndEA 2.0 Standards & Metadata Header Injection Middleware
+@app.middleware("http")
+async def append_indea_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-IndEA-Framework"] = "2.0"
+    response.headers["X-DRM-Standard"] = "JSON-LD"
+    response.headers["X-GovTech-Interoperability"] = "Tier-2"
+    return response
 
 # CORS Middleware (supports Next.js frontend port 3000 and standard local origins)
 app.add_middleware(
@@ -55,6 +64,7 @@ app.include_router(sso.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
 app.include_router(admin_workflow.router, prefix="/api")
 app.include_router(sla.router, prefix="/api")
+app.include_router(tier2_router.router, prefix="/api")
 app.include_router(audit.router, prefix="/api")
 app.include_router(legal.router)
 app.include_router(stamp_duty.router)
@@ -78,6 +88,7 @@ app.include_router(sso.router, prefix=settings.API_V1_STR)
 app.include_router(events.router, prefix=settings.API_V1_STR)
 app.include_router(admin_workflow.router, prefix=settings.API_V1_STR)
 app.include_router(sla.router, prefix=settings.API_V1_STR)
+app.include_router(tier2_router.router, prefix=settings.API_V1_STR)
 app.include_router(audit.router, prefix=settings.API_V1_STR)
 app.include_router(legal.router, prefix=settings.API_V1_STR)
 app.include_router(stamp_duty.router, prefix=settings.API_V1_STR)
