@@ -662,14 +662,18 @@ import type {
 
 const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
   {
+    utid: "APP-2026-MSME-0841",
     application_id: "APP-2026-MSME-0841",
+    applicant_name: "Rahul Rajesh Sharma",
     citizen_name: "Rahul Rajesh Sharma",
     enterprise_name: "Namma Cloud Technologies LLP",
     department: "MSME",
     department_name: "Ministry of Micro, Small & Medium Enterprises",
+    target_goal: "Udyam Enterprise Registration & Priority Credit Certificate",
     service_title: "Udyam Enterprise Registration & Priority Credit Certificate",
     journey_id: "msme-registration",
     current_step_id: "step-2",
+    current_department_stage: "NIC Code & Enterprise Classification Validation",
     current_step_title: "NIC Code & Enterprise Classification Validation",
     status: "PENDING_REVIEW",
     submission_date: "2026-08-21T09:30:00Z",
@@ -743,14 +747,18 @@ const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
     },
   },
   {
+    utid: "APP-2026-FSSAI-1904",
     application_id: "APP-2026-FSSAI-1904",
+    applicant_name: "Priya V. Sundaram",
     citizen_name: "Priya V. Sundaram",
     enterprise_name: "Anand Sweets & Cloud Kitchen",
     department: "FOOD_SAFETY",
     department_name: "Food Safety and Standards Authority of India (FSSAI)",
+    target_goal: "FSSAI State Food Business Operator (FBO) License",
     service_title: "FSSAI State Food Business Operator (FBO) License",
     journey_id: "food-license-fssai",
     current_step_id: "step-2",
+    current_department_stage: "Kitchen Hygiene & FSMS Plan Scrutiny",
     current_step_title: "Kitchen Hygiene & FSMS Plan Scrutiny",
     status: "PENDING_REVIEW",
     submission_date: "2026-08-20T14:15:00Z",
@@ -815,14 +823,18 @@ const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
     },
   },
   {
+    utid: "APP-2026-REV-3301",
     application_id: "APP-2026-REV-3301",
+    applicant_name: "Amitabh Ramesh Kulkarni",
     citizen_name: "Amitabh Ramesh Kulkarni",
     enterprise_name: "Kulkarni Agro Processing Units",
     department: "REVENUE",
     department_name: "Department of Land Records & Revenue",
+    target_goal: "Agricultural Land Conversion & Non-Agricultural (NA) Permission",
     service_title: "Agricultural Land Conversion & Non-Agricultural (NA) Permission",
     journey_id: "property-registration",
     current_step_id: "step-3",
+    current_department_stage: "Tahsildar Field Inspection & Title Search Clearance",
     current_step_title: "Tahsildar Field Inspection & Title Search Clearance",
     status: "DEFECT_FLAGGED",
     submission_date: "2026-08-18T11:00:00Z",
@@ -899,14 +911,18 @@ const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
     },
   },
   {
+    utid: "APP-2026-MUNI-5590",
     application_id: "APP-2026-MUNI-5590",
+    applicant_name: "Fatima Zahra Khan",
     citizen_name: "Fatima Zahra Khan",
     enterprise_name: "Zahra Designer Studios",
     department: "MUNICIPAL",
     department_name: "Greater Bengaluru Municipal Corporation (BBMP)",
+    target_goal: "Trade License & Commercial Establishment Sanction",
     service_title: "Trade License & Commercial Establishment Sanction",
     journey_id: "trade-license",
     current_step_id: "step-1",
+    current_department_stage: "Property Tax (PID) & Zonal Sanction Verification",
     current_step_title: "Property Tax (PID) & Zonal Sanction Verification",
     status: "APPROVED",
     submission_date: "2026-08-21T08:00:00Z",
@@ -956,14 +972,18 @@ const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
     },
   },
   {
+    utid: "APP-2026-RTO-7102",
     application_id: "APP-2026-RTO-7102",
+    applicant_name: "Kavita Devendra Patil",
     citizen_name: "Kavita Devendra Patil",
     enterprise_name: null,
     department: "TRANSPORT",
     department_name: "Ministry of Road Transport & Highways (MoRTH)",
+    target_goal: "Commercial Goods Carrier Permit & Fitness Certification",
     service_title: "Commercial Goods Carrier Permit & Fitness Certification",
     journey_id: "driving-license",
     current_step_id: "step-2",
+    current_department_stage: "Automated Vehicle Inspection & Emission Report Check",
     current_step_title: "Automated Vehicle Inspection & Emission Report Check",
     status: "PENDING_REVIEW",
     submission_date: "2026-08-21T12:00:00Z",
@@ -1011,7 +1031,7 @@ const FALLBACK_OFFICER_APPLICATIONS: OfficerApplication[] = [
 
 export const officerService = {
   /**
-   * Retrieve list of cross-departmental citizen applications for officer scrutiny.
+   * Retrieve list of cross-departmental citizen applications for officer scrutiny with RBAC.
    */
   getApplications: async (
     department?: DepartmentCode,
@@ -1024,7 +1044,11 @@ export const officerService = {
     if (search) params.append("search", search);
 
     const qs = params.toString() ? `?${params.toString()}` : "";
-    const live = await safeFetch<OfficerApplication[]>(`/api/officer/applications${qs}`);
+    const live = await safeFetch<OfficerApplication[]>(`/api/officer/applications${qs}`, {
+      headers: {
+        "X-User-Role": "OFFICER_ROLE",
+      },
+    });
     if (live && Array.isArray(live)) {
       return live;
     }
@@ -1037,10 +1061,10 @@ export const officerService = {
       const q = search.toLowerCase();
       results = results.filter(
         (a) =>
-          a.application_id.toLowerCase().includes(q) ||
-          a.citizen_name.toLowerCase().includes(q) ||
+          a.utid.toLowerCase().includes(q) ||
+          a.applicant_name.toLowerCase().includes(q) ||
           (a.enterprise_name && a.enterprise_name.toLowerCase().includes(q)) ||
-          a.service_title.toLowerCase().includes(q)
+          a.target_goal.toLowerCase().includes(q)
       );
     }
     return results;
@@ -1049,10 +1073,18 @@ export const officerService = {
   /**
    * Retrieve single application detail with full dossier.
    */
-  getApplicationById: async (applicationId: string): Promise<OfficerApplication | null> => {
-    const live = await safeFetch<OfficerApplication>(`/api/officer/applications/${encodeURIComponent(applicationId)}`);
+  getApplicationById: async (applicationIdOrUtid: string): Promise<OfficerApplication | null> => {
+    const live = await safeFetch<OfficerApplication>(`/api/officer/applications/${encodeURIComponent(applicationIdOrUtid)}`, {
+      headers: {
+        "X-User-Role": "OFFICER_ROLE",
+      },
+    });
     if (live) return live;
-    return FALLBACK_OFFICER_APPLICATIONS.find((a) => a.application_id === applicationId) || null;
+    return (
+      FALLBACK_OFFICER_APPLICATIONS.find(
+        (a) => a.utid === applicationIdOrUtid || a.application_id === applicationIdOrUtid
+      ) || null
+    );
   },
 
   /**
@@ -1061,6 +1093,9 @@ export const officerService = {
   submitDecision: async (payload: OfficerDecisionRequest): Promise<OfficerDecisionResponse> => {
     const live = await safeFetch<OfficerDecisionResponse>("/api/officer/decision", {
       method: "POST",
+      headers: {
+        "X-User-Role": "OFFICER_ROLE",
+      },
       body: JSON.stringify(payload),
     });
     if (live) return live;
@@ -1069,14 +1104,16 @@ export const officerService = {
     const nowStr = new Date().toISOString();
     return {
       success: true,
-      application_id: payload.application_id,
+      utid: payload.utid || payload.application_id || "APP-2026",
+      application_id: payload.utid || payload.application_id || "APP-2026",
       new_status: payload.decision,
       decision_timestamp: nowStr,
       sla_time_delta_hours: 14.5,
       sla_performance_summary: `Completed in 14.5 hrs (33.5 hrs ahead of statutory SLA limit of 48 hrs)`,
       audit_reference_id: `AUDIT-${payload.department || "GOV"}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
       officer_id: payload.officer_id || "OFFICER-KA-9942",
-      message: `Application ${payload.application_id} updated to ${payload.decision}.`,
+      message: `Application ${payload.utid || payload.application_id} updated to ${payload.decision}.`,
+      citizen_roadmap_updated: true,
     };
   },
 
@@ -1086,16 +1123,21 @@ export const officerService = {
   analyzeDossier: async (payload: DossierAnalysisRequest): Promise<DossierAnalysisResponse> => {
     const live = await safeFetch<DossierAnalysisResponse>("/api/officer/analyze-dossier", {
       method: "POST",
+      headers: {
+        "X-User-Role": "OFFICER_ROLE",
+      },
       body: JSON.stringify(payload),
     });
     if (live) return live;
 
-    const isFssai = payload.application_id.includes("FSSAI") || payload.service_title.includes("Food");
-    const isRev = payload.application_id.includes("REV") || payload.service_title.includes("Land");
+    const targetUtid = payload.utid || payload.application_id || "";
+    const isFssai = targetUtid.includes("FSSAI") || payload.service_title.includes("Food");
+    const isRev = targetUtid.includes("REV") || payload.service_title.includes("Land");
 
     if (isFssai) {
       return {
-        application_id: payload.application_id,
+        utid: targetUtid,
+        application_id: targetUtid,
         identity_verification_status: "Aadhaar & PAN authenticated with 100% biometric and name match via DigiLocker. Food Safety Supervisor Level 2 FoSTaC Certificate verified.",
         document_completeness: "IS 10500 compliant water test report and registered 11-month lease deed attached. Kitchen equipment layout blueprint attached.",
         regulatory_red_flags: "Commercial lease agreement has 28 days remaining for statutory renewal; requires a 3-year extension undertaking under FSSAI Section 31 before final 5-year license dispatch.",
@@ -1107,7 +1149,8 @@ export const officerService = {
       };
     } else if (isRev) {
       return {
-        application_id: payload.application_id,
+        utid: targetUtid,
+        application_id: targetUtid,
         identity_verification_status: "Applicant identity confirmed with DigiLocker verified 7/12 land record mutation extract (Ferfar) dating back 30 years without encumbrances.",
         document_completeness: "Cadastral survey map (KJP) submitted; Town Planning zone classification letter attached.",
         regulatory_red_flags: "Discrepancy noted in plot boundary coordinates on Survey Plot 142/3-B bordering forest buffer zone. Demarcation must be verified by Deputy Director of Land Records (DDLR).",
@@ -1119,7 +1162,8 @@ export const officerService = {
       };
     } else {
       return {
-        application_id: payload.application_id,
+        utid: targetUtid,
+        application_id: targetUtid,
         identity_verification_status: "Aadhaar KYC & Income Tax PAN cryptographic match confirmed via API Setu with zero discrepancy in applicant demographic records.",
         document_completeness: "Incorporation certification from Ministry of Corporate Affairs and BESCOM electricity utility tariff bill verified.",
         regulatory_red_flags: "No high-risk regulatory red flags identified. Enterprise qualifies for Micro category under MSMED Act 2006 with clean statutory standing.",

@@ -2,6 +2,8 @@
  * Officer Back-Office Dashboard & Scrutiny Types for JanSetu™ (जनसेतु)
  */
 
+export type UserRole = "OFFICER_ROLE" | "CITIZEN_ROLE" | "ADMIN_ROLE";
+
 export type ApplicationStatus = "PENDING_REVIEW" | "APPROVED" | "DEFECT_FLAGGED" | "REJECTED";
 
 export type DepartmentCode = "MSME" | "FOOD_SAFETY" | "REVENUE" | "MUNICIPAL" | "TRANSPORT" | "LABOUR";
@@ -45,15 +47,19 @@ export interface BeneficiaryDossier {
 }
 
 export interface OfficerApplication {
-  application_id: string;
-  citizen_name: string;
+  utid: string;
+  application_id?: string;
+  applicant_name: string;
+  citizen_name?: string;
   enterprise_name?: string | null;
   department: DepartmentCode;
   department_name: string;
-  service_title: string;
+  target_goal: string;
+  service_title?: string;
   journey_id: string;
   current_step_id: string;
-  current_step_title: string;
+  current_department_stage: string;
+  current_step_title?: string;
   status: ApplicationStatus;
   submission_date: string;
   sla_deadline: string;
@@ -68,7 +74,8 @@ export interface OfficerApplication {
 }
 
 export interface OfficerDecisionRequest {
-  application_id: string;
+  utid: string;
+  application_id?: string;
   step_id: string;
   decision: ApplicationStatus;
   remarks: string;
@@ -80,7 +87,8 @@ export interface OfficerDecisionRequest {
 
 export interface OfficerDecisionResponse {
   success: boolean;
-  application_id: string;
+  utid: string;
+  application_id?: string;
   new_status: ApplicationStatus;
   decision_timestamp: string;
   sla_time_delta_hours: number;
@@ -88,10 +96,12 @@ export interface OfficerDecisionResponse {
   audit_reference_id: string;
   officer_id: string;
   message: string;
+  citizen_roadmap_updated?: boolean;
 }
 
 export interface DossierAnalysisRequest {
-  application_id: string;
+  utid: string;
+  application_id?: string;
   service_title: string;
   department: string;
   citizen_name: string;
@@ -102,7 +112,8 @@ export interface DossierAnalysisRequest {
 }
 
 export interface DossierAnalysisResponse {
-  application_id: string;
+  utid: string;
+  application_id?: string;
   identity_verification_status: string;
   document_completeness: string;
   regulatory_red_flags: string;

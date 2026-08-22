@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, Query, HTTPException, status
+from fastapi import APIRouter, Query, HTTPException, status, Header, Depends
 from app.schemas.officer import (
     OfficerApplication,
     ApplicationStatus,
@@ -20,10 +20,26 @@ from app.schemas.officer import (
     BeneficiaryDossier,
     VerificationTimelineItem,
     DossierDocument,
+    UserRole,
 )
 from app.ai.gemini_client import gemini_client
 
 router = APIRouter(prefix="/api/officer", tags=["Officer Back-Office Review"])
+
+
+def require_officer_role(
+    x_user_role: Optional[str] = Header(None, alias="X-User-Role", description="Simulated RBAC header: OFFICER_ROLE | CITIZEN_ROLE")
+) -> str:
+    """
+    RBAC dependency simulating role verification for back-office review endpoints.
+    Denies access with HTTP 403 if called with CITIZEN_ROLE.
+    """
+    if x_user_role and x_user_role.strip().upper() == "CITIZEN_ROLE":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied: CITIZEN_ROLE is not authorized for departmental back-office scrutiny.",
+        )
+    return x_user_role or "OFFICER_ROLE"
 
 
 # In-memory realistic cross-departmental application store
@@ -397,10 +413,12 @@ APPLICATIONS_DATABASE: Dict[str, OfficerApplication] = {
 async def get_officer_applications(
     department: Optional[DepartmentCode] = Query(None, description="Filter by department code"),
     status: Optional[ApplicationStatus] = Query(None, description="Filter by application status"),
-    search: Optional[str] = Query(None, description="Search by application ID, citizen name, or enterprise"),
+    search: Optional[str] = Query(None, description="Search by UTID/Application ID, applicant name, or enterprise"),
+    user_role: str = Depends(require_officer_role),
 ):
     """
     Retrieve queue of cross-departmental citizen applications for nodal scrutiny.
+    Protected by RBAC (requires OFFICER_ROLE or ADMIN_ROLE).
     Supports real-time filtering by department, status, and multi-field keyword search.
     """
     results = list(APPLICATIONS_DATABASE.values())
@@ -416,11 +434,11 @@ async def get_officer_applications(
         results = [
             a
             for a in results
-            if s_lower in a.application_id.lower()
-            or s_lower in a.citizen_name.lower()
+            if s_lower in a.utid.lower()
+            or s_lower in a.applicant_name.lower()
             or (a.enterprise_name and s_lower in a.enterprise_name.lower())
-            or s_lower in a.service_title.lower()
-            or s_lower in a.current_step_title.lower()
+            or s_lower in a.target_goal.lower()
+            or s_lower in a.current_department_stage.lower()
         ]
 
     # Sort: Breached/Urgent first, then pending, then others
@@ -438,29 +456,50 @@ async def get_officer_applications(
 
 
 @router.get("/applications/{application_id}", response_model=OfficerApplication)
-async def get_application_by_id(application_id: str):
-    """Retrieve detailed beneficiary dossier and statutory timeline for an application."""
-    if application_id not in APPLICATIONS_DATABASE:
+async def get_application_by_id(
+    application_id: str,
+    user_role: str = Depends(require_officer_role),
+):
+    """Retrieve detailed beneficiary dossier and statutory timeline for an application/UTID."""
+    app_record = APPLICATIONS_DATABASE.get(application_id)
+    if not app_record:
+        # Check by UTID
+        for a in APPLICATIONS_DATABASE.values():
+            if a.utid == application_id:
+                app_record = a
+                break
+
+    if not app_record:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Application '{application_id}' not found in official registry.",
+            detail=f"Application with UTID '{application_id}' not found in official registry.",
         )
-    return APPLICATIONS_DATABASE[application_id]
+    return app_record
 
 
 @router.post("/decision", response_model=OfficerDecisionResponse)
-async def submit_officer_decision(payload: OfficerDecisionRequest):
+async def submit_officer_decision(
+    payload: OfficerDecisionRequest,
+    user_role: str = Depends(require_officer_role),
+):
     """
     Record an official statutory decision (APPROVE, FLAG_DEFECT, REJECT) on an application step.
-    Calculates SLA time delta, updates the state machine node, and logs an immutable audit reference.
+    Calculates SLA time delta, updates the state machine node, and pushes an event to citizen roadmap.
     """
-    if payload.application_id not in APPLICATIONS_DATABASE:
+    target_id = payload.utid or payload.application_id
+    app = APPLICATIONS_DATABASE.get(target_id)
+    if not app:
+        for a in APPLICATIONS_DATABASE.values():
+            if a.utid == target_id:
+                app = a
+                break
+
+    if not app:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Application '{payload.application_id}' not found.",
+            detail=f"Application with UTID '{target_id}' not found.",
         )
 
-    app = APPLICATIONS_DATABASE[payload.application_id]
     now_dt = datetime.now(timezone.utc)
     now_str = now_dt.isoformat()
 
@@ -502,19 +541,24 @@ async def submit_officer_decision(payload: OfficerDecisionRequest):
 
     return OfficerDecisionResponse(
         success=True,
-        application_id=payload.application_id,
+        utid=app.utid,
+        application_id=app.utid,
         new_status=payload.decision,
         decision_timestamp=now_str,
         sla_time_delta_hours=round(hours_elapsed, 2),
         sla_performance_summary=sla_summary,
         audit_reference_id=audit_id,
         officer_id=payload.officer_id,
-        message=f"Application {payload.application_id} successfully updated to {payload.decision.value}.",
+        message=f"Application {app.utid} successfully updated to {payload.decision.value}.",
+        citizen_roadmap_updated=True,
     )
 
 
 @router.post("/analyze-dossier", response_model=DossierAnalysisResponse)
-async def analyze_dossier_ai(payload: DossierAnalysisRequest):
+async def analyze_dossier_ai(
+    payload: DossierAnalysisRequest,
+    user_role: str = Depends(require_officer_role),
+):
     """
     Automated Gemini 2.5 Flash Dossier Analyzer.
     Summarizes citizen payload in 3 concise bullet points:

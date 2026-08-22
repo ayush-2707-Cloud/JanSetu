@@ -224,9 +224,9 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Top Navigation Mode / Role Controller */}
-        <div className="hidden lg:flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner text-xs">
-          {/* Citizen Portal Tab */}
+        {/* Top-Level Role Toggle Switcher: [ Citizen View ] | [ Department Officer View ] */}
+        <div className="flex items-center bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner text-xs">
+          {/* Citizen View Tab */}
           <Link
             href="/"
             onClick={() => {
@@ -234,32 +234,32 @@ export const GovTechHeader: React.FC = () => {
                 navigateToHome();
               }
             }}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
+            className={`px-3 py-1.5 rounded-xl font-extrabold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
               pathname !== "/officer"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-slate-400 hover:text-slate-200"
             }`}
+            title="Switch to Citizen Journey & Roadmap Portal"
           >
             <Users className="w-3.5 h-3.5" />
-            <span>Citizen Portal</span>
+            <span>Citizen View</span>
           </Link>
 
-          {/* Officer / Admin Back-Office Tab */}
+          {/* Department Officer View Tab */}
           <Link
             href="/officer"
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
+            className={`px-3 py-1.5 rounded-xl font-extrabold flex items-center gap-1.5 transition-all cursor-pointer no-underline ${
               pathname === "/officer"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-slate-400 hover:text-slate-200"
             }`}
+            title="Switch to Department Officer Back-Office Scrutiny Dashboard"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
-            <span>Officer Scrutiny Hub</span>
-            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/40">
-              Back-Office
-            </span>
+            <span>Department Officer View</span>
           </Link>
 
+          {/* Municipal Comparison Modal Trigger */}
           <button
             type="button"
             onClick={() => setIsMunicipalModalOpen(true)}

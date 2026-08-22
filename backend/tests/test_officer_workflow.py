@@ -110,6 +110,7 @@ def test_submit_officer_decision_defect_flagged():
 def test_analyze_dossier_ai_endpoint():
     """Test Gemini 2.5 Flash / Heuristic 3-point dossier analyzer."""
     payload = {
+        "utid": "APP-2026-MSME-0841",
         "application_id": "APP-2026-MSME-0841",
         "service_title": "Udyam Enterprise Registration",
         "department": "MSME",
@@ -126,10 +127,51 @@ def test_analyze_dossier_ai_endpoint():
     response = client.post("/api/officer/analyze-dossier", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["application_id"] == "APP-2026-MSME-0841"
+    assert data["utid"] == "APP-2026-MSME-0841"
     assert "identity_verification_status" in data
     assert "document_completeness" in data
     assert "regulatory_red_flags" in data
     assert data["overall_risk_level"] in ["LOW", "MEDIUM", "ELEVATED"]
     assert isinstance(data["risk_score"], int)
     assert "recommended_action" in data
+
+
+def test_rbac_middleware_blocks_citizen_role_with_403():
+    """Test that simulated CITIZEN_ROLE receives HTTP 403 Forbidden on officer endpoints."""
+    headers = {"X-User-Role": "CITIZEN_ROLE"}
+    response = client.get("/api/officer/applications", headers=headers)
+    assert response.status_code == 403
+    assert "Access Denied" in response.json()["detail"]
+
+
+def test_rbac_middleware_allows_officer_role():
+    """Test that explicit OFFICER_ROLE receives HTTP 200 OK on officer endpoints."""
+    headers = {"X-User-Role": "OFFICER_ROLE"}
+    response = client.get("/api/officer/applications", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) >= 1
+    # Verify presence of UTID and target_goal
+    first_item = data[0]
+    assert "utid" in first_item
+    assert "applicant_name" in first_item
+    assert "target_goal" in first_item
+    assert "current_department_stage" in first_item
+
+
+def test_submit_officer_decision_with_utid_payload():
+    """Test decision submission using UTID field and roadmap sync confirmation."""
+    payload = {
+        "utid": "APP-2026-MSME-0841",
+        "step_id": "step-2",
+        "decision": "APPROVED",
+        "remarks": "Statutory verification complete under MSMED Section 7.",
+        "officer_id": "OFFICER-KA-1001",
+    }
+    response = client.post("/api/officer/decision", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["utid"] == "APP-2026-MSME-0841"
+    assert data["new_status"] == "APPROVED"
+    assert data["citizen_roadmap_updated"] is True
+

@@ -10,6 +10,12 @@ from pydantic import BaseModel, Field, AliasChoices
 from datetime import datetime
 
 
+class UserRole(str, Enum):
+    OFFICER_ROLE = "OFFICER_ROLE"
+    CITIZEN_ROLE = "CITIZEN_ROLE"
+    ADMIN_ROLE = "ADMIN_ROLE"
+
+
 class ApplicationStatus(str, Enum):
     PENDING_REVIEW = "PENDING_REVIEW"
     APPROVED = "APPROVED"
@@ -67,15 +73,19 @@ class BeneficiaryDossier(BaseModel):
 
 
 class OfficerApplication(BaseModel):
-    application_id: str
-    citizen_name: str
+    utid: str = Field(..., validation_alias=AliasChoices("utid", "application_id"), description="Universal Transaction Identifier")
+    application_id: Optional[str] = None
+    applicant_name: str = Field(..., validation_alias=AliasChoices("applicant_name", "citizen_name"))
+    citizen_name: Optional[str] = None
     enterprise_name: Optional[str] = None
     department: DepartmentCode
     department_name: str
-    service_title: str
+    target_goal: str = Field(..., validation_alias=AliasChoices("target_goal", "service_title"))
+    service_title: Optional[str] = None
     journey_id: str
     current_step_id: str
-    current_step_title: str
+    current_department_stage: str = Field(..., validation_alias=AliasChoices("current_department_stage", "current_step_title"))
+    current_step_title: Optional[str] = None
     status: ApplicationStatus = ApplicationStatus.PENDING_REVIEW
     submission_date: str
     sla_deadline: str  # ISO string or datetime
@@ -88,9 +98,22 @@ class OfficerApplication(BaseModel):
     last_officer_id: Optional[str] = None
     last_officer_remarks: Optional[str] = None
 
+    def model_post_init(self, __context: Any) -> None:
+        if not self.application_id:
+            self.application_id = self.utid
+        if not self.citizen_name:
+            self.citizen_name = self.applicant_name
+        if not self.service_title:
+            self.service_title = self.target_goal
+        if not self.current_step_title:
+            self.current_step_title = self.current_department_stage
+
+    model_config = {"populate_by_name": True}
+
 
 class OfficerDecisionRequest(BaseModel):
-    application_id: str
+    utid: str = Field(..., validation_alias=AliasChoices("utid", "application_id"), description="Universal Transaction Identifier")
+    application_id: Optional[str] = None
     step_id: str
     decision: ApplicationStatus  # APPROVED, DEFECT_FLAGGED, REJECTED
     remarks: str
@@ -98,12 +121,19 @@ class OfficerDecisionRequest(BaseModel):
     officer_id: str = "OFFICER-KA-9942"
     officer_name: str = "Shri S. Ranganathan"
     officer_designation: str = "Assistant Commissioner / Nodal Scrutiny Officer"
-    department: DepartmentCode = DepartmentCode.MSME
+    department: Optional[DepartmentCode] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.application_id:
+            self.application_id = self.utid
+
+    model_config = {"populate_by_name": True}
 
 
 class OfficerDecisionResponse(BaseModel):
     success: bool
-    application_id: str
+    utid: str = Field(..., validation_alias=AliasChoices("utid", "application_id"))
+    application_id: Optional[str] = None
     new_status: ApplicationStatus
     decision_timestamp: str
     sla_time_delta_hours: float
@@ -111,10 +141,18 @@ class OfficerDecisionResponse(BaseModel):
     audit_reference_id: str
     officer_id: str
     message: str
+    citizen_roadmap_updated: bool = True
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.application_id:
+            self.application_id = self.utid
+
+    model_config = {"populate_by_name": True}
 
 
 class DossierAnalysisRequest(BaseModel):
-    application_id: str
+    utid: str = Field(..., validation_alias=AliasChoices("utid", "application_id"))
+    application_id: Optional[str] = None
     service_title: str
     department: str
     citizen_name: str
@@ -123,9 +161,16 @@ class DossierAnalysisRequest(BaseModel):
     timeline: List[Dict[str, Any]] = Field(default_factory=list)
     additional_notes: Optional[str] = None
 
+    def model_post_init(self, __context: Any) -> None:
+        if not self.application_id:
+            self.application_id = self.utid
+
+    model_config = {"populate_by_name": True}
+
 
 class DossierAnalysisResponse(BaseModel):
-    application_id: str
+    utid: str = Field(..., validation_alias=AliasChoices("utid", "application_id"))
+    application_id: Optional[str] = None
     identity_verification_status: str
     document_completeness: str
     regulatory_red_flags: str
@@ -134,3 +179,9 @@ class DossierAnalysisResponse(BaseModel):
     statutory_citations: List[str] = Field(default_factory=list)
     recommended_action: str  # "APPROVE", "REQUEST_CLARIFICATION", "REJECT"
     analysis_timestamp: str
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.application_id:
+            self.application_id = self.utid
+
+    model_config = {"populate_by_name": True}

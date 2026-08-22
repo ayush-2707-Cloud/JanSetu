@@ -82,11 +82,13 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
   const loadAiBriefing = async (app: OfficerApplication) => {
     setIsLoadingAi(true);
     try {
+      const targetUtid = app.utid || app.application_id || "";
       const res = await officerService.analyzeDossier({
-        application_id: app.application_id,
-        service_title: app.service_title,
+        utid: targetUtid,
+        application_id: targetUtid,
+        service_title: app.target_goal || app.service_title || "",
         department: app.department_name,
-        citizen_name: app.citizen_name,
+        citizen_name: app.applicant_name || app.citizen_name || "",
         enterprise_name: app.enterprise_name,
         documents: app.dossier.documents.map((d) => ({ doc_name: d.doc_name, status: d.verification_status })),
         timeline: app.dossier.timeline.map((t) => ({ step_title: t.step_title, status: t.status })),
@@ -111,8 +113,10 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
 
     setIsSubmitting(true);
     try {
+      const targetUtid = application.utid || application.application_id || "";
       const req: OfficerDecisionRequest = {
-        application_id: application.application_id,
+        utid: targetUtid,
+        application_id: targetUtid,
         step_id: application.current_step_id,
         decision: selectedDecision,
         remarks: remarks.trim(),
@@ -124,10 +128,10 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
       const res = await officerService.submitDecision(req);
       if (res && res.success) {
         showToast(
-          `Decision recorded! ${application.application_id} marked as ${selectedDecision} (${res.sla_performance_summary})`,
+          `Decision recorded! ${targetUtid} marked as ${selectedDecision} (${res.sla_performance_summary})`,
           "success"
         );
-        onDecisionSubmitted?.(application.application_id, selectedDecision);
+        onDecisionSubmitted?.(targetUtid, selectedDecision);
         onClose();
       }
     } catch (err: any) {
@@ -138,26 +142,34 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
   };
 
   const getSlaBadge = () => {
-    if (application.is_sla_breached) {
+    if (application.status === "APPROVED") {
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-black bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" />
-          SLA Breached ({Math.abs(application.sla_hours_remaining).toFixed(1)}h Overdue)
+        <span className="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          Resolved within Statutory SLA
         </span>
       );
     }
-    if (application.sla_hours_remaining <= 12) {
+    if (application.is_sla_breached || application.sla_hours_remaining < 0) {
+      return (
+        <span className="px-2.5 py-1 rounded-full text-xs font-black bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1 animate-pulse">
+          <Clock className="w-3.5 h-3.5" />
+          Red Alert: SLA Breached ({Math.abs(application.sla_hours_remaining).toFixed(1)}h Overdue)
+        </span>
+      );
+    }
+    if (application.sla_hours_remaining <= 24) {
       return (
         <span className="px-2.5 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1">
           <Clock className="w-3.5 h-3.5" />
-          Urgent ({application.sla_hours_remaining.toFixed(1)}h remaining)
+          Amber Alert: Urgent (&lt;24h - {application.sla_hours_remaining.toFixed(1)}h remaining)
         </span>
       );
     }
     return (
       <span className="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
         <Clock className="w-3.5 h-3.5" />
-        On Track ({application.sla_hours_remaining.toFixed(1)}h remaining)
+        Green Alert: On Track (&gt;24h - {application.sla_hours_remaining.toFixed(1)}h remaining)
       </span>
     );
   };
@@ -178,7 +190,7 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-xs font-black bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded">
-                {application.application_id}
+                UTID: {application.utid || application.application_id}
               </span>
               <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                 {application.department}
@@ -187,13 +199,13 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
             </div>
 
             <h2 className="text-lg font-black tracking-tight text-white line-clamp-1">
-              {application.service_title}
+              {application.target_goal || application.service_title}
             </h2>
 
             <p className="text-xs text-slate-400 flex items-center gap-1.5">
               <Building2 className="w-3.5 h-3.5 text-blue-400" />
-              <span>Step Under Review:</span>
-              <strong className="text-slate-200">{application.current_step_title}</strong>
+              <span>Current Stage:</span>
+              <strong className="text-slate-200">{application.current_department_stage || application.current_step_title}</strong>
             </p>
           </div>
 
@@ -299,10 +311,26 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
 
               {/* Cross-Department Statutory Verification Timeline */}
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
-                  Cross-Department Verification Timeline
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-blue-600" />
+                    Cross-Department Verification Trail
+                  </h3>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    Inter-Agency Audit Graph
+                  </span>
+                </div>
+
+                {/* Trail summary breadcrumb */}
+                <div className="p-2.5 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/70 dark:border-blue-900/50 rounded-xl text-xs flex items-center gap-2 text-blue-900 dark:text-blue-300 font-semibold overflow-x-auto">
+                  <span className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+                    <CheckCircle2 className="w-3.5 h-3.5 inline" /> Step 1: Verified via DigiLocker
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                  <span className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-blue-700 dark:text-blue-300">
+                    <Clock className="w-3.5 h-3.5 inline" /> Step 2: {application.department} Pending Officer Review
+                  </span>
+                </div>
 
                 <div className="relative pl-6 border-l-2 border-slate-200 dark:border-slate-800 space-y-4 ml-2">
                   {application.dossier.timeline.map((step, idx) => (
@@ -546,8 +574,8 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
               <span className="text-[11px] text-slate-500">Official Scrutiny Log</span>
             </div>
 
-            {/* Decision Radio / Buttons */}
-            <div className="grid grid-cols-3 gap-2">
+            {/* Decision Radio / Action Triggers */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setSelectedDecision("APPROVED")}
@@ -571,7 +599,7 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
                 }`}
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
-                <span>Flag Defect</span>
+                <span className="truncate">Flag Defect / Request Clarification</span>
               </button>
 
               <button
@@ -584,7 +612,7 @@ export const ApplicationReviewDrawer: React.FC<ApplicationReviewDrawerProps> = (
                 }`}
               >
                 <XCircle className="w-3.5 h-3.5" />
-                <span>Reject</span>
+                <span>Reject with Reason</span>
               </button>
             </div>
 

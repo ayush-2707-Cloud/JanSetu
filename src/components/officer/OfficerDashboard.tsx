@@ -142,26 +142,26 @@ export const OfficerDashboard: React.FC = () => {
         </span>
       );
     }
-    if (app.is_sla_breached) {
+    if (app.is_sla_breached || app.sla_hours_remaining < 0) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800 animate-pulse">
-          <Flame className="w-3 h-3 text-red-600" />
-          Overdue by {Math.abs(app.sla_hours_remaining).toFixed(1)}h
+        <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800 animate-pulse">
+          <Flame className="w-3.5 h-3.5 text-red-600" />
+          Red: Breached ({Math.abs(app.sla_hours_remaining).toFixed(1)}h overdue)
         </span>
       );
     }
-    if (app.sla_hours_remaining <= 12) {
+    if (app.sla_hours_remaining <= 24) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-          <Clock className="w-3 h-3 text-amber-600" />
-          {app.sla_hours_remaining.toFixed(1)}h left (Urgent)
+        <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+          <Clock className="w-3.5 h-3.5 text-amber-600" />
+          Amber: &lt;24h ({app.sla_hours_remaining.toFixed(1)}h left)
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-        <Clock className="w-3 h-3 text-slate-500" />
-        {app.sla_hours_remaining.toFixed(1)}h remaining
+      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+        <Clock className="w-3.5 h-3.5 text-emerald-600" />
+        Green: &gt;24h ({app.sla_hours_remaining.toFixed(1)}h remaining)
       </span>
     );
   };
@@ -348,55 +348,55 @@ export const OfficerDashboard: React.FC = () => {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="py-3.5 px-4">Application ID</th>
-                  <th className="py-3.5 px-4">Applicant & Enterprise</th>
-                  <th className="py-3.5 px-4">Department / Service</th>
-                  <th className="py-3.5 px-4">Current Milestone Step</th>
-                  <th className="py-3.5 px-4">SLA Countdown</th>
-                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">UTID</th>
+                  <th className="py-3.5 px-4">Applicant Name</th>
+                  <th className="py-3.5 px-4">Target Goal</th>
+                  <th className="py-3.5 px-4">Current Department Stage</th>
+                  <th className="py-3.5 px-4">SLA Remaining</th>
+                  <th className="py-3.5 px-4">Status Badge</th>
                   <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
                 {applications.map((app) => (
                   <tr
-                    key={app.application_id}
+                    key={app.utid || app.application_id}
                     onClick={() => handleRowClick(app)}
                     className="hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors cursor-pointer group"
                   >
-                    {/* Application ID */}
+                    {/* UTID */}
                     <td className="py-4 px-4 font-mono font-black text-blue-600 dark:text-blue-400">
-                      {app.application_id}
+                      {app.utid || app.application_id}
                     </td>
 
-                    {/* Applicant & Enterprise */}
+                    {/* Applicant Name */}
                     <td className="py-4 px-4 space-y-0.5">
                       <strong className="text-slate-900 dark:text-white block font-bold">
-                        {app.citizen_name}
+                        {app.applicant_name || app.citizen_name}
                       </strong>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block truncate max-w-[200px]">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block truncate max-w-[180px]">
                         {app.enterprise_name || "Individual Citizen"}
                       </span>
                     </td>
 
-                    {/* Department / Service */}
+                    {/* Target Goal */}
                     <td className="py-4 px-4 space-y-0.5">
                       <span className="inline-block text-[10px] font-bold px-2 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {app.department}
                       </span>
-                      <p className="text-[11px] text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[220px]" title={app.service_title}>
-                        {app.service_title}
+                      <p className="text-[11px] text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[200px]" title={app.target_goal || app.service_title}>
+                        {app.target_goal || app.service_title}
                       </p>
                     </td>
 
-                    {/* Current Step */}
+                    {/* Current Department Stage */}
                     <td className="py-4 px-4">
-                      <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-1 max-w-[180px]" title={app.current_step_title}>
-                        {app.current_step_title}
+                      <span className="text-slate-700 dark:text-slate-300 font-medium line-clamp-2 max-w-[180px]" title={app.current_department_stage || app.current_step_title}>
+                        {app.current_department_stage || app.current_step_title}
                       </span>
                     </td>
 
-                    {/* SLA Countdown */}
+                    {/* SLA Remaining */}
                     <td className="py-4 px-4">
                       {getSlaBadge(app)}
                     </td>
