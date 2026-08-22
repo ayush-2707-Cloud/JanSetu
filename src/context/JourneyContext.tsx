@@ -142,9 +142,10 @@ export const JourneyProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // 1. Initial State Hydration from URL Search Params & LocalStorage (Cross-Reload Recovery)
   useEffect(() => {
     try {
-      // Language recovery
+      // Language recovery across all 11 supported Indian languages
       const savedLang = localStorage.getItem(STORAGE_KEYS.LANG) as Language | null;
-      if (savedLang && ["EN", "HI", "KN"].includes(savedLang)) {
+      const validLangs: Language[] = ["EN", "HI", "KN", "BN", "TE", "TA", "MR", "GU", "ML", "PA", "OR"];
+      if (savedLang && validLangs.includes(savedLang)) {
         setLanguageState(savedLang);
       }
 
