@@ -77,6 +77,7 @@ export const GovTechHeader: React.FC = () => {
   const [isSLAModalOpen, setIsSLAModalOpen] = useState(false);
   const [isHarmonizerModalOpen, setIsHarmonizerModalOpen] = useState(false);
   const [isSSOModalOpen, setIsSSOModalOpen] = useState(false);
+  const [isInteropDropdownOpen, setIsInteropDropdownOpen] = useState(false);
   const t = useMemo(() => translations[language] || translations.EN, [language]);
 
   return (
@@ -241,92 +242,172 @@ export const GovTechHeader: React.FC = () => {
           </div>
         </Link>
 
-        {/* Center Quick Tools: Interoperability Hub, Pre-Flight Gate, MDM & SLA */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {/* Pre-Flight Quality Gate Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsPreflightModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-emerald-400 bg-emerald-950/50 border border-emerald-800/80 hover:text-emerald-300 hover:bg-emerald-900/60 transition-all cursor-pointer shadow-xs"
-            title="Run data-quality pre-checks & AI exception validation before filing"
+        {/* Clean Center Navigation for Citizens & Evaluators */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/explore"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition-all no-underline"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Pre-Flight Gate</span>
-          </button>
+            <span>Explore Clearances</span>
+          </Link>
 
-          {/* Connectors Hub Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsConnectorsModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-blue-400 bg-blue-950/50 border border-blue-800/80 hover:text-blue-300 hover:bg-blue-900/60 transition-all cursor-pointer shadow-xs"
-            title="Reusable Legacy SOAP/XML & Modern REST Connectors Hub"
+          <Link
+            href="/officer"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-300 hover:text-indigo-200 bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-800/60 transition-all no-underline"
           >
-            <FolderTree className="w-3.5 h-3.5 text-blue-400" />
-            <span>Connectors Hub</span>
-          </button>
+            <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Officer Portal</span>
+          </Link>
 
-          {/* MDM Golden Citizen Record Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsMDMModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-teal-400 bg-teal-950/50 border border-teal-800/80 hover:text-teal-300 hover:bg-teal-900/60 transition-all cursor-pointer shadow-xs"
-            title="Master Data Management Golden Citizen Record & Once-Only Auto-Populate"
-          >
-            <UserCheck className="w-3.5 h-3.5 text-teal-400" />
-            <span>Golden Record (MDM)</span>
-          </button>
+          {/* Unified Single Interoperability Suite Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsInteropDropdownOpen(!isInteropDropdownOpen)}
+              className="px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 text-xs text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-md transition-all cursor-pointer border border-indigo-400/30"
+              title="Open SIH26129 Interoperability Middleware Lab & Evaluation Suite"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>⚡ Interoperability Lab</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isInteropDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
 
-          {/* Cryptographic Audit Ledger Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsAuditModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-purple-400 bg-purple-950/50 border border-purple-800/80 hover:text-purple-300 hover:bg-purple-900/60 transition-all cursor-pointer shadow-xs"
-            title="Immutable Cryptographic SHA-256 Audit Trail"
-          >
-            <Shield className="w-3.5 h-3.5 text-purple-400" />
-            <span>Audit Ledger</span>
-          </button>
+            {isInteropDropdownOpen && (
+              <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-80 sm:w-96 rounded-2xl bg-slate-950 border border-slate-800 shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 space-y-3">
+                <div className="p-2 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="font-extrabold text-xs text-white block">
+                      SIH26129 Interoperability Suite
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      Tier-1 Enterprise Middleware Lab (Govt of Maharashtra)
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                    Live Active
+                  </span>
+                </div>
 
-          {/* Visual Data Harmonizer Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsHarmonizerModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-indigo-400 bg-indigo-950/50 border border-indigo-800/80 hover:text-indigo-300 hover:bg-indigo-900/60 transition-all cursor-pointer shadow-xs"
-            title="IndEA 2.0 Canonical Schema Harmonizer & MDM Mapper"
-          >
-            <span>🔄 Harmonizer (IndEA)</span>
-          </button>
+                {/* Section 1: Ingestion & Identity */}
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-500 px-2 block">
+                    1. Ingestion & Identity Middleware
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      onClick={() => {
+                        setIsHarmonizerModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-indigo-300 block font-bold">🔄 Harmonizer</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">IndEA 2.0 Schema MDM</span>
+                    </button>
 
-          {/* Federated SSO MeriPehchaan Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsSSOModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-orange-400 bg-orange-950/50 border border-orange-800/80 hover:text-orange-300 hover:bg-orange-900/60 transition-all cursor-pointer shadow-xs"
-            title="MeriPehchaan (Jan Parichay) Federated Single Sign-On"
-          >
-            <span>🇮🇳 MeriPehchaan SSO</span>
-          </button>
+                    <button
+                      onClick={() => {
+                        setIsConnectorsModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-blue-300 block font-bold">🔌 Connectors Hub</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">SOAP/XML & REST</span>
+                    </button>
 
-          {/* Departmental SLA Analytics Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsSLAModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-amber-400 bg-amber-950/50 border border-amber-800/80 hover:text-amber-300 hover:bg-amber-900/60 transition-all cursor-pointer shadow-xs"
-            title="Right to Public Services SLA Analytics & Bottleneck Monitor"
-          >
-            <Building2 className="w-3.5 h-3.5 text-amber-400" />
-            <span>SLA Monitor</span>
-          </button>
+                    <button
+                      onClick={() => {
+                        setIsMDMModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-teal-300 block font-bold">👤 Golden Record</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">Once-Only Auto-Populate</span>
+                    </button>
 
-          {/* Municipal Comparison Modal Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsMunicipalModalOpen(true)}
-            className="px-2.5 py-1.5 rounded-xl font-bold flex items-center gap-1 text-xs text-slate-300 bg-slate-900/90 border border-slate-800 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
-            title="Compare municipal compliance rules (BBMP vs BMC vs MCD)"
-          >
-            <span>{t.cityBylawsDiff || "City Bylaws Diff"}</span>
-          </button>
+                    <button
+                      onClick={() => {
+                        setIsSSOModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-orange-300 block font-bold">🇮🇳 MeriPehchaan</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">Jan Parichay SSO</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section 2: Trust & Performance */}
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-500 px-2 block">
+                    2. Trust, Governance & SLA
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      onClick={() => {
+                        setIsPreflightModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-emerald-300 block font-bold">🛡️ Pre-Flight Gate</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">Data Quality & OCR</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsAuditModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-purple-300 block font-bold">📜 Audit Ledger</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">SHA-256 Tamper-Proof</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsSLAModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-amber-300 block font-bold">📊 SLA Monitor</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">RTSA Act 2015 Timers</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsMunicipalModalOpen(true);
+                        setIsInteropDropdownOpen(false);
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors cursor-pointer"
+                    >
+                      <strong className="text-xs text-slate-300 block font-bold">🏙️ Bylaws Diff</strong>
+                      <span className="text-[10px] text-slate-400 block leading-tight">BBMP vs BMC Rules</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section 3: QA Checklist */}
+                <div className="pt-1 border-t border-slate-900">
+                  <button
+                    onClick={() => {
+                      setIsQAModalOpen(true);
+                      setIsInteropDropdownOpen(false);
+                    }}
+                    className="w-full p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-800/80 text-left flex items-center justify-between transition-colors cursor-pointer"
+                  >
+                    <span className="text-xs font-bold text-emerald-300">🧪 Interactive QA Testing Checklist</span>
+                    <span className="text-[10px] text-emerald-400 font-mono">107/107 Tests</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Action Controls & Authenticated User Identity */}
