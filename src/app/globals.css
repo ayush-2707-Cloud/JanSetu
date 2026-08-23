@@ -21,6 +21,33 @@
   }
 }
 
+/* GIGW 3.0 & WCAG 2.1 AA Accessibility Modes */
+.hc-yellow, .hc-yellow * {
+  background-color: #000000 !important;
+  color: #fef08a !important;
+  border-color: #eab308 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.hc-yellow a, .hc-yellow button {
+  color: #fde047 !important;
+  text-decoration: underline !important;
+}
+
+.hc-dark, .hc-dark * {
+  background-color: #050811 !important;
+  color: #f8fafc !important;
+  border-color: #3b82f6 !important;
+}
+
+.font-dyslexic, .font-dyslexic * {
+  font-family: 'Trebuchet MS', 'Segoe UI', 'Arial', sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.08em !important;
+  line-height: 1.75 !important;
+}
+
 /* Fast Rendering & Hardware Acceleration Utilities */
 .perf-gpu {
   transform: translateZ(0);
