@@ -14,7 +14,8 @@ from app.db.database import init_db
 from app.routers import (
     journeys, progress, sandbox, sessions, alerts, ai, copilot, legal,
     stamp_duty, notifications, officer, auth, preflight, connectors, mdm, audit,
-    indea_harmonizer, sso, events, admin_workflow, sla, tier2_router, tier3_router
+    indea_harmonizer, sso, events, admin_workflow, sla, tier2_router, tier3_router,
+    tracker_router, consent_router, coordination_router, exceptions_router
 )
 from app.engine.dependency_graph import DependencyResolutionError
 
@@ -66,6 +67,10 @@ app.include_router(admin_workflow.router, prefix="/api")
 app.include_router(sla.router, prefix="/api")
 app.include_router(tier2_router.router, prefix="/api")
 app.include_router(tier3_router.router, prefix="/api")
+app.include_router(tracker_router.router)
+app.include_router(consent_router.router)
+app.include_router(coordination_router.router)
+app.include_router(exceptions_router.router)
 app.include_router(audit.router, prefix="/api")
 app.include_router(legal.router)
 app.include_router(stamp_duty.router)
@@ -91,6 +96,10 @@ app.include_router(admin_workflow.router, prefix=settings.API_V1_STR)
 app.include_router(sla.router, prefix=settings.API_V1_STR)
 app.include_router(tier2_router.router, prefix=settings.API_V1_STR)
 app.include_router(tier3_router.router, prefix=settings.API_V1_STR)
+app.include_router(tracker_router.router, prefix=settings.API_V1_STR)
+app.include_router(consent_router.router, prefix=settings.API_V1_STR)
+app.include_router(coordination_router.router, prefix=settings.API_V1_STR)
+app.include_router(exceptions_router.router, prefix=settings.API_V1_STR)
 app.include_router(audit.router, prefix=settings.API_V1_STR)
 app.include_router(legal.router, prefix=settings.API_V1_STR)
 app.include_router(stamp_duty.router, prefix=settings.API_V1_STR)

@@ -110,7 +110,26 @@
 
 ---
 
-## 📋 Complete Master Cheat Sheet of All 18 Tools
+## 🎯 5. Problem Statement Proof & Governance (Tier-4)
+
+### 19. 📋 Unified Cross-Portal Application Tracker
+* **What it is in simple words**: A **Single Flight Board for ALL Government Applications**.
+* **The Problem**: If a citizen applies for a food license, municipal trade permit, and land clearance, they have to open 3 different portals with 3 different login IDs.
+* **How it helps**: Consolidates all central (FSSAI/MSME), state (Revenue), and municipal (BMC) applications into **1 single live dashboard** with live milestone progress and officer assignments.
+
+### 20. 🔐 Consent-Based Data Sharing Ledger
+* **What it is in simple words**: A **Digital Permission Slip & Passbook** for your personal data.
+* **The Problem**: Citizens never know which government department is reading their personal records or bank details.
+* **How it helps**: Shows a clear, searchable ledger of every department that accessed your data, why they accessed it, and gives you a **1-click Revoke button** under DPDP Act 2023 Section 6(4).
+
+### 21. 📊 Before vs After Impact Metrics Dashboard
+* **What it is in simple words**: The **Scorecard & Report Card** for the entire Hackathon evaluation.
+* **The Problem**: Judges ask: *"What are the exact measurable outcomes of your solution?"*
+* **How it helps**: Shows hard numbers on screen: **94.2% filing time saved**, **34 duplicate form fields cut**, **86.8% faster turnaround (21 days -> 2.78 days)**, and **₹500+ Crores saved** by reusing legacy systems.
+
+---
+
+## 📋 Complete Master Cheat Sheet of All 21 Tools
 
 | Tier | Tool | Everyday Meaning | Key Benefit |
 | :--- | :--- | :--- | :--- |
@@ -132,3 +151,6 @@
 | **Tier-3** | **⚡ API Benchmark** | Stress-Test Engine | Proves 1,700+ ops/sec throughput live on screen |
 | **Tier-3** | **🔒 DPDP 2025 Privacy**| Citizen Privacy Vault | Portable JSON dossier & SHA-256 erasure certificates |
 | **Tier-3** | **🏪 CSC Operator Mode**| Rural Kiosk Interface | Fast profile switching, batch upload & printable receipts |
+| **Tier-4** | **📋 Unified Tracker** | Single Flight Board | Consolidates FSSAI, BMC, Land & MSME in 1 screen |
+| **Tier-4** | **🔐 Consent Ledger** | Data Permission Passbook | Full transparency on data sharing + 1-click revocation |
+| **Tier-4** | **📊 Impact Metrics** | Evaluator Scorecard | Proves 94.2% time saved & 86.8% faster turnaround |

@@ -31,6 +31,8 @@ import { officerService } from "@/services/api";
 import { ApplicationReviewDrawer } from "@/components/officer/ApplicationReviewDrawer";
 import { useToast } from "@/context/ToastContext";
 import WorkflowRuleManagerModal from "@/components/WorkflowRuleManagerModal";
+import CrossDepartmentDashboard from "@/components/officer/CrossDepartmentDashboard";
+import ExceptionResolutionQueue from "@/components/officer/ExceptionResolutionQueue";
 
 const DEPARTMENT_TABS: { id: DepartmentCode | "ALL"; label: string; icon: string }[] = [
   { id: "ALL", label: "All Departments", icon: "🏛️" },
@@ -51,6 +53,7 @@ const STATUS_FILTERS: { id: ApplicationStatus | "ALL"; label: string }[] = [
 
 export const OfficerDashboard: React.FC = () => {
   const { showToast } = useToast();
+  const [activeView, setActiveView] = useState<"QUEUE" | "COORDINATION" | "EXCEPTIONS">("QUEUE");
   const [applications, setApplications] = useState<OfficerApplication[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedDept, setSelectedDept] = useState<DepartmentCode | "ALL">("ALL");
@@ -249,6 +252,59 @@ export const OfficerDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* 3 Main Functional View Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-1 text-xs font-bold">
+        <button
+          type="button"
+          onClick={() => setActiveView("QUEUE")}
+          className={`px-4 py-2.5 rounded-2xl flex items-center gap-2 transition-all cursor-pointer ${
+            activeView === "QUEUE"
+              ? "bg-blue-600 text-white shadow-md"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <span>📋 Applications Scrutiny Queue</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-700/50 text-white font-mono">{applications.length}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveView("COORDINATION")}
+          className={`px-4 py-2.5 rounded-2xl flex items-center gap-2 transition-all cursor-pointer ${
+            activeView === "COORDINATION"
+              ? "bg-indigo-600 text-white shadow-md"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <span>🏛️ Cross-Department Coordination Radar</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveView("EXCEPTIONS")}
+          className={`px-4 py-2.5 rounded-2xl flex items-center gap-2 transition-all cursor-pointer ${
+            activeView === "EXCEPTIONS"
+              ? "bg-amber-600 text-white shadow-md"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <span>⚠️ Exception Resolution Pipeline</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-700/50 text-white font-mono">3 Active</span>
+        </button>
+      </div>
+
+      {activeView === "COORDINATION" && (
+        <CrossDepartmentDashboard onSelectDepartment={(d) => { setSelectedDept(d as any); setActiveView("QUEUE"); }} />
+      )}
+
+      {activeView === "EXCEPTIONS" && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+          <ExceptionResolutionQueue />
+        </div>
+      )}
+
+      {activeView === "QUEUE" && (
+        <>
       {/* Filter Bar: Department Tabs & Search */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
         
@@ -438,6 +494,8 @@ export const OfficerDashboard: React.FC = () => {
         )}
 
       </div>
+      </>
+      )}
 
       {/* Slide-Over Application Review Drawer */}
       <ApplicationReviewDrawer

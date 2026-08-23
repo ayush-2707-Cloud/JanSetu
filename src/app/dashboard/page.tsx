@@ -6,6 +6,7 @@ import { GovTechHeader } from "@/components/GovTechHeader";
 import { GoalDiscoveryLanding } from "@/components/GoalDiscoveryLanding";
 import { MilestoneRoadmap } from "@/components/MilestoneRoadmap";
 import { DemoControlsPanel } from "@/components/DemoControlsPanel";
+import UnifiedApplicationTracker from "@/components/UnifiedApplicationTracker";
 import { ShieldCheck } from "lucide-react";
 
 export default function DashboardPage() {
@@ -30,6 +31,9 @@ export default function DashboardPage() {
           <GoalDiscoveryLanding />
         ) : (
           <div className="space-y-6">
+            {/* Unified Cross-Portal Application Tracker (Central, State, Municipal) */}
+            <UnifiedApplicationTracker onSelectJourney={(id) => selectJourneyById(id)} />
+
             {/* Interactive Sandbox Toolbar */}
             <DemoControlsPanel
               currentDatasetKey={activeJourney.journeyId}
