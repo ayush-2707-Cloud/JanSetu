@@ -95,3 +95,66 @@ def test_exception_resolution_queue_and_action():
     updated_exc = post_res.json()
     assert updated_exc["status"] == "AUTO_FIXED"
     assert updated_exc["resolved_by"] == "OFFICER-MH-8492"
+
+
+# ─── Central API Gateway Tests ────────────────────────────────────────────────
+
+
+def test_gateway_exchange_full_pipeline():
+    """Test the central API gateway executes the full 5-step exchange pipeline."""
+    payload = {
+        "source_department": "FOOD_SAFETY",
+        "target_department": "MUNICIPAL",
+        "utid": "UTID-MH-2026-094182",
+        "payload": {
+            "applicant_name": "  Ayush  Singh  Chauhan  ",
+            "pan_number": "bkzpc9912a",
+            "contact_no": "+91 98765-43210",
+        },
+    }
+    res = client.post("/api/gateway/exchange", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+
+    # Verify exchange metadata
+    assert data["status"] == "SUCCESS"
+    assert data["source_department"] == "FOOD_SAFETY"
+    assert data["target_department"] == "MUNICIPAL"
+    assert data["consent_verified"] is True
+    assert data["schema_harmonized"] is True
+    assert data["event_published"] is True
+    assert len(data["audit_hash"]) == 64  # SHA-256
+    assert data["sla_tracking_id"].startswith("SLA-")
+
+    # Verify 5-step pipeline
+    assert len(data["pipeline_steps"]) == 5
+    stages = [s["stage"] for s in data["pipeline_steps"]]
+    assert stages == [
+        "CONSENT_VERIFICATION",
+        "SCHEMA_HARMONIZATION",
+        "DATA_DELIVERY",
+        "AUDIT_LOGGING",
+        "EVENT_BROADCAST",
+    ]
+
+    # Verify harmonized record
+    assert data["harmonized_record"] is not None
+    assert data["harmonized_record"]["pan_number"] == "BKZPC9912A"
+
+
+def test_gateway_stats():
+    """Test the gateway stats endpoint returns aggregate metrics."""
+    res = client.get("/api/gateway/stats")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["departments_connected"] >= 5
+    assert data["consent_verification_rate"] == 100.0
+
+
+def test_gateway_exchange_history():
+    """Test the gateway returns exchange audit history."""
+    res = client.get("/api/gateway/history")
+    assert res.status_code == 200
+    data = res.json()
+    assert isinstance(data, list)
+
