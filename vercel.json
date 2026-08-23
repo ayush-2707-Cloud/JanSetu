@@ -1,6 +1,10 @@
 {
-  "version": 2,
-  "framework": "nextjs",
+  "services": {
+    "frontend": {
+      "root": ".",
+      "framework": "nextjs"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/backend/:path*",
